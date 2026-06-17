@@ -1,0 +1,20 @@
+{
+  "projectSlug": "agent-website-builder",
+  "projectName": "Agent Website Builder",
+  "sourceDocs": [
+    "README.md",
+    "docs/agency-website-system/"
+  ],
+  "defaultTags": [
+    "agent-website-builder",
+    "agency-websites",
+    "ai-project"
+  ],
+  "humanApprovalRequiredFor": [
+    "production deploy",
+    "paid API usage",
+    "secrets",
+    "client-site implementation",
+    "public repository visibility"
+  ]
+}
