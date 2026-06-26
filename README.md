@@ -6,6 +6,7 @@ This repo separates the reusable website-builder system from individual client w
 
 ## Current Contents
 
+- `docs/PROJECT_STATUS.md` - current project handoff, GitHub/account status, and remaining work.
 - `docs/agency-website-system/AGENCY_WEBSITE_AGENT_SYSTEM_PLAN.md` - full delivery-system strategy and roadmap.
 - `docs/agency-website-system/AGENCY_WEBSITE_AGENT_EXECUTION_SPECS.md` - per-agent execution specs, gates, handoff contracts, and failure behavior.
 - `docs/agency-website-system/AGENCY_WEBSITE_DESIGN_HARNESS_PLAN.md` - design harness plan for improving visual quality and repeatability.
