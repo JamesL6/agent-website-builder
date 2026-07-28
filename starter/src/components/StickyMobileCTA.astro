@@ -1,0 +1,48 @@
+---
+/**
+ * Shared mobile sticky CTA bar (§10). Mounted from BaseLayout so every page inherits it.
+ * Hidden while [data-page-hero] is in view; slides up after the hero scrolls past.
+ * Falls back to a scroll threshold when a page has no hero marker.
+ */
+import { site } from '../data/site';
+
+interface Props {
+  label?: string;
+}
+
+const { label = 'Need help now? Call now' } = Astro.props;
+---
+
+<div
+  class="pointer-events-none fixed inset-x-0 bottom-0 z-50 translate-y-full transition-transform duration-300 md:hidden"
+  data-mobile-sticky-cta
+>
+  <div class="pointer-events-auto m-3 mb-[max(0.75rem,env(safe-area-inset-bottom))]">
+    <a
+      href={site.phoneHref}
+      class="flex min-h-11 items-center justify-center gap-3 rounded-md bg-accent py-3.5 text-lg font-bold text-white shadow-xl transition hover:bg-accent-hover"
+    >
+      <span class="relative flex size-2.5" aria-hidden="true">
+        <span class="absolute inline-flex h-full w-full animate-ping rounded-full bg-white/70"></span>
+        <span class="relative inline-flex size-2.5 rounded-full bg-white"></span>
+      </span>
+      {label}
+    </a>
+  </div>
+</div>
+
+<script>
+  /**
+   * Reveal rule (§10): hidden in the initial hero view, shown after the user scrolls
+   * ~half the first viewport. A "hero fully out of view" trigger is deliberately NOT
+   * used — split heroes are 2+ viewports tall on mobile, which would reveal the bar
+   * far too late. The 50%-of-first-viewport clause in §10 covers exactly this case.
+   */
+  const cta = document.querySelector('[data-mobile-sticky-cta]');
+  if (cta) {
+    const onScroll = () =>
+      cta.classList.toggle('translate-y-full', window.scrollY <= window.innerHeight * 0.5);
+    addEventListener('scroll', onScroll, { passive: true });
+    onScroll();
+  }
+</script>

@@ -1,0 +1,69 @@
+# Agency Restoration Starter
+
+Astro 5 + Tailwind v4 starter implementing the `emergency_split_hero` archetype.
+
+- Archetype spec: `../docs/agency-website-system/design-system/EMERGENCY_SPLIT_HERO_ARCHETYPE.md`
+- Token contract: `../docs/agency-website-system/design-system/DESIGN_TOKENS.md`
+- Variant registry consumed by design recipes: `../docs/agency-website-system/schemas/design-recipe.yaml`
+
+## Per-client theming
+
+`src/styles/theme.css` is the only file that changes per client. Everything else is shared.
+
+## Rules baked in
+
+- Tokens only — arbitrary Tailwind values (`p-[13px]`, `text-[#hex]`) are banned in components.
+- All phone actions read from `src/data/site.ts` (`phoneHref` is the approved DNI source, §9).
+- `overflow-x: clip` on root, never `hidden` (§12 sticky survival).
+- `prefers-reduced-motion` respected globally.
+- Shell-mounted header/footer/sticky CTA — never per-page (§10, §17).
+
+## Component build order (Phase 2 remaining work)
+
+Build one at a time, verify each against the archetype composition rules with a live
+preview + screenshots before moving on. Each component ships with its variants from the
+recipe registry and a `/templates/` noindex preview route (§17).
+
+1. ✅ `SiteHeader.astro` — utility strip + sticky header, phone CTA dominant (§9); mobile: call / logo / menu
+2. ✅ `StickyMobileCTA.astro` — `[data-mobile-sticky-cta]`, reveals after ~50% of first viewport (§10)
+3. ✅ `Hero.astro` (variant: `image_backed_split_form`) + `RequestServicePanel.astro` (§11)
+4. ✅ `EmergencyCTABand.astro` — accent stripe band, pulse dot, phone CTA with number
+5. ✅ `ServiceGrid.astro` (variant: `image_overlay_grid`) — photo cards with chips; gradient placeholder until client photos land
+6. ✅ `DifferentiatorVS.astro` (variant: `dark_advantage_board`) — ✗/✓ comparison module
+7. ✅ `ProcessSection.astro` (variant: `dark_timeline_cards`) — numbered cards, desktop connectors
+8. ✅ `ReviewSection.astro` (variants: `real_widget_stacked` via slot, `reserved_polished_state` fallback) (§16)
+9. ✅ `ServiceAreaMap.astro` (variant: `map_with_county_accordions`) — Leaflet + county/city accordions, auto-init on load (§15)
+10. ✅ `FAQSection.astro` — accordion cards, accent open state
+11. ✅ `FinalCTA.astro` (variant: `dark_phone_first_band`)
+12. ✅ `SiteFooter.astro` (variant: `full_nap_service_footer`) — mounted from BaseLayout (§13)
+
+### Second variants (differentiation layer)
+
+- ✅ `HeroFullBleed.astro` — `premium_full_bleed`: centered full-bleed hero, chips row, no side form (pair with a form section directly below)
+- ✅ `ServiceGridIcons.astro` — `icon_plus_media_cards`: icon-tile cards for clients without strong photography
+- ✅ `ProcessStepper.astro` — `numbered_connector_steps`: light horizontal stepper, 3-5 steps, vertical rail on mobile
+- ✅ `RegionalServiceExplorer.astro` — `regional_service_explorer`: county tabs + cross-county city search + map, for large service areas
+
+Variant registry (which are BUILT vs PLANNED): `../docs/agency-website-system/schemas/design-recipe.yaml`.
+
+### Preview routes (all noindex, §17)
+
+- `/` — full homepage, variant set A + default (red) tokens
+- `/demo-client-b` — full homepage, variant set B + green tokens (same components, different recipe)
+- `/templates/sections-a` … `sections-d` — variant set A sections in isolation
+- `/templates/variants-b1`, `variants-b2` — variant set B sections in isolation
+13. Optional modules: `InsuranceBand.astro`, `SocialCards.astro`, `CommercialGrid.astro`, `IntroSection.astro`
+14. Image components: `HeroImage.astro`, `OptimizedImage.astro`, `GalleryImage.astro` (§18)
+15. Schema utilities (§22), then `InnerPageTemplate.astro` and the other page templates
+
+## Commands
+
+```bash
+npm install
+npm run dev      # local preview
+npm run check    # astro check
+npm run build    # production build
+```
+
+Planned validation commands (`optimize:images`, `validate:images`, `validate:forms`,
+`validate:sitemap`, `audit:launch`) land with the corresponding components.

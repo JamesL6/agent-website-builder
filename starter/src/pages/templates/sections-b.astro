@@ -1,0 +1,26 @@
+---
+/** Template preview route (§17): process + reviews (reserved state). noindex. */
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import ProcessSection from '../../components/ProcessSection.astro';
+import ReviewSection from '../../components/ReviewSection.astro';
+import { site } from '../../data/site';
+---
+
+<BaseLayout title="Template preview — process + reviews" description="Internal template preview." noindex>
+  <ProcessSection
+    eyebrow="Simple process"
+    heading="3 Steps to Restore Your Property"
+    support="We've made the process simple. One call, and we handle everything — from the first response to the final nail."
+    steps={[
+      { title: 'Call anytime, day or night', text: 'Tell us what happened. A real person answers, asks the right questions, and gets a crew moving.' },
+      { title: 'Assess & stabilize', text: 'We stop the damage from spreading, document everything for your claim, and walk you through the plan.' },
+      { title: 'Restore & rebuild', text: 'From cleanup through reconstruction, one team carries your property back to normal.' },
+    ]}
+  />
+  <ReviewSection
+    eyebrow="What our customers say"
+    heading={`Property owners trust ${site.name}`}
+    intro="Every review comes straight from the platforms our customers use — nothing is edited or hand-picked."
+    reviewsUrl="https://example.com/reviews"
+  />
+</BaseLayout>

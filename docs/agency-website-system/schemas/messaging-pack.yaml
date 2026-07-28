@@ -1,0 +1,65 @@
+# Homepage Messaging Pack — handoff schema
+# Produced by: Copywriting And Localization Agent (4)
+# Consumed by: Design Agent (5), Astro Build Agent (6), QA Agent (7), Design Review Agent (9)
+#
+# Purpose: lock the exact customer-facing homepage copy BEFORE design starts, so the
+# design/build agents arrange approved words instead of inventing copy.
+# Every claim-bearing item carries a claim_state (CORE_CONTRACTS.md §6).
+# A pack is INVALID if any required field is missing or any visible claim lacks a claim_state.
+
+meta:
+  client: ""                       # required
+  industry: restoration            # required
+  source_snapshot: ""              # sheet/doc URLs + read date (CORE_CONTRACTS.md §2)
+  status: Draft                    # Draft | Ready For Review | Approved
+  approved_by: ""                  # human approver, required before design handoff
+  approved_date: ""
+
+hero:
+  h1: ""                           # required — final wording, not a pattern
+  h1_line_groups: []               # required — explicit desktop line breaks, e.g. ["Greater Seattle Area's", "Emergency Restoration Team"]
+  h1_nowrap_phrases: []            # phrases that must never split across lines
+  subhead: ""                      # required
+  primary_cta_label: ""            # required — phone-first (desktop label includes phone number, §9)
+  secondary_cta_label: ""          # required — request-service
+  trust_bullets:                   # required — 4 to 6 short verified conversion facts
+    - text: ""
+      claim_state: visible_preview_allowed   # §6 states
+      proof_source: ""
+
+proof_band:
+  items:                           # each item is a claim
+    - text: ""
+      claim_state: ""
+      proof_source: ""
+
+sections:
+  intro_heading: ""
+  intro_copy: ""
+  services_heading: ""             # required
+  services_intro: ""
+  process_heading: ""              # required
+  process_steps: []                # 3 step labels + one-line descriptions
+  differentiator_heading: ""       # required
+  differentiator_points: []
+  review_heading: ""               # required
+  review_intro: ""                 # customer-facing only — no internal labels (§7)
+  service_area_heading: ""         # required
+  service_area_intro: ""
+  faq_heading: ""                  # required
+  final_cta_heading: ""            # required
+  final_cta_copy: ""
+  footer_summary: ""               # required
+
+form:
+  emergency_notice: ""             # required — explains 24/7 phone + one-business-day online callback (§11)
+  service_options: []              # dropdown values, from verified service matrix only
+
+claims_register:                   # every claim used anywhere above, deduplicated
+  - claim: ""
+    claim_state: ""
+    proof_source: ""
+    used_in: []                    # hero.trust_bullets, proof_band, etc.
+
+banned_confirmed: false            # required true — producer confirms no §7 hard-block phrases appear in any field
+blockers: []                       # missing fields the AM/human must resolve

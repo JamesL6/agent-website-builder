@@ -1,0 +1,41 @@
+---
+/**
+ * Shared shell for every page type. Mounts header, footer, and the sticky
+ * mobile CTA (§10) so all pages inherit them — never per-page (§17).
+ */
+import '../styles/global.css';
+import SiteHeader from '../components/SiteHeader.astro';
+import SiteFooter from '../components/SiteFooter.astro';
+import StickyMobileCTA from '../components/StickyMobileCTA.astro';
+import { site } from '../data/site';
+
+interface Props {
+  title: string;
+  description: string;
+  /** Template preview routes set this to true (§17). */
+  noindex?: boolean;
+  /** Demo-only scoped theme key. Real client builds swap theme.css instead. */
+  demoTheme?: string;
+}
+
+const { title, description, noindex = false, demoTheme } = Astro.props;
+---
+
+<!doctype html>
+<html lang="en" data-theme={demoTheme}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    {noindex && <meta name="robots" content="noindex,nofollow" />}
+  </head>
+  <body class="pb-20 md:pb-0">
+    <SiteHeader />
+    <main>
+      <slot />
+    </main>
+    <SiteFooter blurb={site.footerBlurb} />
+    <StickyMobileCTA />
+  </body>
+</html>

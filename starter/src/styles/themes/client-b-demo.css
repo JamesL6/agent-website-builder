@@ -1,0 +1,32 @@
+/*
+ * Demo-only scoped theme override.
+ *
+ * REAL CLIENT BUILDS DO NOT USE THIS PATTERN — each client site swaps
+ * `src/styles/theme.css` (one file, global @theme block, see DESIGN_TOKENS.md).
+ * This scoped override exists purely so the variant comparison demo can render
+ * two differently-branded homepages inside one starter project.
+ *
+ * Palette: Green State Restoration (extracted from the live site 2026-07-07).
+ */
+[data-theme='client-b'] {
+  --color-accent: #3aa156;
+  --color-accent-hover: #2f8b49;
+  --color-accent-bright: #52bd6f;
+  --color-brand-2: #21472a;
+
+  --color-dark: #111613;
+  --color-dark-2: #1c231e;
+  --color-dark-3: #2a332d;
+
+  --color-surface: #f4f7f1;
+  --color-surface-2: #e7eee4;
+  --color-border: #d9e2d6;
+
+  --color-ink: #2c332e;
+  --color-ink-muted: #5c5c5c;
+  --color-on-dark: #f4f7f1;
+
+  --shadow-md: 0 16px 46px rgb(13 23 16 / 0.16);
+  --shadow-lg: 0 26px 80px rgb(13 23 16 / 0.22);
+  --shadow-xl: 0 26px 80px rgb(13 23 16 / 0.28);
+}

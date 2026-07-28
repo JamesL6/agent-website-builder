@@ -1,5 +1,8 @@
 # Agency Website Design Harness Plan
 
+> **STRATEGY DOCUMENT — not agent-facing.** This file explains rationale and roadmap. Operational rules live in `CORE_CONTRACTS.md` (shared rules, single source of truth), `PIPELINE.md` (orchestration), `agents/` (per-agent specs), and `schemas/` (handoff formats). If this file disagrees with any of those, they win. Do not add new rules here.
+
+
 Status: Planning artifact
 Last updated: 2026-06-08
 Owner: James / Codex

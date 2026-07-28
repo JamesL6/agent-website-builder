@@ -1,0 +1,153 @@
+---
+/**
+ * Service area — variant `map_with_county_accordions` (§15).
+ * Stacked intro above, then explorer row: county/city accordions (controlled
+ * height) beside a real Leaflet/OSM map with a shaded service polygon.
+ * Loading: non-blocking, auto-initializes on window load — never IO-only (§15).
+ * City rows render as links ONLY when a real route URL is provided; the
+ * service-area section is an internal-link module (§15).
+ */
+import 'leaflet/dist/leaflet.css';
+
+interface CityService {
+  label: string;
+  url: string;
+}
+
+interface City {
+  name: string;
+  url?: string;
+  services?: CityService[];
+}
+
+interface County {
+  name: string;
+  cities: City[];
+}
+
+interface Props {
+  eyebrow: string;
+  heading: string;
+  intro?: string;
+  counties: County[];
+  mapCenter: [number, number];
+  mapZoom?: number;
+  /** Optional service-area polygon, [lat, lng] pairs. */
+  polygon?: [number, number][];
+  mapCaption?: string;
+  id?: string;
+}
+
+const {
+  eyebrow,
+  heading,
+  intro,
+  counties,
+  mapCenter,
+  mapZoom = 8,
+  polygon = [],
+  mapCaption,
+  id = 'areas',
+} = Astro.props;
+
+const mapConfig = JSON.stringify({ center: mapCenter, zoom: mapZoom, polygon });
+---
+
+<section class="bg-surface-2 py-16 md:py-20" id={id}>
+  <div class="mx-auto max-w-7xl px-4 md:px-6">
+    <p class="text-xs font-bold uppercase tracking-eyebrow text-accent">{eyebrow}</p>
+    <h2 class="mt-3 max-w-2xl font-display text-4xl font-bold text-ink md:text-5xl">{heading}</h2>
+    {intro && <p class="mt-4 max-w-2xl text-ink-muted">{intro}</p>}
+
+    <div class="mt-10 grid gap-8 lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)]">
+      <div class="max-h-[480px] space-y-3 overflow-y-auto pr-1">
+        {counties.map((county, i) => (
+          <details class="group rounded-md border border-border bg-white shadow-sm open:border-accent" open={i === 0}>
+            <summary class="flex cursor-pointer list-none items-center justify-between gap-4 px-5 py-4 [&::-webkit-details-marker]:hidden">
+              <h3 class="font-display text-lg font-bold text-ink">{county.name}</h3>
+              <span class="text-ink-muted transition group-open:rotate-180" aria-hidden="true">▾</span>
+            </summary>
+            <ul class="max-h-64 overflow-y-auto border-t border-border">
+              {county.cities.map((city) => (
+                <li class="border-b border-border px-5 py-3 text-sm last:border-b-0">
+                  <div class="flex items-center gap-2">
+                    <span class="size-1.5 rounded-full bg-accent" aria-hidden="true"></span>
+                    {city.url ? (
+                      <a href={city.url} class="font-semibold text-ink transition hover:text-accent">{city.name}</a>
+                    ) : (
+                      <span class="font-semibold text-ink">{city.name}</span>
+                    )}
+                  </div>
+                  {city.services && city.services.length > 0 && (
+                    <details class="mt-1 pl-3.5">
+                      <summary class="cursor-pointer list-none text-xs font-semibold text-accent [&::-webkit-details-marker]:hidden">
+                        {city.name} services ▾
+                      </summary>
+                      <ul class="mt-1 space-y-1">
+                        {city.services.map((svc) => (
+                          <li>
+                            <a href={svc.url} class="text-xs text-ink-muted transition hover:text-accent">{svc.label}</a>
+                          </li>
+                        ))}
+                      </ul>
+                    </details>
+                  )}
+                </li>
+              ))}
+            </ul>
+          </details>
+        ))}
+      </div>
+
+      <div>
+        <div
+          class="h-[420px] w-full overflow-hidden rounded-md border border-border bg-white shadow-md lg:h-[480px]"
+          data-service-area-map
+          data-map-config={mapConfig}
+        >
+        </div>
+        {mapCaption && (
+          <p class="mt-3 text-center text-xs font-bold uppercase tracking-eyebrow text-ink-muted">{mapCaption}</p>
+        )}
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  /**
+   * §15 loading contract: never render-blocking, never IO-only.
+   * Initializes automatically once the page has loaded.
+   */
+  async function initServiceAreaMaps() {
+    const containers = document.querySelectorAll<HTMLElement>('[data-service-area-map]');
+    if (containers.length === 0) return;
+    const L = (await import('leaflet')).default;
+    containers.forEach((el) => {
+      if (el.dataset.mapInitialized) return;
+      el.dataset.mapInitialized = 'true';
+      const cfg = JSON.parse(el.dataset.mapConfig ?? '{}');
+      const map = L.map(el, { scrollWheelZoom: false }).setView(cfg.center, cfg.zoom);
+      L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+      }).addTo(map);
+      if (cfg.polygon && cfg.polygon.length > 2) {
+        const accent = getComputedStyle(document.documentElement).getPropertyValue('--color-accent').trim() || '#cc2a2a';
+        const poly = L.polygon(cfg.polygon, {
+          color: accent,
+          weight: 2,
+          dashArray: '6 6',
+          fillColor: accent,
+          fillOpacity: 0.12,
+        }).addTo(map);
+        map.fitBounds(poly.getBounds(), { padding: [24, 24] });
+      }
+    });
+  }
+
+  if (document.readyState === 'complete') {
+    initServiceAreaMaps();
+  } else {
+    window.addEventListener('load', initServiceAreaMaps);
+  }
+</script>

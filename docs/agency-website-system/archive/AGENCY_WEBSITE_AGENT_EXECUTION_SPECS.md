@@ -1,5 +1,8 @@
 # Agency Website Agent Execution Specs
 
+> **SUPERSEDED (2026-07-07).** This file was split into `../CORE_CONTRACTS.md`, `../PIPELINE.md`, `../agents/01-08`, and `../schemas/`. It is kept for history only. Do not load it as agent instructions and do not update it.
+
+
 Status: Working spec
 Last updated: 2026-06-04
 
