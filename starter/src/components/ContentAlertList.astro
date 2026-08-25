@@ -1,0 +1,37 @@
+---
+/**
+ * Body module `content-alert-list` (§12): short, scannable urgency/safety rows
+ * tied to real user risk — symptoms, unsafe conditions, "call now" decision
+ * points. Keep rows brief; this is a signal block, not a paragraph container.
+ */
+interface Alert {
+  title: string;
+  text?: string;
+}
+
+interface Props {
+  heading?: string;
+  alerts: Alert[];
+}
+
+const { heading, alerts } = Astro.props;
+---
+
+<div class="not-article my-8 rounded-md border border-border bg-white p-6 shadow-sm sm:p-7">
+  {heading && <h3 class="font-display text-xl font-bold text-ink">{heading}</h3>}
+  <ul class:list={['grid gap-3 sm:grid-cols-2', { 'mt-4': heading }]}>
+    {alerts.map((alert) => (
+      <li class="flex items-start gap-3">
+        <span class="mt-0.5 inline-flex size-6 shrink-0 items-center justify-center rounded-full bg-accent/10" aria-hidden="true">
+          <svg class="size-3.5 text-accent" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 9v4m0 4h.01M10.3 3.9L1.8 18a2 2 0 001.7 3h17a2 2 0 001.7-3L13.7 3.9a2 2 0 00-3.4 0z" />
+          </svg>
+        </span>
+        <div>
+          <p class="text-sm font-bold text-ink">{alert.title}</p>
+          {alert.text && <p class="mt-0.5 text-sm text-ink-muted">{alert.text}</p>}
+        </div>
+      </li>
+    ))}
+  </ul>
+</div>

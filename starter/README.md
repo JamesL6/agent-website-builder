@@ -54,7 +54,16 @@ Variant registry (which are BUILT vs PLANNED): `../docs/agency-website-system/sc
 - `/templates/variants-b1`, `variants-b2` — variant set B sections in isolation
 13. Optional modules: `InsuranceBand.astro`, `SocialCards.astro`, `CommercialGrid.astro`, `IntroSection.astro`
 14. Image components: `HeroImage.astro`, `OptimizedImage.astro`, `GalleryImage.astro` (§18)
-15. Schema utilities (§22), then `InnerPageTemplate.astro` and the other page templates
+15. Schema utilities (§22), then the remaining page templates (city hub, contact)
+
+✅ `templates/InnerPageTemplate.astro` — the two-column service/city/city-service layout (§12):
+   compact `PageHero`, editorial left column with typographic defaults, sticky sidebar
+   (form-first, proof card, `SidebarNav` with hard-capped smart navigation), post-body slot.
+   Body modules: ✅ `InlineCTA` (required 2x per page), ✅ `ContentAlertList`,
+   ✅ `IncludedPanel`, ✅ `InnerSubsections`.
+   Preview route: `/templates/inner-page` (realistic water-damage content, noindex).
+   Verified: sticky pins at 96px and releases with the body; mobile sidebar drops below
+   the article, static; no horizontal overflow; nav capped in code.
 
 ## Commands
 

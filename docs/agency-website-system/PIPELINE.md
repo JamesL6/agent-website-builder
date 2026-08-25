@@ -7,15 +7,22 @@ This file defines how the agents run together: sequence, parallelism, handoff ar
 
 ## Agents
 
-1. Client Intake Agent — `agents/01-client-intake-agent.md`
-2. Current Site Audit, Sitemap And Redirect Agent — `agents/02-site-audit-redirect-agent.md`
-3. Content Brief Agent — `agents/03-content-brief-agent.md`
-4. Copywriting And Localization Agent — `agents/04-copywriting-localization-agent.md`
-5. Template And Brand Adaptation Agent — `agents/05-design-agent.md`
-6. Astro Build Agent — `agents/06-astro-build-agent.md`
-7. SEO, Tracking And QA Agent — `agents/07-qa-agent.md`
-8. Launch, Tracking And Handoff Agent — `agents/08-launch-handoff-agent.md`
+Each stage has a written spec here; stages marked with a `$skill` also have a runnable Codex
+skill in `~/.agents/skills/`. Spec and skill must be kept in sync manually — when one changes,
+update the other in the same pass.
+
+1. Client Intake Agent — `agents/01-client-intake-agent.md` — `$agency-client-intake-agent`
+2. Current Site Audit, Sitemap And Redirect Agent — `agents/02-site-audit-redirect-agent.md` (spec only)
+3. Content Brief Agent — `agents/03-content-brief-agent.md` — `$restoration-content-brief-generator`
+4. Copywriting And Localization Agent — `agents/04-copywriting-localization-agent.md` — `$restoration-page-copywriter`
+5. Template And Brand Adaptation Agent — `agents/05-design-agent.md` — `$agency-website-design-builder`
+6. Astro Build Agent — `agents/06-astro-build-agent.md` — `$agency-astro-site-builder`
+7. SEO, Tracking And QA Agent — `agents/07-qa-agent.md` (spec only)
+8. Launch, Tracking And Handoff Agent — `agents/08-launch-handoff-agent.md` (spec only)
 9. Design Review Agent (planned, Phase 3) — independent visual reviewer between build and human approval.
+
+Orchestration: `$agency-new-client-website` (the conductor skill) runs stages 1-8 in order,
+invoking stage skills where they exist and pausing at every human approval gate.
 
 ## Execution Order And Parallelism
 

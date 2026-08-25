@@ -1,0 +1,4 @@
+interface:
+  display_name: "Agency Astro Site Builder"
+  short_description: "Assemble a client site from the starter + approved recipe and copy"
+  default_prompt: "Use $agency-astro-site-builder to assemble the client website from the agency starter using the approved Design Recipe, Homepage Messaging Pack, and Final Page Copy. Start from the starter (Rule Zero), apply the theme in src/styles/theme.css only, place approved copy without rewriting it, run validation, and produce a Build Summary for QA. Stop and list blockers if any required input is missing or unapproved."
