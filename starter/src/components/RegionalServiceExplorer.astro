@@ -105,7 +105,9 @@ const mapConfig = JSON.stringify({ center: mapCenter, zoom: mapZoom, polygon });
           ))}
         </div>
 
-        <div class="h-[320px] border-t border-dark-3 lg:h-auto lg:min-h-[420px] lg:border-l lg:border-t-0">
+        <!-- `isolate` contains Leaflet's z-400/z-1000 panes so they cannot paint
+             over the sticky header (z-40). See ServiceAreaMap for the full note. -->
+        <div class="map-pane isolate border-t border-dark-3 lg:border-l lg:border-t-0">
           <div class="h-full w-full" data-service-area-map data-map-config={mapConfig}></div>
         </div>
       </div>
@@ -182,3 +184,16 @@ const mapConfig = JSON.stringify({ center: mapCenter, zoom: mapZoom, polygon });
     window.addEventListener('load', initExplorerMaps);
   }
 </script>
+
+<style>
+  /* See ServiceAreaMap: heights as scoped CSS, not arbitrary Tailwind values. */
+  .map-pane {
+    height: 320px;
+  }
+  @media (min-width: 1024px) {
+    .map-pane {
+      height: auto;
+      min-height: 420px;
+    }
+  }
+</style>

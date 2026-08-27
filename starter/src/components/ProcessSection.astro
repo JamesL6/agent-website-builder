@@ -5,6 +5,9 @@
  * desktop connector arrows (hidden on mobile; animation obeys reduced motion
  * via the global media rule).
  */
+import type { ImageMetadata } from 'astro';
+import OptimizedImage from './OptimizedImage.astro';
+
 interface Step {
   title: string;
   text: string;
@@ -15,8 +18,8 @@ interface Props {
   heading: string;
   support?: string;
   steps: Step[];
-  /** Optional prepared background image src — dimmed automatically. */
-  backgroundImage?: string;
+  /** Client photo (branded truck/crew) behind the section — dimmed automatically. */
+  backgroundImage?: ImageMetadata;
 }
 
 const { eyebrow, heading, support, steps, backgroundImage } = Astro.props;
@@ -24,14 +27,19 @@ const { eyebrow, heading, support, steps, backgroundImage } = Astro.props;
 
 <section class="relative overflow-hidden border-t-2 border-accent bg-dark py-16 text-on-dark md:py-24">
   {backgroundImage && (
-    <div
-      class="absolute inset-0 bg-cover bg-center opacity-20"
-      style={`background-image: url('${backgroundImage}'); min-height: 100%;`}
-      aria-hidden="true"
-    >
-    </div>
+    /* Rendered as an optimized <img>, not a CSS background, so it goes through
+       the image pipeline and serves responsive AVIF/WebP (§18). */
+    <OptimizedImage
+      src={backgroundImage}
+      alt=""
+      widths={[1200, 1600, 2000]}
+      sizes="100vw"
+      class="absolute inset-0 h-full w-full object-cover opacity-40"
+    />
   )}
-  <div class="absolute inset-0 bg-gradient-to-b from-dark/60 via-transparent to-dark/60" aria-hidden="true"></div>
+  <!-- Vertical scrim: protects the heading and card text without flattening the
+       photo to invisibility (photo sits at 40%, not 20%). -->
+  <div class="absolute inset-0 bg-gradient-to-b from-dark/85 via-dark/60 to-dark/85" aria-hidden="true"></div>
 
   <div class="relative mx-auto max-w-7xl px-4 md:px-6">
     <div class="mx-auto max-w-2xl text-center">

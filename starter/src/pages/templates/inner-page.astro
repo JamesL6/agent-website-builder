@@ -11,9 +11,9 @@ import InlineCTA from '../../components/InlineCTA.astro';
 import ContentAlertList from '../../components/ContentAlertList.astro';
 import IncludedPanel from '../../components/IncludedPanel.astro';
 import InnerSubsections from '../../components/InnerSubsections.astro';
-import ProcessStepper from '../../components/ProcessStepper.astro';
+import ProcessSection from '../../components/ProcessSection.astro';
 import ReviewSection from '../../components/ReviewSection.astro';
-import FinalCTA from '../../components/FinalCTA.astro';
+import ServiceAreaMap from '../../components/ServiceAreaMap.astro';
 import { site } from '../../data/site';
 ---
 
@@ -125,25 +125,21 @@ import { site } from '../../data/site';
       support="One call starts extraction, drying, and documentation — we handle the rest."
     />
 
+    <!--
+      Post-body sections reuse the SAME shared sections as the homepage, from the
+      same data (owner decision 2026-08-25) — identical process section, and the
+      service-area module (counties → city hubs → city-service links) placed
+      directly below reviews. Reusing site.process / site.serviceArea guarantees
+      they cannot drift out of sync with the homepage.
+    -->
     <Fragment slot="post-body">
-    <ProcessStepper
-      eyebrow="Simple process"
-      heading="What happens after you call"
-      steps={[
-        { title: 'Call anytime', text: 'A real person answers, asks the right questions, and dispatches a crew.' },
-        { title: 'Extract & dry', text: 'Standing water out, drying equipment in, moisture documented daily.' },
-        { title: 'Restore & rebuild', text: 'From verified dry-out through reconstruction, one team finishes the job.' },
-      ]}
-    />
-    <ReviewSection
-      eyebrow="What our customers say"
-      heading={`Property owners trust ${site.name}`}
-      intro="Every review comes straight from the platforms our customers use."
-    />
-    <FinalCTA
-      heading="Don't Wait — Water Spreads Every Hour"
-      support="The sooner extraction starts, the more we can save. Call now and talk to a real person."
-    />
+      <ProcessSection {...site.process} />
+      <ReviewSection
+        eyebrow="What our customers say"
+        heading={`Property owners trust ${site.name}`}
+        intro="Every review comes straight from the platforms our customers use."
+      />
+      <ServiceAreaMap {...site.serviceArea} mapCaption={site.serviceArea.caption} />
     </Fragment>
   </InnerPageTemplate>
 </BaseLayout>

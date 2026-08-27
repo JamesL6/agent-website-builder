@@ -1,7 +1,7 @@
 # Core Contracts
 
 Status: Active — single source of truth for shared rules
-Last updated: 2026-07-07
+Last updated: 2026-08-25
 
 ## 1. How To Use This File
 
@@ -136,6 +136,28 @@ Build every local-service website from the phone experience first, then desktop,
 - Mobile header layout: tap-to-call button on the left, logo centered (not pushed off-center), menu button on the right. Do not hide the phone action inside the mobile menu.
 - All phone actions site-wide use the approved tracking/DNI-capable phone source from shared site data.
 
+Dynamic number insertion (DNI) mechanics — verified against the deployed LeadConnector
+`number_pool.js` on 2026-08-25:
+
+- **Every phone number on the page is a `tel:` link and is swappable by default.** Numbers
+  render as tap-to-call anchors everywhere, and the swapper is allowed to replace all of them.
+- The swapper finds numbers by **pattern-matching rendered text and `href` values** — it does
+  not use CSS selectors or data attributes. It recognizes only these formats:
+  `5550001234`, `555-000-1234`, `555.000.1234`, `(555) 000-1234`, `(555)000-1234`, and the
+  URL-encoded `(555)%20000-1234` / `%28555%29%20000-1234`.
+- Therefore **phone formatting is functional, not cosmetic**. A number rendered in any other
+  format (for example space-separated `555 000 1234`) is silently skipped: no error, no visible
+  problem, and call attribution for that CTA is lost. Display numbers as `(555) 000-1234` and
+  hrefs as `tel:+15550001234` (the bare 10 digits inside the href are what the swapper matches).
+- Opt-out: the swapper skips any anchor whose class list contains `noswap`. This is the ONLY
+  exclusion mechanism available. Use it only for a deliberate exception — for example, keeping a
+  GBP-listed location number exactly as Google has it — and record the reason. Default is swap.
+- Load order: the number-pool script runs at body end so it can inspect rendered phone links
+  after the markup exists (§19).
+- Pre-launch QA must confirm swapping actually fires on the production host: load the live page
+  with a tracking source and verify the rendered number and `tel:` href both changed. Script
+  presence is not proof (§24).
+
 ## 10. Mobile Sticky CTA Contract
 
 Every local-service website includes a shared mobile sticky CTA bar unless explicitly excluded.
@@ -144,7 +166,8 @@ Behavior:
 
 - Available on every published page type (homepage, service, city, city-service, contact, review, team, etc.).
 - Hidden while the hero is in view; revealed after the user scrolls past the hero (or roughly 35-50% of the first viewport).
-- Primary action is a `tel:` call button using the approved DNI-capable number. Copy is short and urgent (for example, `Need help now? Call now.`).
+- Approved design (owner decision 2026-08-25): a dark floating card containing a short reassurance line with a pulse indicator above ONE full-width call button showing the approved number. Deliberately a single action — at the moment someone needs an emergency crew, a competing "Request" button splits attention away from the call. The copy line persuades; the button does one thing.
+- Primary action is a `tel:` call button using the approved DNI-capable number. Copy is short and urgent, and comes from per-client site data (never invented in the component).
 - A secondary request-service action is optional only when it fits without crowding.
 - Subtle attention treatment (pulse dot, glow, shadow lift, or slide-up) that respects `prefers-reduced-motion`.
 - Safe-area inset padding, minimum 44px tap target, high contrast, and enough bottom page padding that the bar never covers content, forms, footer interactions, cookie banners, or chat widgets.
@@ -163,6 +186,8 @@ Astro implementation:
 - The approved phone number must be visible inside or directly beside the form.
 - Layout: if a field has no natural same-row partner, make it full width. Never leave a lone short field floating half-width.
 - Form notices must use high-contrast text. Muted gray support text on dark, green, or gradient backgrounds fails QA.
+- Interactive controls meet a 44px minimum touch height — form inputs, selects, and any phone link presented as an action. A bare inline `tel:` link renders ~20px tall, which is too small to hit reliably on a phone; render location/office numbers as call buttons, not body text.
+- The form panel's visible title is a UI label, not a document section: render it as a non-heading element and give the `<form>` its accessible name via `aria-labelledby`. The shared panel mounts more than once per page (hero/sidebar + footer + contact), so a heading there produces duplicate headings in the page outline.
 - Form CTA hierarchy stays phone-first for emergencies and request-service-first only for non-emergency form users.
 - Forms use standard routing/tracking fields; form destination and tracking are captured at intake, not launch day.
 
@@ -177,7 +202,8 @@ Structure:
 - Approved reusable body modules for rhythm inside long copy: `content-alert-list` (urgency/safety signs), `included-panel` (scoped service-includes lists), `inner-subsections` (H3 support cards), `inline-cta` (page-specific phone-first conversion). Keep body modules restrained: no nested cards, no excessive icons, no repeated card grid after card grid.
 - Every service, city, and city-service page places a page-specific `inline-cta` immediately after the first body paragraph, and ends the final left-column narrative section with the same `inline-cta` component before post-body sections. Both in-body CTAs use the exact same reusable component and format.
 - Right column: sticky sidebar on desktop/tablet with contact form first, review/proof widget, capped related navigation, and trust elements. On mobile the sidebar is static and stacks below the article.
-- After the two-column body: reusable process, benefits, insurance/support, reviews, service area, FAQ, final CTA, and footer sections as approved.
+- After the two-column body: reusable process, benefits, insurance/support, reviews, service area, FAQ, and footer sections as approved. Default inner-page post-body order: **process → reviews → service area**.
+- Post-body sections must be the SAME sections the homepage renders, from the same shared client data — not re-specified per page (owner decision 2026-08-25). In particular: the process section uses the client's one chosen process variant with identical content on every page, and the service-area module (counties → city hubs → city-service links) appears on inner pages directly below reviews. Passing per-page copy to these sections is how two pages drift out of sync; keep their content in shared site data so every page inherits one source.
 
 Sticky sidebar implementation:
 
@@ -197,8 +223,9 @@ Capped sidebar navigation:
 
 - Phone-first hero: main phone number visible, tap-to-call CTA, secondary `Request Service` anchor to the form.
 - The request-service form is the first body section after the hero. Do not place locations, maps, or general contact copy before the form without explicit approval.
-- Location/NAP cards below the form. Every approved GBP location appears, visually segmented, and each card matches the verified GBP business name, address, and phone exactly.
-- Reusable final CTA and footer.
+- That request section is two columns on desktop (modeled on the approved Green State contact page): a support panel on the left framing **when to call vs. when the form is fine**, carrying the phone number, the online-response expectation, and the email address; the shared request-service form on the right. On mobile the form stacks below the support copy.
+- Location/NAP cards below the form. Every approved GBP location appears, visually segmented, each with name, address, phone, hours where known, and a directions link — matching the verified GBP business name, address, and phone exactly. Multi-location clients show all locations; a single location renders as one card, not a stretched row.
+- The footer conversion band closes the page (§17); no separate final CTA above it.
 
 ## 14. City Page Hub Contract
 
@@ -210,6 +237,7 @@ Capped sidebar navigation:
 
 - Use a real, scalable map provider — typically Leaflet/OpenStreetMap — unless another provider is approved. Never ship a fake decorative map in production.
 - Map loading: load without blocking initial render, but do not rely only on scroll/IntersectionObserver triggers. Include a `load`/`DOMContentLoaded` fallback that initializes the map automatically so users never see a permanent placeholder. (This supersedes any older "load only when near viewport" rule.)
+- Map stacking: the map container must create its own stacking context (`isolation: isolate`). Leaflet's panes use `z-index: 400` and its controls `1000`, and its container creates no stacking context — so without isolation the map paints over the sticky site header while scrolling. Applies to any embedded map, widget, or third-party embed that sets internal z-indexes.
 - The section is an internal-link module, not just a visual: default hierarchy is county/state selector → city hub link → expandable city-service links. The city name links to the city hub; a separate expander reveals that city's approved city-service pages.
 - Do not duplicate cities as decorative pills when the accordion/list already exposes them.
 - For large city/city-service builds: stacked layout — intro copy above, map/explorer below, county/city lists inside or below the explorer with controlled height. Never place a short copy column beside a very tall accordion.

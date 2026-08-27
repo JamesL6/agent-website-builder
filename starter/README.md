@@ -48,13 +48,26 @@ Variant registry (which are BUILT vs PLANNED): `../docs/agency-website-system/sc
 
 ### Preview routes (all noindex, §17)
 
-- `/` — full homepage, variant set A + default (red) tokens
-- `/demo-client-b` — full homepage, variant set B + green tokens (same components, different recipe)
-- `/templates/sections-a` … `sections-d` — variant set A sections in isolation
-- `/templates/variants-b1`, `variants-b2` — variant set B sections in isolation
+- `/` — full homepage assembly, default (red) tokens, with placeholder photography
+- `/templates/inner-page` — the inner-page template with realistic service content
+- `/templates/contact-page` — the contact page template with three locations
+- `/templates/sections-a` — services grid + differentiator
+- `/templates/sections-b` — process + reviews
+- `/templates/sections-c` — service area + FAQ
+- `/templates/sections-d` — footer in isolation
+- `/templates/variants-b1`, `variants-b2` — the second variants (icon service cards +
+  light stepper; regional service explorer) in isolation
+
+To see per-client theming, point the `./theme.css` import in `src/styles/global.css` at
+`src/styles/themes/green-state-example.css` — the whole site re-brands from one file.
 13. Optional modules: `InsuranceBand.astro`, `SocialCards.astro`, `CommercialGrid.astro`, `IntroSection.astro`
-14. Image components: `HeroImage.astro`, `OptimizedImage.astro`, `GalleryImage.astro` (§18)
-15. Schema utilities (§22), then the remaining page templates (city hub, contact)
+14. ✅ Image components: `HeroImage.astro` (LCP: eager, fetchpriority=high, AVIF/WebP, never a CSS background) and `OptimizedImage.astro` (lazy content images). Wired into Hero, IntroSection, ServiceGrid cards, and ProcessSection backgrounds. Placeholder photos in `src/assets/photos/` are PREVIEW-ONLY — see that folder's README; shipping them is a build blocker. `GalleryImage.astro` still to build.
+15. ✅ `templates/ContactPageTemplate.astro` (§13) — phone-first hero → request section FIRST
+    (two columns: when-to-call support card with phone/response-time/email, shared form beside it)
+    → `ContactLocations.astro` NAP cards for every approved GBP location. Preview:
+    `/templates/contact-page`. Reviews/About/city-hub pages reuse InnerPageTemplate — no separate
+    templates needed.
+16. Schema utilities (§22), then the validation scripts.
 
 ✅ `templates/InnerPageTemplate.astro` — the two-column service/city/city-service layout (§12):
    compact `PageHero`, editorial left column with typographic defaults, sticky sidebar

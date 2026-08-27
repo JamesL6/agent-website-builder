@@ -20,8 +20,9 @@ Required sections, in order. `[optional]` modules have fixed insertion points an
                              right: request-service form card with brand-color header
  4. Emergency CTA band     — high-contrast accent band: "Experiencing an emergency right now?"
                              + big phone CTA; diagonal-stripe or equivalent texture; pulse dot
- 5. [optional] Intro       — short company intro, 1-2 paragraphs (Green State uses; Romexterra folds
-                             this into the hero eyebrow/trust content)
+ 5. Intro / about          — REQUIRED (owner decision 2026-08-25): directly after the emergency
+                             band, before services. Eyebrow, heading, 1-2 paragraphs, benefit
+                             checks, phone CTA, media panel (client photo/video when available).
  6. Services grid          — eyebrow + H2 + intro copy, then rich cards: real photo panel with
                              residential/commercial chips, bold title, 2-3 line description,
                              accent "Learn More →". 3-column grid, 5-7 cards.
@@ -31,29 +32,59 @@ Required sections, in order. `[optional]` modules have fixed insertion points an
  8. Process                — dark section, dimmed real-photo background (branded trucks/crew).
                              Eyebrow + H2 + one-line promise. 3 numbered cards with connector
                              arrows/animation between steps (hidden on mobile, reduced-motion safe).
- 9. [optional] Insurance   — dark band: "We work with all major insurance companies" + white logo
-                             cards + "All others accepted" chip. Only with verified carrier logos
-                             (§6 badge_asset_required).
-10. Reviews                — light section. Eyebrow + H2 (locality claim only if verified),
-                             then REAL widget full row width below the copy (§16): per-source rating
-                             tabs, overall rating, review cards.
-11. [optional] Video       — customer video testimonial cards + "view all" (Romexterra).
-12. [optional] Commercial  — property-type cards (office/retail, industrial, multifamily,
-                             insurance documentation) for clients with commercial mix.
-13. Service area           — "Where we work" + H2. Real Leaflet map with shaded service polygon
-                             (dark-themed tiles on dark sections) beside/above expandable
-                             city/county rows with per-city service links (§15). Caption labels
-                             the shaded area.
+ 9. Insurance section      — REQUIRED (owner decision 2026-08-25): "We work with all major
+                             insurance companies" + carrier logo cards + "All others accepted"
+                             chip. Shared carrier logo assets ship in the starter
+                             (`starter/public/logos/insurance/`).
+10. Reviews                — REQUIRED. Light section. Eyebrow + H2 (locality claim only if
+                             verified), then REAL widget full row width below the copy (§16).
+                             Workflow (owner decision 2026-08-25): ask for the client's review
+                             widget embed code at design time; if it doesn't exist yet, build the
+                             polished reserved state and record it as an awaiting-source
+                             placeholder in the build notes (never in customer-visible text, §7).
+                             Reserved state must be replaced before launch.
+11. [optional, off by default] Video — customer video testimonial cards (Romexterra only).
+12. [optional, off by default] Commercial — property-type cards for clients with commercial mix.
+13. Service area           — REQUIRED on every site (owner decision 2026-08-25). "Where we work"
+                             + H2. Real Leaflet map with the service area visually highlighted,
+                             broken down county → cities → per-city service page links (the
+                             Romexterra Addison pattern: expanding a city reveals its water/fire/
+                             mold/reconstruction pages) (§15). Caption labels the shaded area.
+                             This section is also an explicit per-client flair point: same
+                             structure every time, but vary the visual treatment (variant choice,
+                             map styling, list presentation) so sites don't read as identical.
 14. FAQ                    — centered eyebrow + H2 + reassurance line. Accordion cards; open item
                              gets accent border; first item answers the 24/7 question with the
                              phone number inline.
-15. [optional] Social      — first-party profile cards (YouTube/TikTok/Instagram/Facebook):
-                             platform icon tile, eyebrow, title, 2-line description, arrow link.
-                             Outbound links only — no embedded feeds without approval (§19).
-16. Final CTA              — dark, urgency-led: "Don't wait — damage gets worse every hour" pattern,
-                             phone-first CTA with number visible (§9), secondary request CTA.
-17. Footer                 — full NAP/location cards, service links, service-area links, company
-                             links, approved social links (§13 NAP exactness applies).
+15. [optional, off by default] Social — first-party profile cards, outbound links only (§19).
+                             Off by default (owner decision 2026-08-25): not all clients have
+                             social presences worth showcasing.
+16. [optional, off by default] Final CTA — dark urgency band. OFF by default: the footer's
+                             conversion band (§17) is the page's closing CTA. Rendering both
+                             produced two near-identical closes with the phone number four
+                             times on one screen (rejected in review 2026-08-25). Use only on
+                             pages whose footer conversion band is intentionally suppressed.
+17. Footer                 — THREE deliberate bands, never one dark blob:
+                             (a) Conversion close — eyebrow, display heading, support line,
+                                 tap-to-call FIRST in DOM (leads on mobile), trust row directly
+                                 under the copy (never bottom-pinned to the form — it reads as
+                                 disconnected), and the shared request-service form beside it
+                                 (same component as the hero form, §11 — extra mounts pass a
+                                 unique id prefix to avoid duplicate ids). This band IS the page's
+                                 final CTA.
+                             (b) Nav + locations — raised surface (dark-2) so it separates from
+                                 (a): brand blurb, services, service-area links, company links,
+                                 then NAP/location cards under a "Our Location(s)" heading
+                                 (§13 exactness applies).
+                             (c) Legal bar — copyright + policy links.
+                             Max ONE call-to-action button per band; the earlier draft stacked
+                             four phone CTAs and each extra one weakened the rest.
+                             All three bands share ONE container width (narrower than the page
+                             body) so band edges align and the copy/form pair sits ~70px apart.
+                             A capped copy block inside a full-width column leaves a dead gap
+                             down the middle — size the columns to the content, not the page.
+                             Service-area column must carry real area links, not a single
+                             fallback sentence, or the columns read ragged.
 18. Sticky mobile CTA      — shared shell component (§10).
 ```
 

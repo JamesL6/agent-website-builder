@@ -5,63 +5,74 @@
  * Form action/routing is wired per client at build time — never hard-coded here.
  */
 import { site } from '../data/site';
+
+interface Props {
+  /**
+   * Unique prefix for field ids when the shared panel renders more than once on
+   * a page (hero + footer). Duplicate ids break label targeting — every second
+   * mount MUST pass its own prefix.
+   */
+  idPrefix?: string;
+}
+
+const { idPrefix = 'rs' } = Astro.props;
 ---
 
 <div class="overflow-hidden rounded-md bg-white text-ink shadow-xl">
   <div class="bg-accent px-6 py-5 text-white">
-    <h2 class="font-display text-3xl font-bold">Request Service</h2>
-    <p class="mt-1 text-sm text-white/90">Non-emergency requests are returned within one business day.</p>
+    <p id={`${idPrefix}-title`} class="font-display text-3xl font-bold">Request Service</p>
+    <p class="mt-1 text-sm text-white/90">{site.form.responseNotice}</p>
   </div>
 
   <div class="space-y-4 p-6">
     <p class="rounded-sm border-l-4 border-accent bg-surface px-4 py-3 text-sm leading-snug">
-      <strong>Currently experiencing an emergency?</strong>
+      <strong>{site.form.emergencyNoticeLead}</strong>
       {' '}Call{' '}
       <a href={site.phoneHref} class="font-bold text-accent whitespace-nowrap">{site.phoneDisplay}</a>
       {' '}now for immediate assistance.
     </p>
 
-    <form class="space-y-4" method="post" action="#">
+    <form class="space-y-4" method="post" action="#" aria-labelledby={`${idPrefix}-title`}>
       <div>
-        <label for="rs-name" class="mb-1 block text-xs font-bold uppercase tracking-wide text-ink-muted">Name *</label>
-        <input id="rs-name" name="name" type="text" required autocomplete="name" placeholder="Your name"
-          class="w-full rounded-sm border border-border px-3 py-2.5 text-sm outline-none transition focus:border-accent" />
+        <label for={`${idPrefix}-name`} class="mb-1 block text-xs font-bold uppercase tracking-wide text-ink-muted">Name *</label>
+        <input id={`${idPrefix}-name`} name="name" type="text" required autocomplete="name" placeholder="Your name"
+          class="w-full rounded-sm border border-border min-h-11 px-3 py-2.5 text-sm outline-none transition focus:border-accent" />
       </div>
 
       <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <div>
-          <label for="rs-phone" class="mb-1 block text-xs font-bold uppercase tracking-wide text-ink-muted">Phone *</label>
-          <input id="rs-phone" name="phone" type="tel" required autocomplete="tel" placeholder="(555) 000-0000"
-            class="w-full rounded-sm border border-border px-3 py-2.5 text-sm outline-none transition focus:border-accent" />
+          <label for={`${idPrefix}-phone`} class="mb-1 block text-xs font-bold uppercase tracking-wide text-ink-muted">Phone *</label>
+          <input id={`${idPrefix}-phone`} name="phone" type="tel" required autocomplete="tel" placeholder="(555) 000-0000"
+            class="w-full rounded-sm border border-border min-h-11 px-3 py-2.5 text-sm outline-none transition focus:border-accent" />
         </div>
         <div>
-          <label for="rs-email" class="mb-1 block text-xs font-bold uppercase tracking-wide text-ink-muted">Email *</label>
-          <input id="rs-email" name="email" type="email" required autocomplete="email" placeholder="your@email.com"
-            class="w-full rounded-sm border border-border px-3 py-2.5 text-sm outline-none transition focus:border-accent" />
+          <label for={`${idPrefix}-email`} class="mb-1 block text-xs font-bold uppercase tracking-wide text-ink-muted">Email *</label>
+          <input id={`${idPrefix}-email`} name="email" type="email" required autocomplete="email" placeholder="your@email.com"
+            class="w-full rounded-sm border border-border min-h-11 px-3 py-2.5 text-sm outline-none transition focus:border-accent" />
         </div>
       </div>
 
       <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <div>
-          <label for="rs-service" class="mb-1 block text-xs font-bold uppercase tracking-wide text-ink-muted">Service needed *</label>
-          <select id="rs-service" name="service" required
-            class="w-full rounded-sm border border-border bg-white px-3 py-2.5 text-sm outline-none transition focus:border-accent">
+          <label for={`${idPrefix}-service`} class="mb-1 block text-xs font-bold uppercase tracking-wide text-ink-muted">Service needed *</label>
+          <select id={`${idPrefix}-service`} name="service" required
+            class="w-full rounded-sm border border-border bg-white min-h-11 px-3 py-2.5 text-sm outline-none transition focus:border-accent">
             <option value="" selected disabled>Select a service…</option>
             {site.services.map((s) => <option value={s.id}>{s.label}</option>)}
             <option value="other">Something else</option>
           </select>
         </div>
         <div>
-          <label for="rs-city" class="mb-1 block text-xs font-bold uppercase tracking-wide text-ink-muted">City or ZIP *</label>
-          <input id="rs-city" name="city" type="text" required autocomplete="postal-code" placeholder={`${site.primaryMarket} or ZIP`}
-            class="w-full rounded-sm border border-border px-3 py-2.5 text-sm outline-none transition focus:border-accent" />
+          <label for={`${idPrefix}-city`} class="mb-1 block text-xs font-bold uppercase tracking-wide text-ink-muted">City or ZIP *</label>
+          <input id={`${idPrefix}-city`} name="city" type="text" required autocomplete="postal-code" placeholder={`${site.primaryMarket} or ZIP`}
+            class="w-full rounded-sm border border-border min-h-11 px-3 py-2.5 text-sm outline-none transition focus:border-accent" />
         </div>
       </div>
 
       <div>
-        <label for="rs-message" class="mb-1 block text-xs font-bold uppercase tracking-wide text-ink-muted">Additional information (optional)</label>
-        <textarea id="rs-message" name="message" rows="3" placeholder="Tell us what happened, if you have time…"
-          class="w-full rounded-sm border border-border px-3 py-2.5 text-sm outline-none transition focus:border-accent"></textarea>
+        <label for={`${idPrefix}-message`} class="mb-1 block text-xs font-bold uppercase tracking-wide text-ink-muted">Additional information (optional)</label>
+        <textarea id={`${idPrefix}-message`} name="message" rows="3" placeholder="Tell us what happened, if you have time…"
+          class="w-full rounded-sm border border-border min-h-11 px-3 py-2.5 text-sm outline-none transition focus:border-accent"></textarea>
       </div>
 
       <button type="submit"

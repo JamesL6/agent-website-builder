@@ -15,8 +15,6 @@ This repo separates the reusable website-builder system from individual client w
 - `docs/agency-website-system/AGENCY_WEBSITE_DESIGN_HARNESS_PLAN.md` - design harness strategy and rationale (not agent-facing).
 - `docs/agency-website-system/archive/` - superseded documents kept for history.
 - `examples/green-state/` - Green State Restoration reference artifacts (example evidence only, not generic system state).
-- `skills/` - versioned copies of the runnable Codex skills for the pipeline stages (canonical live location: `~/.agents/skills/`; keep the two in sync when either changes).
-- `starter/` - the Astro 5 + Tailwind v4 component library every client build starts from.
 
 ## Agent Sequence
 

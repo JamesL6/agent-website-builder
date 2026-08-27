@@ -5,8 +5,10 @@
  * list, 2x2 trust bullets, phone-first dual CTA (§9). Right: request-service panel.
  * All visible copy arrives via props from the Messaging Pack — no copy lives here.
  */
+import type { ImageMetadata } from 'astro';
 import { site } from '../data/site';
 import RequestServicePanel from './RequestServicePanel.astro';
+import HeroImage from './HeroImage.astro';
 
 interface H1Line {
   text: string;
@@ -19,18 +21,46 @@ interface Props {
   serviceList: string[];
   trustBullets: string[];
   secondaryCtaLabel?: string;
+  /**
+   * Client hero photo (imported image). Strongly recommended — a real photo
+   * behind the overlay is the single biggest difference between this reading as
+   * a template and reading as a finished site. Falls back to the grid texture.
+   */
+  backgroundImage?: ImageMetadata;
 }
 
-const { eyebrow, h1Lines, serviceList, trustBullets, secondaryCtaLabel = 'Request Service' } = Astro.props;
+const {
+  eyebrow,
+  h1Lines,
+  serviceList,
+  trustBullets,
+  secondaryCtaLabel = 'Request Service',
+  backgroundImage,
+} = Astro.props;
 ---
 
 <section class="relative overflow-hidden bg-dark text-on-dark" data-page-hero>
-  <div
-    class="absolute inset-0 opacity-5"
-    style="background-image: linear-gradient(to right, currentColor 1px, transparent 1px), linear-gradient(to bottom, currentColor 1px, transparent 1px); background-size: 56px 56px;"
-    aria-hidden="true"
-  >
-  </div>
+  {backgroundImage ? (
+    <>
+      {/* Real photo as an <img> (never a CSS background, §18). The photo renders
+          at full opacity; contrast comes from the scrim above it, graded darkest
+          on the left where the headline sits. Dimming the photo AND stacking an
+          opaque gradient makes the image invisible — grade the scrim instead. */}
+      <HeroImage
+        src={backgroundImage}
+        alt=""
+        class="absolute inset-0 h-full w-full object-cover"
+      />
+      <div class="absolute inset-0 bg-gradient-to-r from-dark/95 via-dark/80 to-dark/55" aria-hidden="true"></div>
+    </>
+  ) : (
+    <div
+      class="absolute inset-0 opacity-5"
+      style="background-image: linear-gradient(to right, currentColor 1px, transparent 1px), linear-gradient(to bottom, currentColor 1px, transparent 1px); background-size: 56px 56px;"
+      aria-hidden="true"
+    >
+    </div>
+  )}
 
   <div class="relative mx-auto grid max-w-7xl items-start gap-10 px-4 py-12 md:px-6 md:py-16 lg:grid-cols-[minmax(0,1fr)_420px] lg:gap-14">
     <div>

@@ -8,7 +8,6 @@
 
 @import "tailwindcss";
 @import "./theme.css"; /* per-client swap: point at src/styles/themes/<client>.css */
-@import "./themes/client-b-demo.css"; /* demo-only scoped override — see file header */
 
 /*
  * Base rules shared by every client site.
@@ -33,6 +32,16 @@
     font-family: var(--font-display);
     font-weight: 700;
     line-height: 1.05;
+  }
+
+  /*
+   * Astro's <Picture> wraps the <img> in a <picture>, which is display:inline
+   * with no dimensions — so utility classes like h-full on the img resolve
+   * against a zero-height parent and the image collapses. `display: contents`
+   * removes the wrapper from layout so the img sizes against the real container.
+   */
+  picture {
+    display: contents;
   }
 
   @media (prefers-reduced-motion: reduce) {

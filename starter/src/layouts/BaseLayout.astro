@@ -14,15 +14,13 @@ interface Props {
   description: string;
   /** Template preview routes set this to true (§17). */
   noindex?: boolean;
-  /** Demo-only scoped theme key. Real client builds swap theme.css instead. */
-  demoTheme?: string;
 }
 
-const { title, description, noindex = false, demoTheme } = Astro.props;
+const { title, description, noindex = false } = Astro.props;
 ---
 
 <!doctype html>
-<html lang="en" data-theme={demoTheme}>
+<html lang="en">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -35,7 +33,15 @@ const { title, description, noindex = false, demoTheme } = Astro.props;
     <main>
       <slot />
     </main>
-    <SiteFooter blurb={site.footerBlurb} />
+    <SiteFooter
+      blurb={site.footerBlurb}
+      areaLinks={[
+        { label: 'Example City', url: '/service-areas/example-city/' },
+        { label: 'Northtown', url: '/service-areas/northtown/' },
+        { label: 'Southville', url: '/service-areas/southville/' },
+        { label: 'View all areas', url: '/#areas' },
+      ]}
+    />
     <StickyMobileCTA />
   </body>
 </html>

@@ -22,24 +22,28 @@ interface Props {
    *  break the grid rhythm. Sourced from the Messaging Pack, never invented. */
   trustChips: string[];
   secondaryCtaLabel?: string;
-  /** Prepared hero image src — rendered as a dimmed full-bleed backdrop. */
-  backgroundImage?: string;
+  /**
+   * REQUIRED. This variant is photography-gated: its entire premise is a strong
+   * real image. Rendered without one it collapses into an oversized sparse hero —
+   * the exact anti-pattern the acceptance rubric fails (rejected in review,
+   * 2026-08-25). No approved hero photo → use `image_backed_split_form` instead.
+   * Also: NOT the default for emergency-restoration clients — the split hero
+   * with the form is. This variant targets premium-brand clients with assets.
+   */
+  backgroundImage: string;
 }
 
 const { eyebrow, h1Lines, subhead, trustChips, secondaryCtaLabel = 'Request Service', backgroundImage } = Astro.props;
+
+if (!backgroundImage) {
+  throw new Error(
+    'HeroFullBleed requires an approved hero photo (backgroundImage). Without one, use the image_backed_split_form hero variant.'
+  );
+}
 ---
 
 <section class="relative overflow-hidden bg-dark text-on-dark" data-page-hero>
-  {backgroundImage ? (
-    <div class="absolute inset-0 bg-cover bg-center opacity-30" style={`background-image: url('${backgroundImage}');`} aria-hidden="true"></div>
-  ) : (
-    <div
-      class="absolute inset-0"
-      style="background-image: radial-gradient(ellipse 90% 70% at 50% 110%, var(--color-dark-3) 0%, transparent 60%), radial-gradient(ellipse 70% 50% at 80% -10%, var(--color-dark-2) 0%, transparent 55%);"
-      aria-hidden="true"
-    >
-    </div>
-  )}
+  <div class="absolute inset-0 bg-cover bg-center opacity-30" style={`background-image: url('${backgroundImage}');`} aria-hidden="true"></div>
   <div class="absolute inset-0 bg-gradient-to-b from-dark/70 via-transparent to-dark" aria-hidden="true"></div>
 
   <!--

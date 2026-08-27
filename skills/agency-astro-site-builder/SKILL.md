@@ -64,6 +64,17 @@ number ONLY — every phone action site-wide reads from here, §9), nav, service
 map), claims WITH their claim states (§6), locations (exact GBP NAP, §13), social links,
 footer blurb (from approved copy).
 
+**Every customer-facing string in this file is placeholder wording and MUST be replaced from
+the approved Messaging Pack** — including `footerCta.heading`/`footerCta.support`,
+`stickyCtaLabel`, and `form.responseNotice`. These render in the shared shell, so on EVERY
+page of the site. Shipping the starter's placeholder wording is how sites start reading as
+mass-produced; treat leftover placeholder copy as a build blocker, not a cosmetic detail.
+(`form.responseNotice` is also a real client commitment — confirm the response window.)
+
+Shared UI microcopy is deliberately NOT per-client: field labels, `Send Service Request`,
+`Request Service` button verbs, and `Learn More` stay consistent across all builds. Do not
+"customize" those — consistency there is a feature, and rewriting them invents copy (§ Never Do).
+
 ### 4. Assemble the homepage
 Compose `src/pages/index.astro` from the recipe's section order and variant selections, using
 this registry (enum → starter component):

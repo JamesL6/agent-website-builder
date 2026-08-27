@@ -7,14 +7,24 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Hero from '../components/Hero.astro';
 import EmergencyCTABand from '../components/EmergencyCTABand.astro';
+import IntroSection from '../components/IntroSection.astro';
+import InsuranceBand from '../components/InsuranceBand.astro';
 import ServiceGrid from '../components/ServiceGrid.astro';
 import DifferentiatorVS from '../components/DifferentiatorVS.astro';
 import ProcessSection from '../components/ProcessSection.astro';
 import ReviewSection from '../components/ReviewSection.astro';
 import ServiceAreaMap from '../components/ServiceAreaMap.astro';
 import FAQSection from '../components/FAQSection.astro';
-import FinalCTA from '../components/FinalCTA.astro';
 import { site } from '../data/site';
+
+/* PREVIEW-ONLY placeholder photography — replace with client photos per build.
+   See src/assets/photos/README.md (shipping these is a build blocker). */
+import heroPhoto from '../assets/photos/placeholder-hero.jpg';
+import introPhoto from '../assets/photos/placeholder-intro.jpg';
+import processPhoto from '../assets/photos/placeholder-process.jpg';
+import svc1 from '../assets/photos/placeholder-service-1.jpg';
+import svc2 from '../assets/photos/placeholder-service-2.jpg';
+import svc3 from '../assets/photos/placeholder-service-3.jpg';
 ---
 
 <BaseLayout
@@ -37,6 +47,7 @@ import { site } from '../data/site';
       'Licensed & Insured',
       'Homes & Businesses',
     ]}
+    backgroundImage={heroPhoto}
   />
 
   <EmergencyCTABand
@@ -44,14 +55,26 @@ import { site } from '../data/site';
     support="Our team is standing by 24/7 — call now and we can start dispatch right away."
   />
 
+  <IntroSection
+    eyebrow="Who we are"
+    heading="One call for urgent cleanup, mitigation, and a clear restoration plan"
+    paragraphs={[
+      "When your property has been damaged, the last thing you need is three different contractors pointing at each other. We handle the whole recovery — emergency response, cleanup, drying, and reconstruction — with one local team and one point of contact.",
+      "Every job is documented from the first visit: photos, moisture readings, and scope notes that keep your insurance claim supported and your questions answered.",
+    ]}
+    benefits={['One team, start to finish', 'Insurance-ready documentation', 'Local crews, fast response', 'Clear communication at every step']}
+    image={introPhoto}
+    imageAlt="Our crew arriving on site"
+  />
+
   <ServiceGrid
     eyebrow="What we do"
     heading="Our Restoration Services"
     intro="From residential emergencies to commercial property losses and complete reconstruction — certified technicians and a commitment to getting you back to normal fast."
     services={[
-      { title: 'Water Damage Restoration', description: 'Extraction, structural drying, and moisture documentation after floods, burst pipes, and appliance leaks.', url: '/water-damage-restoration/', chips: ['Residential', 'Commercial'] },
-      { title: 'Fire Damage Restoration', description: 'Smoke and soot cleanup, odor removal, and full recovery after a fire — from first response to rebuild.', url: '/fire-damage-restoration/', chips: ['Residential', 'Commercial'] },
-      { title: 'Mold Remediation', description: 'Containment, safe removal, and clearance-ready remediation with clear documentation at every step.', url: '/mold-remediation/', chips: ['Residential', 'Commercial'] },
+      { title: 'Water Damage Restoration', description: 'Extraction, structural drying, and moisture documentation after floods, burst pipes, and appliance leaks.', url: '/water-damage-restoration/', chips: ['Residential', 'Commercial'], image: svc1, imageAlt: 'Water damage restoration work' },
+      { title: 'Fire Damage Restoration', description: 'Smoke and soot cleanup, odor removal, and full recovery after a fire — from first response to rebuild.', url: '/fire-damage-restoration/', chips: ['Residential', 'Commercial'], image: svc2, imageAlt: 'Fire damage restoration work' },
+      { title: 'Mold Remediation', description: 'Containment, safe removal, and clearance-ready remediation with clear documentation at every step.', url: '/mold-remediation/', chips: ['Residential', 'Commercial'], image: svc3, imageAlt: 'Mold remediation work' },
       { title: 'Storm Damage Restoration', description: 'Emergency board-up, roof tarping, debris removal, and full property recovery after any storm.', url: '/storm-damage-restoration/' },
       { title: 'Reconstruction', description: 'Once restoration is complete, we rebuild. One contractor from disaster to done — no hand-offs, no gaps.', url: '/reconstruction/' },
       { title: 'Commercial Restoration', description: 'Fast containment, cleanup, and rebuild coordination for offices, retail, industrial, and managed facilities.', url: '/commercial-restoration/', chips: ['Commercial'] },
@@ -59,6 +82,7 @@ import { site } from '../data/site';
   />
 
   <DifferentiatorVS
+    leftEyebrow="Many restoration companies"
     leftHeading="What property owners often run into"
     rightHeading="What makes the response different"
     problems={[
@@ -75,15 +99,12 @@ import { site } from '../data/site';
     ]}
   />
 
-  <ProcessSection
-    eyebrow="Simple process"
-    heading="3 Steps to Restore Your Property"
-    support="We've made the process simple. One call, and we handle everything — from the first response to the final nail."
-    steps={[
-      { title: 'Call anytime, day or night', text: 'Tell us what happened. A real person answers, asks the right questions, and gets a crew moving.' },
-      { title: 'Assess & stabilize', text: 'We stop the damage from spreading, document everything for your claim, and walk you through the plan.' },
-      { title: 'Restore & rebuild', text: 'From cleanup through reconstruction, one team carries your property back to normal.' },
-    ]}
+  <!-- Shared section: same content/variant as every inner page (site.process) -->
+  <ProcessSection {...site.process} backgroundImage={processPhoto} />
+
+  <InsuranceBand
+    heading="We Work With All Major Insurance Companies"
+    support="We handle the claims process so you don't have to — all insurers accepted, zero hassle for you."
   />
 
   <ReviewSection
@@ -92,35 +113,8 @@ import { site } from '../data/site';
     intro="Every review comes straight from the platforms our customers use — nothing is edited or hand-picked."
   />
 
-  <ServiceAreaMap
-    eyebrow="Where we work"
-    heading={`Serving ${site.primaryMarket} and Surrounding Communities`}
-    intro="Fast emergency response across our core service area. Click any city to explore dedicated service pages."
-    counties={[
-      {
-        name: 'Example County',
-        cities: [
-          { name: 'Example City', services: [] },
-          { name: 'Northtown', services: [] },
-          { name: 'Southville', services: [] },
-        ],
-      },
-      {
-        name: 'Neighbor County',
-        cities: [{ name: 'Easton' }, { name: 'Westfield' }, { name: 'Lakeside' }],
-      },
-    ]}
-    mapCenter={[41.85, -87.75]}
-    mapZoom={9}
-    polygon={[
-      [42.15, -88.2],
-      [42.2, -87.7],
-      [41.85, -87.55],
-      [41.5, -87.8],
-      [41.6, -88.25],
-    ]}
-    mapCaption="Shaded service area — Example City metro"
-  />
+  <!-- Shared section: same content/variant as every inner page (site.serviceArea) -->
+  <ServiceAreaMap {...site.serviceArea} mapCaption={site.serviceArea.caption} />
 
   <FAQSection
     eyebrow="Common questions"
@@ -134,8 +128,8 @@ import { site } from '../data/site';
     ]}
   />
 
-  <FinalCTA
-    heading="Don't Wait — Damage Gets Worse Every Hour"
-    support="The sooner mitigation starts, the more of your property we can save. Call now and talk to a real person."
-  />
+  <!--
+    No FinalCTA here: the footer's conversion band is the page's closing CTA.
+    Rendering both produced two near-identical closes (rejected 2026-08-25).
+  -->
 </BaseLayout>

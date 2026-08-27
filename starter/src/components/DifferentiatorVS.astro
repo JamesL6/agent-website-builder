@@ -13,7 +13,8 @@ interface Row {
 }
 
 interface Props {
-  leftEyebrow?: string;
+  /** Client-voice label — required so no build ships generic placeholder wording. */
+  leftEyebrow: string;
   leftHeading: string;
   rightHeading: string;
   problems: Row[];
@@ -21,7 +22,7 @@ interface Props {
 }
 
 const {
-  leftEyebrow = 'Many restoration companies',
+  leftEyebrow,
   leftHeading,
   rightHeading,
   problems,

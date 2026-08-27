@@ -100,8 +100,15 @@ const mapConfig = JSON.stringify({ center: mapCenter, zoom: mapZoom, polygon });
       </div>
 
       <div>
+        <!--
+          `isolate` is REQUIRED, not decorative: Leaflet's panes use z-index 400
+          and its zoom controls 1000. Leaflet's container creates no stacking
+          context, so those values compete against the sticky site header (z-40)
+          in the root context and paint OVER it while scrolling. `isolation:
+          isolate` contains them so the whole map resolves as one element.
+        -->
         <div
-          class="h-[420px] w-full overflow-hidden rounded-md border border-border bg-white shadow-md lg:h-[480px]"
+          class="map-frame isolate w-full overflow-hidden rounded-md border border-border bg-white shadow-md"
           data-service-area-map
           data-map-config={mapConfig}
         >
@@ -151,3 +158,16 @@ const mapConfig = JSON.stringify({ center: mapCenter, zoom: mapZoom, polygon });
     window.addEventListener('load', initServiceAreaMaps);
   }
 </script>
+
+<style>
+  /* Map frame heights live here rather than as arbitrary Tailwind values
+     (`h-[420px]`), which the starter bans in components. */
+  .map-frame {
+    height: 420px;
+  }
+  @media (min-width: 1024px) {
+    .map-frame {
+      height: 480px;
+    }
+  }
+</style>
