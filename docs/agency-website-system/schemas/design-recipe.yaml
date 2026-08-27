@@ -1,0 +1,114 @@
+# Design Recipe — handoff schema
+# Produced by: Template And Brand Adaptation Agent (5)
+# Consumed by: Astro Build Agent (6), QA Agent (7), Design Review Agent (9)
+#
+# Purpose: the controlled, enum-based instruction set the build agent implements.
+# The recipe replaces vague direction ("make it premium") with component variant selections.
+#
+# VALIDITY RULES — a recipe is INVALID if:
+# - any *_variant value is freeform prose instead of an enum from the starter's variant registry
+# - it references a component variant that does not exist in the starter
+# - required messaging-pack fields are missing (messaging_pack_ref must point to an Approved pack)
+# - typography lacks a self-hosted font plan or system-font decision (§20)
+# - any visible claim lacks a claim state (§6)
+# - new pages lack navigation-inclusion decisions (§23)
+# - page types lack schema plans (§22)
+# - image assets lack an approved optimization path (§18)
+# - third-party widgets/maps/videos/chat/tracking lack a loading strategy (§19)
+# - QA evidence requirements are missing (§24)
+#
+# NOTE: the variant enums below are the PLANNED registry for the first restoration archetype
+# (Emergency Split Hero). The starter component library (Phase 2) is the source of truth for
+# which variants actually exist; extend this list only when the component ships.
+
+meta:
+  client: ""
+  industry: restoration
+  archetype: emergency_split_hero      # emergency_split_hero | large_loss_commercial | local_trusted_residential | premium_brand
+  messaging_pack_ref: ""               # path/URL to Approved messaging pack — required
+  status: Draft                        # Draft | Ready For Review | Approved
+  rubric_result: ""                    # Pass | Needs Revision | Fail Accepted By Human — a Fail area blocks handoff unless the human explicitly accepts the risk (record who/why in exceptions)
+  approved_by: ""
+
+variants:
+  # BUILT = shipped in starter/src/components and safe to select today.
+  # PLANNED = not built yet; selecting one blocks the build (recipe is invalid).
+  header: utility_strip_sticky_header  # BUILT: utility_strip_sticky_header | PLANNED: minimal_sticky_header
+  hero: image_backed_split_form        # BUILT: image_backed_split_form (Hero.astro), premium_full_bleed (HeroFullBleed.astro) | PLANNED: commercial_command_center, local_owner_photo
+  proof_band: transition_strip         # BUILT: transition_strip (EmergencyCTABand.astro) | PLANNED: verified_claim_stat_bar, certification_badge_row
+  service_cards: image_overlay_grid    # BUILT: image_overlay_grid (ServiceGrid.astro), icon_plus_media_cards (ServiceGridIcons.astro) | PLANNED: commercial_service_matrix
+  process: dark_timeline_cards         # BUILT: dark_timeline_cards (ProcessSection.astro), numbered_connector_steps (ProcessStepper.astro)
+  differentiator: dark_advantage_board # BUILT: dark_advantage_board (DifferentiatorVS.astro) | PLANNED: comparison_panel
+  reviews: real_widget_stacked         # BUILT: real_widget_stacked + reserved_polished_state (ReviewSection.astro — slot decides)
+  service_area: map_with_county_accordions  # BUILT: map_with_county_accordions (ServiceAreaMap.astro), regional_service_explorer (RegionalServiceExplorer.astro)
+  faq: premium_cards_sticky_intro      # BUILT: premium_cards_sticky_intro (FAQSection.astro) | PLANNED: simple_accordion
+  final_cta: dark_phone_first_band     # BUILT: dark_phone_first_band (FinalCTA.astro)
+  footer: full_nap_service_footer      # BUILT: full_nap_service_footer (SiteFooter.astro)
+  mobile_sticky_cta: show_after_hero   # BUILT: show_after_hero (contract: §10)
+
+# Per-variant knobs the design agent sets alongside the variant choice. These are
+# what make two clients using the SAME variant still look different.
+variant_options:
+  process_step_count: 3                # 3-5 supported by both process variants
+  service_card_count: 6                # 5-7 recommended
+  service_card_chips: true             # residential/commercial chips on image_overlay_grid
+  hero_h1_line_count: 4                # explicit line groups come from the messaging pack (§24)
+  section_order_overrides: []          # e.g. ["services_before_process", "reviews_last"]
+  optional_modules: []                 # intro | insurance_band | social_cards | commercial_grid | video_testimonials
+
+# New variant requests: a client need no variant covers becomes an EXCEPTION.
+# A human designs/approves it once, it ships as a new component variant, and it
+# joins the registry above — never a one-off freeform redesign inside a client build.
+
+section_rhythm: dark_hero__proof_strip__light_intro__white_services__dark_differentiator__light_process__reviews__map__faq__dark_cta
+
+brand:
+  tokens:                              # hex values; mark source
+    primary: ""
+    secondary: ""
+    accent: ""
+    dark: ""
+    surface: ""
+    muted: ""
+    border: ""
+    white: ""
+    primary_hover: ""
+  token_source: brand_guidelines       # brand_guidelines | logo_derived_needs_approval
+  typography:
+    heading_font: ""
+    body_font: ""
+    hosting_plan: self_hosted_woff2    # self_hosted_woff2 | system_fonts (§20)
+    weights: []                        # only weights actually used
+
+assets:
+  hero_image: { source: "", optimization_path: hero_image_component }   # §18
+  service_card_images: []
+  logo: { source: "", formats_needed: [] }
+  open_needs: []                       # assets still missing
+
+third_party:                           # every entry needs a loading strategy (§19)
+  - name: ""                           # e.g. elfsight_reviews, leaflet_map, ga4, leadconnector_dni, distance_chat
+    placement: ""
+    loading_strategy: ""               # e.g. async_platform_script_lazy_container, nonblocking_with_load_fallback
+    source_id: ""                      # widget/app/measurement ID if known
+
+pages:                                 # per-page decisions for pages in this recipe's scope
+  - url: /
+    page_type: homepage
+    schema_plan: [LocalBusiness, FAQPage]        # §22
+    navigation_inclusion: header                 # §23: header | footer | sidebar | hub_listing | sitemap_only | hidden_approved
+    copy_source: messaging_pack                  # messaging_pack | final_page_copy_ref
+
+qa_evidence_required:                  # §24 defaults; add client-specific items
+  - mobile_initial_390x844
+  - mobile_scrolled_390x844
+  - desktop_1440x1100
+  - tablet_1024x900
+  - no_horizontal_overflow
+  - sticky_cta_hidden_in_hero_visible_after
+  - rendered_text_scan
+  - schema_validation
+  - image_validation
+
+exceptions: []                         # approved deviations, each with: request, risk, approved_implementation, approver
+open_blockers: []

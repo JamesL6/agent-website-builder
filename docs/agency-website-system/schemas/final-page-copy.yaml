@@ -1,0 +1,44 @@
+# Final Page Copy — handoff schema
+# Produced by: Copywriting And Localization Agent (4)
+# Consumed by: Astro Build Agent (6), QA Agent (7)
+#
+# Purpose: one page-ready writing artifact per page. Full body content under every
+# approved H2/H3 — never outline notes, key points, or prompts presented as finished copy.
+# The build agent places this copy without rewriting it.
+
+meta:
+  page_id: ""                        # matches active-page-map page_id
+  page_url: ""
+  page_type: ""
+  brief_used: ""                     # Google Doc URL, or "structured-requirements" for no-brief pages
+  primary_service_page_target_area: ""   # required for root/non-city service pages
+  linked_city_service_pages: []      # required for city hub pages
+  status: Draft                      # Draft | Ready For Review | Approved
+  reviewed_by: ""
+
+copy:
+  h1: ""                             # preserved from brief — never rewritten
+  hero_intro: ""
+  body:                              # full written content in brief order
+    - heading: ""                    # exact H2/H3 wording from brief
+      level: h2                      # h2 | h3
+      content: ""                    # full paragraphs/bullets — complete, publishable copy
+      modules: []                    # approved body modules used here: content-alert-list | included-panel | inner-subsections | inline-cta
+  cta_blocks:
+    - position: after_first_paragraph    # after_first_paragraph | end_of_body (both required on service/city/city-service pages, §12)
+      heading: ""
+      support_copy: ""
+  faq:
+    - question: ""                   # exact wording from brief
+      answer: ""
+  internal_links:                    # from the brief's link plan — never replaced
+    - anchor_text: ""
+      target_page_id: ""
+      placement_note: ""
+
+claims_used:
+  - claim: ""
+    claim_state: ""                  # §6 — only visible_preview_allowed (or launch_proof_required with proof pending noted)
+claims_avoided_or_needs_approval: []
+
+blockers: []                         # e.g. "target area unverified", "claim needs proof"

@@ -1,0 +1,43 @@
+/*
+ * Worked example theme #2 — Green State Restoration palette (extracted from the live
+ * site 2026-07-07). Demonstrates the one-file client swap: import this instead of the
+ * default theme.css and the entire site re-brands.
+ * Values marked (derived) were interpolated from the extracted palette and would be
+ * `Needs Human Approval` on a real build.
+ */
+@theme {
+  --color-accent: #3aa156;
+  --color-accent-hover: #2f8b49;
+  --color-accent-bright: #52bd6f;  /* (derived) lighter green for text on dark */
+
+  --color-brand-2: #21472a;
+
+  --color-dark: #111613;
+  --color-dark-2: #1c231e;         /* (derived) between ink and ink-soft */
+  --color-dark-3: #2a332d;
+
+  --color-surface: #f4f7f1;
+  --color-surface-2: #e7eee4;
+  --color-border: #d9e2d6;         /* (derived) from rgba(33,71,42,.16) on white */
+
+  --color-ink: #2c332e;            /* (derived) green-tinted body ink */
+  --color-ink-muted: #5c5c5c;
+  --color-on-dark: #f4f7f1;
+
+  --font-display: "Barlow Condensed", "Arial Narrow", sans-serif;
+  --font-body: "Barlow", "Segoe UI", system-ui, sans-serif;
+
+  --shadow-sm: 0 1px 3px rgb(13 23 16 / 0.12);
+  --shadow-md: 0 16px 46px rgb(13 23 16 / 0.16);
+  --shadow-lg: 0 26px 80px rgb(13 23 16 / 0.22);
+  --shadow-xl: 0 26px 80px rgb(13 23 16 / 0.28);
+  --radius-sm: 4px;
+  --radius-md: 8px;
+
+  --color-success: #1e9e4a;
+
+  --tracking-eyebrow: 0.18em;
+  --tracking-display: 0.3em;
+
+  --transition-base: 0.22s ease;
+}

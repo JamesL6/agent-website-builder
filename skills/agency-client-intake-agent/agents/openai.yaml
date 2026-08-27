@@ -1,0 +1,4 @@
+interface:
+  display_name: "Agency Client Intake Agent"
+  short_description: "Validate a client intake sheet and produce the page map + blockers"
+  default_prompt: "Use $agency-client-intake-agent to read the client's AM Verified Website Intake tab, validate it, and produce the client profile, verified service matrix, active page map draft, approved claims matrix, blocker report, and AM summary. Block with exact follow-up questions on any build-critical Unknown — never assume."

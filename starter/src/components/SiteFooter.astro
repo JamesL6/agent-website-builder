@@ -1,0 +1,197 @@
+---
+/**
+ * Footer — variant `full_nap_service_footer` (archetype §17).
+ *
+ * Three deliberate bands, not one dark blob:
+ *   1. Conversion close  — tap-to-call FIRST in DOM (leads on mobile) + shared
+ *                          request-service form. This band IS the page's final
+ *                          CTA; do NOT also render FinalCTA above it (that
+ *                          produced two near-identical closes, rejected in
+ *                          review 2026-08-25).
+ *   2. Nav + locations   — raised surface (dark-2) so it separates from band 1.
+ *                          Brand, services, service areas, company, NAP cards.
+ *   3. Legal bar         — copyright + policy links.
+ *
+ * Only ONE call button per band (page had four phone CTAs stacked; each extra
+ * one weakens the rest). NAP cards must match approved GBP data exactly (§13).
+ */
+import { site } from '../data/site';
+import RequestServicePanel from './RequestServicePanel.astro';
+
+interface FooterLink {
+  label: string;
+  url: string;
+}
+
+interface Props {
+  blurb: string;
+  areaLinks?: FooterLink[];
+  companyLinks?: FooterLink[];
+  /**
+   * Conversion-band copy. Defaults come from `site.footerCta` (the per-client
+   * data file), NOT from wording invented in this component — see the note in
+   * src/data/site.ts. Override per page only when a page needs a different close.
+   */
+  ctaHeading?: string;
+  ctaSupport?: string;
+  /** Short verified reasons-to-call. Balances the form's height (§6 claim states). */
+  ctaTrustItems?: string[];
+}
+
+const {
+  blurb,
+  areaLinks = [],
+  companyLinks = site.nav.filter((n) => n.url !== '/'),
+  ctaHeading = site.footerCta.heading,
+  ctaSupport = site.footerCta.support,
+  ctaTrustItems = site.claims.filter((c) => c.state === 'visible_preview_allowed').map((c) => c.text),
+} = Astro.props;
+
+const year = new Date().getFullYear();
+---
+
+<footer class="border-t-2 border-accent bg-dark text-on-dark">
+  <!-- BAND 1 — conversion close. Call action first in DOM: leads on mobile. -->
+  <div class="relative overflow-hidden">
+    <div
+      class="absolute inset-0 opacity-5"
+      style="background-image: linear-gradient(to right, currentColor 1px, transparent 1px), linear-gradient(to bottom, currentColor 1px, transparent 1px); background-size: 56px 56px;"
+      aria-hidden="true"
+    >
+    </div>
+
+    <!--
+      All three footer bands share a 6xl container (narrower than the page's 7xl)
+      so the copy column and form sit close enough to read as one paired block,
+      and every band's left edge lines up. Earlier drafts left ~300px of dead
+      space down the middle of this band.
+    -->
+    <div class="relative mx-auto grid max-w-6xl items-start gap-10 px-4 py-12 md:px-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,460px)] lg:gap-12">
+      <div class="max-w-xl">
+        <p class="text-xs font-bold uppercase tracking-eyebrow text-accent-bright">Get help now</p>
+        <h2 class="mt-3 font-display text-4xl font-bold leading-none md:text-5xl">{ctaHeading}</h2>
+        <p class="mt-4 text-on-dark/75">{ctaSupport}</p>
+
+        <a
+          href={site.phoneHref}
+          class="mt-7 inline-flex items-center gap-3 rounded-md bg-accent px-8 py-4 text-lg font-bold text-white shadow-lg transition hover:bg-accent-hover"
+        >
+          <svg class="size-5" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+            <path d="M6.6 10.8c1.4 2.8 3.8 5.1 6.6 6.6l2.2-2.2c.3-.3.7-.4 1-.2 1.1.4 2.3.6 3.6.6.6 0 1 .4 1 1V20c0 .6-.4 1-1 1C10.6 21 3 13.4 3 4c0-.6.4-1 1-1h3.5c.6 0 1 .4 1 1 0 1.2.2 2.4.6 3.6.1.3 0 .7-.2 1l-2.3 2.2z" />
+          </svg>
+          <span class="hidden sm:inline">Call Now — {site.phoneDisplay}</span>
+          <span class="sm:hidden">Tap to Call {site.phoneDisplay}</span>
+        </a>
+
+        <p class="mt-4 flex items-center gap-2 text-sm font-semibold text-on-dark/60">
+          <span class="relative flex size-2" aria-hidden="true">
+            <span class="absolute inline-flex h-full w-full animate-ping rounded-full bg-accent-bright/70"></span>
+            <span class="relative inline-flex size-2 rounded-full bg-accent-bright"></span>
+          </span>
+          {site.emergencyAvailability} emergency response
+        </p>
+
+        {ctaTrustItems.length > 0 && (
+          <!-- Sits directly under the copy block, NOT bottom-pinned to the form:
+               a floating row at the base of the column read as disconnected. -->
+          <ul class="mt-6 grid gap-2.5 border-t border-dark-3 pt-6 sm:grid-cols-2 sm:gap-x-8">
+            {ctaTrustItems.map((item) => (
+              <li class="flex items-center gap-2.5 text-sm font-semibold">
+                <span class="inline-flex size-5 shrink-0 items-center justify-center rounded-full bg-accent" aria-hidden="true">
+                  <svg class="size-3 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M5 12.5l4.5 4.5L19 7.5" />
+                  </svg>
+                </span>
+                {item}
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
+
+      <div class="w-full">
+        <RequestServicePanel idPrefix="footer" />
+      </div>
+    </div>
+  </div>
+
+  <!-- BAND 2 — nav + locations, raised surface so it reads as a separate zone -->
+  <div class="border-t border-dark-3 bg-dark-2">
+    <div class="mx-auto max-w-6xl px-4 py-12 md:px-6">
+      <div class="grid gap-10 sm:grid-cols-2 lg:grid-cols-4">
+        <div>
+          <p class="font-display text-2xl font-bold">{site.name}</p>
+          <p class="mt-3 text-sm leading-relaxed text-on-dark/65">{blurb}</p>
+        </div>
+
+        <nav aria-label="Footer services">
+          <h3 class="text-xs font-bold uppercase tracking-eyebrow text-on-dark/45">Services</h3>
+          <ul class="mt-4 space-y-2.5 text-sm">
+            {site.services.map((svc) => (
+              <li><a href={svc.url} class="text-on-dark/80 transition hover:text-accent-bright">{svc.label}</a></li>
+            ))}
+          </ul>
+        </nav>
+
+        <nav aria-label="Footer service areas">
+          <h3 class="text-xs font-bold uppercase tracking-eyebrow text-on-dark/45">Service Areas</h3>
+          <ul class="mt-4 space-y-2.5 text-sm">
+            {areaLinks.length > 0 ? (
+              areaLinks.map((link) => (
+                <li><a href={link.url} class="text-on-dark/80 transition hover:text-accent-bright">{link.label}</a></li>
+              ))
+            ) : (
+              <li class="text-on-dark/60">Serving {site.primaryMarket} and surrounding communities.</li>
+            )}
+          </ul>
+        </nav>
+
+        <nav aria-label="Footer company">
+          <h3 class="text-xs font-bold uppercase tracking-eyebrow text-on-dark/45">Company</h3>
+          <ul class="mt-4 space-y-2.5 text-sm">
+            {companyLinks.map((link) => (
+              <li><a href={link.url} class="text-on-dark/80 transition hover:text-accent-bright">{link.label}</a></li>
+            ))}
+            {site.socialLinks.map((social) => (
+              <li>
+                <a href={social.url} rel="noopener noreferrer" target="_blank" class="text-on-dark/80 transition hover:text-accent-bright">
+                  {social.platform}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </nav>
+      </div>
+
+      {site.locations.length > 0 && (
+        <div class="mt-10 border-t border-dark-3 pt-8">
+          <h3 class="text-xs font-bold uppercase tracking-eyebrow text-on-dark/45">
+            {site.locations.length > 1 ? 'Our Locations' : 'Our Location'}
+          </h3>
+          <div class="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {site.locations.map((loc) => (
+              <div class="rounded-md border border-dark-3 bg-dark p-5">
+                <p class="font-display text-lg font-bold">{loc.name}</p>
+                <p class="mt-1 text-sm leading-relaxed text-on-dark/65">{loc.address}</p>
+                <a href={`tel:${loc.phone.replace(/[^+\d]/g, '')}`} class="mt-2 inline-block text-sm font-bold text-accent-bright">
+                  {loc.phone}
+                </a>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
+  </div>
+
+  <!-- BAND 3 — legal -->
+  <div class="border-t border-dark-3">
+    <div class="mx-auto flex max-w-6xl flex-col items-center justify-between gap-2 px-4 py-5 text-xs text-on-dark/45 sm:flex-row md:px-6">
+      <p>© {year} {site.legalName}. All rights reserved.</p>
+      <p class="flex gap-4">
+        <a href="/privacy-policy/" class="transition hover:text-on-dark">Privacy Policy</a>
+        <a href="/terms/" class="transition hover:text-on-dark">Terms</a>
+      </p>
+    </div>
+  </div>
+</footer>

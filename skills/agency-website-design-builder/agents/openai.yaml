@@ -1,0 +1,4 @@
+interface:
+  display_name: "Agency Website Design Builder"
+  short_description: "Plan premium local-service website design briefs"
+  default_prompt: "Use $agency-website-design-builder to create a build-ready Astro design brief from verified intake, page map, brand assets, approved claims, and agency design patterns. If the homepage or mockups were rejected, use Fresh Homepage Rebuild Mode instead of generating UI kits."

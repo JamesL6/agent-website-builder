@@ -1,0 +1,199 @@
+---
+/**
+ * Service area — variant `regional_service_explorer` (§15 alternate).
+ * Full-width explorer card: segmented county pills + city search filter on the
+ * left pane, live map on the right. Built for large county/city sets where the
+ * accordion variant gets too long. Same §15 loading contract as ServiceAreaMap:
+ * non-blocking, auto-init on load, never IO-only.
+ */
+import 'leaflet/dist/leaflet.css';
+
+interface CityService {
+  label: string;
+  url: string;
+}
+
+interface City {
+  name: string;
+  url?: string;
+  services?: CityService[];
+}
+
+interface County {
+  name: string;
+  cities: City[];
+}
+
+interface Props {
+  eyebrow: string;
+  heading: string;
+  intro?: string;
+  counties: County[];
+  mapCenter: [number, number];
+  mapZoom?: number;
+  polygon?: [number, number][];
+  mapCaption?: string;
+  id?: string;
+}
+
+const { eyebrow, heading, intro, counties, mapCenter, mapZoom = 8, polygon = [], mapCaption, id = 'areas' } = Astro.props;
+
+const mapConfig = JSON.stringify({ center: mapCenter, zoom: mapZoom, polygon });
+---
+
+<section class="bg-dark py-16 text-on-dark md:py-20" id={id}>
+  <div class="mx-auto max-w-7xl px-4 md:px-6">
+    <div class="mx-auto max-w-2xl text-center">
+      <p class="text-xs font-bold uppercase tracking-eyebrow text-accent-bright">{eyebrow}</p>
+      <h2 class="mt-3 font-display text-4xl font-bold md:text-5xl">{heading}</h2>
+      {intro && <p class="mt-4 text-on-dark/75">{intro}</p>}
+    </div>
+
+    <div class="mt-10 overflow-hidden rounded-md border border-dark-3 bg-dark-2 shadow-xl" data-region-explorer>
+      <div class="flex flex-wrap items-center gap-2 border-b border-dark-3 p-4">
+        {counties.map((county, i) => (
+          <button
+            type="button"
+            class:list={[
+              'rounded-full px-4 py-2 text-sm font-bold transition',
+              i === 0 ? 'bg-accent text-white' : 'bg-dark-3 text-on-dark/70 hover:text-on-dark',
+            ]}
+            data-county-tab={county.name}
+            aria-pressed={i === 0 ? 'true' : 'false'}
+          >
+            {county.name}
+          </button>
+        ))}
+        <input
+          type="search"
+          placeholder="Search cities…"
+          class="ml-auto w-full rounded-md border border-dark-3 bg-dark px-4 py-2 text-sm text-on-dark placeholder:text-on-dark/40 focus:border-accent focus:outline-none sm:w-56"
+          data-city-search
+          aria-label="Search cities"
+        />
+      </div>
+
+      <div class="grid lg:grid-cols-[minmax(0,2fr)_minmax(0,3fr)]">
+        <div class="max-h-[420px] overflow-y-auto p-2" data-city-list>
+          {counties.map((county, ci) => (
+            <ul class:list={[{ hidden: ci !== 0 }]} data-county-panel={county.name}>
+              {county.cities.map((city) => (
+                <li class="border-b border-dark-3 last:border-b-0" data-city-row data-city-name={city.name.toLowerCase()}>
+                  <div class="flex items-center gap-2 px-4 py-3">
+                    <span class="size-1.5 rounded-full bg-accent-bright" aria-hidden="true"></span>
+                    {city.url ? (
+                      <a href={city.url} class="text-sm font-semibold transition hover:text-accent-bright">{city.name}</a>
+                    ) : (
+                      <span class="text-sm font-semibold">{city.name}</span>
+                    )}
+                    {city.services && city.services.length > 0 && (
+                      <details class="ml-auto">
+                        <summary class="cursor-pointer list-none text-xs font-bold text-accent-bright [&::-webkit-details-marker]:hidden">Services ▾</summary>
+                      </details>
+                    )}
+                  </div>
+                  {city.services && city.services.length > 0 && (
+                    <ul class="hidden gap-1 px-8 pb-3">
+                      {city.services.map((svc) => (
+                        <li><a href={svc.url} class="text-xs text-on-dark/60 transition hover:text-accent-bright">{svc.label}</a></li>
+                      ))}
+                    </ul>
+                  )}
+                </li>
+              ))}
+            </ul>
+          ))}
+        </div>
+
+        <!-- `isolate` contains Leaflet's z-400/z-1000 panes so they cannot paint
+             over the sticky header (z-40). See ServiceAreaMap for the full note. -->
+        <div class="map-pane isolate border-t border-dark-3 lg:border-l lg:border-t-0">
+          <div class="h-full w-full" data-service-area-map data-map-config={mapConfig}></div>
+        </div>
+      </div>
+    </div>
+
+    {mapCaption && (
+      <p class="mt-4 text-center text-xs font-bold uppercase tracking-eyebrow text-on-dark/50">{mapCaption}</p>
+    )}
+  </div>
+</section>
+
+<script>
+  // County tab switching + city search filter.
+  document.querySelectorAll<HTMLElement>('[data-region-explorer]').forEach((root) => {
+    const tabs = root.querySelectorAll<HTMLButtonElement>('[data-county-tab]');
+    const panels = root.querySelectorAll<HTMLElement>('[data-county-panel]');
+    const search = root.querySelector<HTMLInputElement>('[data-city-search]');
+
+    tabs.forEach((tab) => {
+      tab.addEventListener('click', () => {
+        tabs.forEach((t) => {
+          const active = t === tab;
+          t.classList.toggle('bg-accent', active);
+          t.classList.toggle('text-white', active);
+          t.classList.toggle('bg-dark-3', !active);
+          t.classList.toggle('text-on-dark/70', !active);
+          t.setAttribute('aria-pressed', String(active));
+        });
+        panels.forEach((p) => p.classList.toggle('hidden', p.dataset.countyPanel !== tab.dataset.countyTab));
+        if (search) search.value = '';
+        root.querySelectorAll<HTMLElement>('[data-city-row]').forEach((r) => r.classList.remove('hidden'));
+      });
+    });
+
+    search?.addEventListener('input', () => {
+      const q = search.value.trim().toLowerCase();
+      // Search spans all counties: show every panel while a query is active.
+      panels.forEach((p) => p.classList.toggle('hidden', q === '' && p.dataset.countyPanel !== root.querySelector<HTMLButtonElement>('[data-county-tab][aria-pressed="true"]')?.dataset.countyTab));
+      root.querySelectorAll<HTMLElement>('[data-city-row]').forEach((row) => {
+        row.classList.toggle('hidden', q !== '' && !(row.dataset.cityName ?? '').includes(q));
+      });
+    });
+  });
+
+  // §15 map loading contract — same auto-init pattern as ServiceAreaMap, guarded per container.
+  async function initExplorerMaps() {
+    const containers = document.querySelectorAll<HTMLElement>('[data-service-area-map]');
+    if (containers.length === 0) return;
+    const L = (await import('leaflet')).default;
+    containers.forEach((el) => {
+      if (el.dataset.mapInitialized) return;
+      el.dataset.mapInitialized = 'true';
+      const cfg = JSON.parse(el.dataset.mapConfig ?? '{}');
+      const map = L.map(el, { scrollWheelZoom: false }).setView(cfg.center, cfg.zoom);
+      L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+      }).addTo(map);
+      if (cfg.polygon && cfg.polygon.length > 2) {
+        const accent = getComputedStyle(document.documentElement).getPropertyValue('--color-accent').trim() || '#cc2a2a';
+        const poly = L.polygon(cfg.polygon, {
+          color: accent,
+          weight: 2,
+          dashArray: '6 6',
+          fillColor: accent,
+          fillOpacity: 0.12,
+        }).addTo(map);
+        map.fitBounds(poly.getBounds(), { padding: [24, 24] });
+      }
+    });
+  }
+  if (document.readyState === 'complete') {
+    initExplorerMaps();
+  } else {
+    window.addEventListener('load', initExplorerMaps);
+  }
+</script>
+
+<style>
+  /* See ServiceAreaMap: heights as scoped CSS, not arbitrary Tailwind values. */
+  .map-pane {
+    height: 320px;
+  }
+  @media (min-width: 1024px) {
+    .map-pane {
+      height: auto;
+      min-height: 420px;
+    }
+  }
+</style>

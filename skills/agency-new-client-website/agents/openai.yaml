@@ -1,0 +1,4 @@
+interface:
+  display_name: "Agency New Client Website"
+  short_description: "Run the full intake-to-launch website pipeline with human gates"
+  default_prompt: "Use $agency-new-client-website to run the full website pipeline for a new client. Collect the Local SEO Sheet URL, brand assets, and current site URL, then drive the stages in order — intake, audit, briefs, copy, design, build, QA, launch — invoking each stage skill and STOPPING at every human approval gate. The human approves; you drive."

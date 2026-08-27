@@ -1,0 +1,4 @@
+interface:
+  display_name: "Restoration Page Copywriter"
+  short_description: "Write first-person restoration page copy"
+  default_prompt: "Use $restoration-page-copywriter to write first-person restoration page copy from an approved brief, verified target area, active page map, and approved claims."

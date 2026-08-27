@@ -1,0 +1,52 @@
+/*
+ * Client theme — the ONLY file that changes per client.
+ * Slot contract: docs/agency-website-system/design-system/DESIGN_TOKENS.md
+ * Default values below are the Romexterra reference set (worked example #1).
+ * Green State worked example: see DESIGN_TOKENS.md comparison table.
+ */
+@theme {
+  /* Brand accent — conversion color */
+  --color-accent: #cc2a2a;
+  --color-accent-hover: #a82020;
+  --color-accent-bright: #e03535;
+
+  /* Secondary brand color */
+  --color-brand-2: #1b5e8a;
+
+  /* Dark scale — tint toward brand temperature, never flat black */
+  --color-dark: #0c0f14;
+  --color-dark-2: #141820;
+  --color-dark-3: #1e2530;
+
+  /* Light surfaces — tinted, never pure gray */
+  --color-surface: #f5f2ee;
+  --color-surface-2: #f0ede8;
+  --color-border: #e2ddd6;
+
+  /* Text */
+  --color-ink: #2e2a26;
+  --color-ink-muted: #5a534c;
+  --color-on-dark: #f5f2ee;
+
+  /* Type — condensed display over readable sans is the house pairing (§20) */
+  --font-display: "Barlow Condensed", "Arial Narrow", sans-serif;
+  --font-body: "Barlow", "Segoe UI", system-ui, sans-serif;
+
+  /* Depth and shape */
+  --shadow-sm: 0 1px 3px rgb(0 0 0 / 0.12);
+  --shadow-md: 0 4px 16px rgb(0 0 0 / 0.14);
+  --shadow-lg: 0 8px 32px rgb(0 0 0 / 0.18);
+  --shadow-xl: 0 16px 60px rgb(0 0 0 / 0.25);
+  --radius-sm: 4px;
+  --radius-md: 8px;
+
+  /* Semantic — not brand: ✓ rows, success states. Stays green on every client. */
+  --color-success: #1e9e4a;
+
+  /* Letterspacing tokens for the house display treatments */
+  --tracking-eyebrow: 0.18em;   /* eyebrow badges, small-caps labels */
+  --tracking-display: 0.3em;    /* letterspaced service list under the H1 */
+
+  /* Motion */
+  --transition-base: 0.22s ease;
+}
