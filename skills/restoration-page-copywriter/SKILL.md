@@ -139,6 +139,36 @@ Examples that require proof:
 
 For insurance, talk about documentation and coordination. Do not promise coverage, claim approval, or reimbursement.
 
+## Copy Sprint — Default Execution Shape
+
+Once briefs are approved, write ALL remaining pages in one parallel sprint — never serially,
+page-by-page across conversation turns. Serial writing at real depth (~15k tokens/page)
+stalls a 26-page site for hours and invites mid-run scope re-negotiation.
+
+1. **Lead writes `copy-spec.md` first** (per client, ~1 page). It locks everything parallel
+   writers must not decide for themselves:
+   - the claim matrix: approved claims listed explicitly WITH claim states; forbidden ones
+     enumerated (no insurance-will-cover, no outcome guarantees, no medical claims, no
+     dollar figures, no credentials beyond what the verified intake supports)
+   - the approved URL list from the Active Page Map — writers may only link URLs on it
+   - voice rules and the word-count warning: first drafts always come in short — verify
+     against the brief's count before returning
+   - one finished page as the reference implementation
+2. **Fan out one subagent per page** (Sonnet, medium effort is the default — page copy is
+   brief-execution, not judgment work). Each reads its own approved brief plus the spec and
+   returns a Final Page Copy artifact (`schemas/final-page-copy.yaml`) into `artifacts/copy/`.
+   Pages with unusual stakes get extra briefing in the fan-out prompt (biohazard/trauma:
+   non-graphic, discretion as the trust signal; remodeling: planned-purchase voice,
+   form-first CTAs).
+3. **Lead verifies every page centrally** — `npm run validate:artifacts` (it validates
+   `artifacts/copy/*.yaml`), word count against the brief, claim scan, heading structure
+   matches the brief exactly. Never take an agent's word for it.
+
+Scope is the approved Active Page Map. Never propose depth tiers, sampling, or skipping
+approved pages mid-run — a page with an approved brief gets written to brief, whether it has
+90,500 searches/mo or 40. Work in search-volume order so the highest-value pages land first,
+and raise capacity concerns in the handoff summary while the sprint keeps going.
+
 ## Output: Final Page Copy
 
 Produce a `Final Page Copy` artifact. This is the finished written content for one page, organized so the build agent can place it into the approved template without guessing or rewriting.

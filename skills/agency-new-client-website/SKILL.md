@@ -9,8 +9,18 @@ Run the stages in order, invoke the stage skill where one exists, follow the sta
 where one doesn't, and STOP at every human gate. The AI drives; the human approves. Never
 skip a gate because the output "looks obviously fine" — the gates are the product.
 
-Authority: `agent-website-builder` repo — `docs/agency-website-system/PIPELINE.md`
+Authority: `agent-website-builder` repo (canonical checkout: `/Users/jameslarosa/Documents/agent-website-builder`) — `docs/agency-website-system/PIPELINE.md`
 (orchestration), `CORE_CONTRACTS.md` (shared rules), `agents/01-08` (stage specs).
+
+## Authority Path — read this first
+
+The ONLY authoritative docs live in the git checkout at
+`/Users/jameslarosa/Documents/agent-website-builder` (branch `main`).
+
+Do not read system docs from any other location. Copies made for handoff, zip
+extracts, or working folders WILL drift behind and have already been observed
+4KB out of date. If you find more than one copy of `docs/agency-website-system/`
+on disk, use the checkout above and tell the human the others exist.
 
 ## Kickoff — collect the only human inputs
 
@@ -34,9 +44,14 @@ Stage 3. For rebuilds: no launch without redirect decisions.
 `agents/03`: assign approved master briefs, localize placeholders, route true gaps to the
 SEO owner (new briefs need human approval, then join the master library).
 
-**Stage 4 — Copy.** Run `$restoration-page-copywriter` per `agents/04`: FIRST the Homepage
-Messaging Pack, then Final Page Copy per page, strict brief fidelity, claim states on
-everything.
+**Stage 4 — Copy Sprint.** Run `$restoration-page-copywriter` per `agents/04`: FIRST the
+Homepage Messaging Pack, then ALL remaining Final Page Copy in one parallel sprint — one
+subagent per page (Sonnet, medium effort), each reading its own approved brief plus a
+per-client `copy-spec.md` the lead writes first (claim matrix with states, approved URL list
+from the page map, voice rules, word-count discipline, one reference page). Strict brief
+fidelity, claim states on everything. The lead verifies every artifact centrally
+(`artifacts/copy/*.yaml` — `npm run validate:artifacts` checks them). ALL copy is finished
+and approved before Stage 6: the builder assembles copy, it never writes any.
 → 🛑 **GATE 3 (human):** approve the Messaging Pack (homepage design cannot start before
 this) and spot-check page copy.
 

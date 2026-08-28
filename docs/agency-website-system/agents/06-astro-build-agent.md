@@ -131,6 +131,9 @@ The build handoff is not complete until navigation-inclusion and schema decision
 - Do not hand-code lead forms in individual pages (§11).
 - Do not duplicate custom form markup outside shared form components/renderers (§11).
 - Do not render two process narratives on one page: if the approved copy includes its own process section, omit the shared post-body process section there (§12 precedence; `post_body_sections.process`). `npm run validate:built` enforces this against `dist/`.
+- Do not write page copy at build time — copy comes finished from the Stage 4 copy sprint (`artifacts/copy/`); missing copy is a blocker handed back, not an invitation to write.
+- Do not publish internal links to routes that are not built (§15) — `npm run validate:built` fails every dead internal link in `dist/`.
+- Do not re-negotiate scope mid-build (depth tiers, sampling) — scope is the approved page map.
 - Do not create `/services/...` URLs for generated restoration pages unless the master sheet changes.
 - Do not ship CSS-background hero/LCP images (§18).
 - Do not ship render-blocking noncritical third-party scripts (§19).

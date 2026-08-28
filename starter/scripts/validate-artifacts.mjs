@@ -239,6 +239,24 @@ function validatePageMap(file, doc) {
   });
 }
 
+// ------------------------------------------------- final page copy (sprint)
+
+// Copy Sprint output: one final-page-copy artifact per page in <dir>/copy/.
+// Validated so the sprint's parallel writers get mechanical verification —
+// the lead never takes an agent's word for claim safety or completeness.
+function validatePageCopy(file, doc) {
+  if (isBlank(doc.meta?.page_id)) err(file, 'meta.page_id empty — must match the active page map');
+  if (isBlank(doc.meta?.page_url)) err(file, 'meta.page_url empty');
+  if (isBlank(doc.meta?.brief_used)) err(file, 'meta.brief_used empty — copy without a brief source is unreviewable');
+  if (!['Draft', 'Ready For Review', 'Approved'].includes(doc.meta?.status))
+    err(file, `meta.status "${doc.meta?.status}" invalid`);
+  if (isBlank(doc.copy?.h1) && isBlank(doc.copy?.body)) err(file, 'copy.h1 and copy.body both empty');
+  scanLanguage(file, doc.copy ?? {});
+  (doc.claims_used ?? []).forEach((c, i) => {
+    if (isBlank(c?.state)) err(file, `claims_used[${i}] missing claim state (§6)`);
+  });
+}
+
 // ---------------------------------------------------------------- runner
 
 const VALIDATORS = {
@@ -259,6 +277,15 @@ for (const [name, fn] of Object.entries(VALIDATORS)) {
   ran++;
   try { fn(name, parse(readFileSync(p, 'utf8'))); }
   catch (e) { err(name, `failed to parse: ${e.message}`); }
+}
+
+const copyDir = join(dir, 'copy');
+if (existsSync(copyDir)) {
+  for (const f of readdirSync(copyDir).filter((f) => f.endsWith('.yaml') || f.endsWith('.yml'))) {
+    ran++;
+    try { validatePageCopy(`copy/${f}`, parse(readFileSync(join(copyDir, f), 'utf8'))); }
+    catch (e) { err(`copy/${f}`, `failed to parse: ${e.message}`); }
+  }
 }
 
 if (ran === 0) {

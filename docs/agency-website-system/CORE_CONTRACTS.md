@@ -244,7 +244,7 @@ Capped sidebar navigation:
 - For large city/city-service builds: stacked layout — intro copy above, map/explorer below, county/city lists inside or below the explorer with controlled height. Never place a short copy column beside a very tall accordion.
 - Expanded lists need max-height scrolling, filtering, pagination, or progressive disclosure so one open county cannot take over the page.
 - Alternate for very large builds: `Regional Service Explorer` — map plus segmented county/state browser with optional city search/filter.
-- Production must not publish active links to city or city-service URLs until those routes exist or the generated-route plan is approved. Preview builds may show planned route links only when the page-generation plan is explicit.
+- Production must not publish active links to city or city-service URLs until those routes exist or the generated-route plan is approved. Preview builds may show planned route links only when the page-generation plan is explicit. Enforced in code: `npm run validate:built` fails any built page containing an internal link that does not resolve to a built route or file (added 2026-08-28 after a build shipped ~50 dead city-hub links in the site-wide mega-menu and service-area map). Build targets before or with the nav entries that point at them.
 - Labels are customer-facing only (see §7).
 
 ## 16. Review / Proof Section Contract

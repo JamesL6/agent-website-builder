@@ -41,7 +41,9 @@ A site built without the starter is a non-production preview, whatever else it l
    services, service areas, social links — from the verified intake.
 6. **Brand assets**: logo files, photos (in an intake/source folder, never used raw).
 
-Never invent, improve, or "fill in" any of these. Missing input = blocker, not creativity.
+Never invent, improve, or "fill in" any of these. Missing input = blocker, not creativity. Missing
+Final Page Copy is the most common temptation: NEVER write page copy at build time — hand
+back to the Stage 4 copy sprint and keep building the pages whose approved copy exists.
 
 ## Build Procedure
 
@@ -151,6 +153,12 @@ necessary but NEVER sufficient — visual approval belongs to the reviewer/human
 - Never use arbitrary Tailwind values (`p-[13px]`, `text-[#hex]`) — tokens and scale only.
 - Never hand-code one-off forms, footers, CTAs, or navigation (§11, §17).
 - Never render two process narratives on one page (§12 precedence — validate:built enforces).
+- Never re-negotiate scope mid-build (depth tiers, sampling, "which pages matter?") — scope
+  is the approved page map, built in page-map priority order. Capacity concerns go in the
+  handoff summary while the build keeps going.
+- Never wire header/mega-menu, footer, or service-area links to routes that aren't built
+  yet — build targets before or with the nav entries pointing at them. `validate:built`
+  fails every dead internal link (§15).
 - Never ship a reserved review state when a real widget source exists (§16).
 - Never publish links to city/city-service routes that don't exist (§15).
 - Never mark the build approved, launch-ready, or "done" — that is QA's and the human's call.

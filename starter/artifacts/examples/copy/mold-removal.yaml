@@ -1,0 +1,25 @@
+# Worked example of a Copy Sprint output (schemas/final-page-copy.yaml).
+# One file per page in artifacts/copy/ — validate:artifacts checks every one.
+meta:
+  page_id: mold-removal
+  page_url: /mold-removal/
+  page_type: child_service
+  brief_used: https://docs.google.com/document/d/EXAMPLE
+  primary_service_page_target_area: Collin County
+  status: Approved
+  reviewed_by: James LaRosa
+copy:
+  h1: Mold Removal in Collin County
+  hero_intro: We remove mold at the source and dry the moisture that caused it.
+  body:
+    - h2: What Our Mold Removal Covers
+      content: Containment, HEPA filtration, removal of contaminated materials, and drying.
+  cta_blocks:
+    - Call now for a same-day mold assessment.
+  internal_links:
+    - /mold-remediation/
+claims_used:
+  - text: IICRC-certified technicians
+    state: launch_proof_required
+claims_avoided_or_needs_approval: []
+blockers: []

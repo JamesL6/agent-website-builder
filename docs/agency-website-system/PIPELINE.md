@@ -40,7 +40,7 @@ Stage B  Mapping (parallel)
 
 Stage C  Content and design (parallel)
          ├─ 4a. Copywriting Agent → Homepage Messaging Pack   (first deliverable)
-         ├─ 4b. Copywriting Agent → Final Page Copy per page  (as briefs allow)
+         ├─ 4b. Copywriting Agent → Final Page Copy per page  (as briefs allow)  — as ONE parallel sprint, see The Copy Sprint Rule
          └─ 5.  Design Agent      → Design Recipe + Design Brief
                 Non-homepage pattern work may start in Draft; homepage design starts
                 only when the Homepage Messaging Pack is Approved and brand tokens exist.
@@ -62,6 +62,18 @@ Rules:
 
 - Final build (Stage D) does not begin until the active page map, brief assignments, final page copy for in-scope pages, design recipe, and critical blockers are resolved or explicitly accepted.
 - Any agent may draft recommendations from incomplete inputs, but must label the output `Draft` and list blockers (`CORE_CONTRACTS.md §2, §4`).
+
+## The Copy Sprint Rule
+
+All non-homepage Final Page Copy is written as ONE parallel sprint immediately after briefs
+are approved — one subagent per page (Sonnet, medium effort), a per-client `copy-spec.md`
+locking the claim matrix, the approved URL list, voice, and word-count discipline, and central
+verification of every artifact by the lead (`artifacts/copy/*.yaml`, checked by
+`npm run validate:artifacts`). The build stage assembles finished, approved copy; it never
+writes any. Scope is the approved Active Page Map — no depth tiers, no sampling, no mid-run
+scope re-negotiation. Added 2026-08-28 after a build wrote copy serially during assembly at
+~15k tokens/page, stalled two pages into 26, and paused to re-litigate scope the approved
+page map had already settled.
 
 ## Handoff Artifact Map
 
