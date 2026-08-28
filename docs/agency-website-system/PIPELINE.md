@@ -73,7 +73,10 @@ verification of every artifact by the lead (`artifacts/copy/*.yaml`, checked by
 writes any. Scope is the approved Active Page Map — no depth tiers, no sampling, no mid-run
 scope re-negotiation. Added 2026-08-28 after a build wrote copy serially during assembly at
 ~15k tokens/page, stalled two pages into 26, and paused to re-litigate scope the approved
-page map had already settled.
+page map had already settled. City hub and city-service pages fall under the same rule: they
+render from per-city data files, so the sprint's deliverable for them is that approved
+dataset (localized master briefs + verifiable local facts, §14) — produced before build, never
+invented by the builder.
 
 ## Handoff Artifact Map
 

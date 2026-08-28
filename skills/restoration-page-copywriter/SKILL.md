@@ -164,6 +164,14 @@ stalls a 26-page site for hours and invites mid-run scope re-negotiation.
    `artifacts/copy/*.yaml`), word count against the brief, claim scan, heading structure
    matches the brief exactly. Never take an agent's word for it.
 
+City hub and city-service pages are copy too — but their deliverable is DATA, not hand-written
+pages. They render from per-city data files (localized from the master briefs' {{city}}/{{state}}
+patterns plus genuinely local, verifiable facts per §14: county, neighborhoods, service-area
+specifics — never invented landmarks or fake local color). The sprint produces and verifies
+that per-city dataset alongside the service-page artifacts, and it is approved BEFORE build.
+The builder must never invent city content at build time; 50 near-identical city pages with a
+swapped city name is thin content, and 50 pages of fabricated local detail is worse.
+
 Scope is the approved Active Page Map. Never propose depth tiers, sampling, or skipping
 approved pages mid-run — a page with an approved brief gets written to brief, whether it has
 90,500 searches/mo or 40. Work in search-volume order so the highest-value pages land first,
