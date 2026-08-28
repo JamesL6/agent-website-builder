@@ -484,9 +484,122 @@ Required navigation surfaces:
 - Breadcrumb behavior.
 - Sitemap-only or intentionally hidden/noindex routes.
 
+### Mega-Menu Requirement For Multi-Service Restoration Sites (REQUIRED)
+
+When a client has more than one service category with child pages, the desktop header MUST use
+grouped mega-menus rather than a flat list of top-level links. A flat header cannot expose a
+33-page service tree, and burying child services behind a hub page costs both discovery and
+internal-link equity.
+
+Two mega-menus are required:
+
+**1. `Services` — one top-level item, not one item per category.**
+
+- The dropdown is organised into COLUMN GROUPS, one per service category (Water Damage, Fire
+  Damage, Mold, Biohazard, Reconstruction/Remodeling, Commercial, and so on).
+- Each column header is the category hub name and LINKS to that hub URL. The header is a link,
+  never a dead label.
+- Beneath each column header, list that category's approved child service pages, in the order
+  the page map defines.
+- List EVERY approved child. Columns scroll (see below); they do not truncate.
+- Categories with no child pages still get a column with the hub link.
+
+**2. `Service Areas` — one top-level item, grouped by county.**
+
+- Column groups are counties. Each county header is plain text or links to the service-area
+  page; individual cities link to their city hubs.
+- List every approved city. The column scrolls at ~15rem so a 40-city county cannot take over
+  the viewport.
+- When approved city-service pages exist, the city link goes to the city hub — the city hub
+  routes deeper (§14). Do NOT expand city-service pages inside the header menu.
+- Never link a city or city-service URL from the menu before that route exists (§15).
+
+Panel styling (REQUIRED — a bare link grid reads as unfinished):
+
+- **Two-zone layout.** A dark intro rail (~260px) on the left of the panel, then the column grid.
+  The rail carries the menu title, a one-line description, a link to the overview page, and the
+  phone CTA. This is what separates a designed mega-menu from a dropdown.
+- **Accent top border** on the panel so it reads as attached to the header, not floating.
+- **Hover states on every interactive element.** Links get both a color change AND a surface
+  tint — color alone is too subtle at 13px. Column headings get a color change. Top-level nav
+  items get a background tint so the open menu is obvious.
+- Column headings: display font, uppercase, accent underline.
+
+**Per-column scrolling — REQUIRED, and it replaces truncation.**
+
+- Each column list gets `max-height` (~15rem) with `overflow-y: auto` and a thin styled
+  scrollbar. A 40-city county scrolls inside its own column instead of stretching the panel.
+- The panel itself gets `max-height: 70vh; overflow-y: auto` as a second guard.
+- **Do NOT cap columns and add a "View all" link.** Scrolling keeps every approved page
+  reachable from the header; truncation hides pages and creates a maintenance trap where the
+  cap and the real count silently disagree.
+
+**Hover intent — the gap bug (READ THIS, it is not obvious).**
+
+There is a vertical gap between a top-level trigger and the panel below it. A `mouseleave`
+listener on the trigger closes the menu the instant the pointer enters that gap, so the menu
+vanishes while the user is reaching for it. This is the single most common mega-menu defect.
+
+The fix is ownership, not delay:
+
+- `mouseenter` on the trigger OPENS.
+- The trigger's own `mouseleave` must NOT close.
+- **`mouseleave` on the HEADER element closes** (with a ~200ms grace timer). The panel is a
+  descendant of the header, so the gap, the trigger, and the panel are all inside one region.
+- Clicking an already-hover-open panel PINS it open rather than closing — a click that closes
+  what hover just opened reads as the menu fighting the user.
+
+**Mobile is a LIST, not a panel. Do not port desktop styling into the drawer.**
+
+This is the mistake to avoid: the desktop panel's column headings (display font, uppercase,
+accent underline) and its multi-column layout look correct on desktop and look bolted-on inside
+a phone drawer. The drawer must read as one consistent list at every depth. Owner correction,
+2026-08-28.
+
+Structure — three levels, same row treatment throughout:
+
+- **Level 1:** `Services` and `Service Areas` — standard drawer rows with a chevron.
+- **Level 2:** one row per category / per county. **Same row component as level 1**, indented
+  one step, slightly smaller type, chevron on the right. Not a heading — a row.
+- **Level 3:** the children, indented one step further, single column, muted colour, same
+  vertical rhythm as the rows above.
+
+Rules:
+
+- Tapping a group reveals **ALL** its children. Never truncate, never cap, never add a
+  "View all" row inside the drawer.
+- **Single column.** Multi-column child lists are a desktop-panel idea; in a drawer they break
+  the list rhythm and shrink tap targets.
+- Do NOT add a separate "All {group} →" link row above the children. It duplicates the group
+  row directly above it and reads as noise.
+- Indentation alone carries the hierarchy. No underlines, no uppercase, no display font, no
+  background fills.
+- The expanded group row takes the accent colour so the open branch is obvious.
+- The drawer scrolls (`max-height: ~75vh; overflow-y: auto`); nothing inside it scrolls.
+- Tap targets ~37-40px. WCAG 2.2 AA requires 24px and Apple HIG wants 44pt — at 50+ links,
+  44px adds roughly 200px of scroll for a few px of target. Never go below 24px.
+
+Mega-menu rules:
+
+- Both menus are driven by SHARED NAV DATA generated from the active page map, never hand-authored
+  link lists. A hand-authored menu drifts from the page map the first time a page is added.
+- Keyboard accessible: the top-level item is a `button` with `aria-expanded`, the panel is
+  dismissible with `Escape`, and every link is tabbable in DOM order.
+- Open on hover AND on click/focus for pointer users; click/tap only on touch.
+- The mega-menu panel must not cover the header's phone CTA.
+- On mobile the same tree renders as a nested accordion inside the menu drawer — category rows
+  expand to reveal children. The tap-to-call button stays outside the drawer (§9).
+- Reference implementation pattern: romexterra.com — `Services` grouped by damage category with
+  child services listed under each, `Service Areas` grouped by county with cities beneath.
+
+Recipe enum: `header: mega_menu_grouped_services` (PLANNED — requires the starter component;
+`utility_strip_sticky_header` remains the flat-nav BUILT variant). Selecting the mega-menu
+variant before the component ships makes the recipe invalid — build the component first.
+
 Design rules:
 
 - Desktop header should stay concise and conversion-focused. For emergency service businesses, the phone CTA must remain visible and more prominent than request service.
+- Top-level header items should stay at or below 7. Service and city depth belongs inside the two mega-menus above, not as additional top-level entries.
 - Mobile header must keep tap-to-call visible on the left, logo centered, and menu button on the right. The phone action must not live only inside the menu.
 - Mobile menu should expose the same primary user paths as desktop header plus request-service access.
 - Footer should include curated groups for core services, service areas, company/trust pages, locations/NAP, and socials. Do not dump large generated page sets into the footer.
@@ -545,6 +658,7 @@ Inner-body reusable modules:
 - Subsection cards may include internal links and a compact `Learn more` action when the brief calls for child-page routing. Do not create link cards for unrelated pages just to fill space.
 - Alert rows should be short, scannable, and tied to user risk or urgency. Use them for symptoms, unsafe conditions, contamination warnings, or “call now” decision points.
 - Keep these modules restrained: no excessive icons, no nested cards, no oversized decorative blocks, and no repeated card grid after card grid.
+- Article H3 treatment (standard, decided 2026-08-28): subsection H3s in the left column carry a 3px accent-colored left rule with a ~14px indent — no icons, no cards. This is the approved way to make long editorial copy scannable while keeping the column editorial; it is baked into `InnerPageTemplate.astro` and inherits the client accent token automatically. Do not spec icon-led or card-led H3s in design briefs; a client request for them is an exception, not a default.
 - Future service, city, and city-service pages should reuse these body modules instead of inventing one-off body layouts.
 - The first left-column body section must place a page-specific `inline-cta` after the full opening body section, not between the opening section's paragraphs. The final left-column narrative section must end with the same `inline-cta` component/format before the template moves into post-body sections such as process, reviews, service area, or FAQ.
 - Both in-body CTAs must use the exact same reusable component and visual format on a given page: client logo, eyebrow, heading, support copy, phone-first `Call` action, and secondary `Request service` action. Do not create one-off first/final CTA layouts.
