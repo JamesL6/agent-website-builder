@@ -58,6 +58,13 @@ variant_options:
   hero_h1_line_count: 4                # explicit line groups come from the messaging pack (§24)
   section_order_overrides: []          # e.g. ["services_before_process", "reviews_last"]
   optional_modules: []                 # intro | insurance_band | social_cards | commercial_grid | video_testimonials
+  # §12 precedence — a page never renders two process narratives.
+  post_body_sections:
+    process: auto                      # auto | always | never. `auto` (default) renders the shared
+                                       # post-body process section only on pages whose approved copy
+                                       # does not already include its own process section (most
+                                       # parent-hub briefs do). Enforced against the built HTML by
+                                       # `npm run validate:built`.
 
 # New variant requests: a client need no variant covers becomes an EXCEPTION.
 # A human designs/approves it once, it ships as a new component variant, and it

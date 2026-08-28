@@ -22,6 +22,8 @@ variants:
   mobile_sticky_cta: show_after_hero
 variant_options:
   process_step_count: 3
+  post_body_sections:
+    process: auto    # render shared post-body process only when the page copy has none (§12 precedence)
 brand:
   tokens:
     primary: "#cc2a2a"

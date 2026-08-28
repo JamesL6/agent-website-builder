@@ -25,7 +25,7 @@ interface Props {
 const { eyebrow, heading, support, steps, backgroundImage } = Astro.props;
 ---
 
-<section class="relative overflow-hidden border-t-2 border-accent bg-dark py-16 text-on-dark md:py-24">
+<section data-section="process" class="relative overflow-hidden border-t-2 border-accent bg-dark py-16 text-on-dark md:py-24">
   {backgroundImage && (
     /* Rendered as an optimized <img>, not a CSS background, so it goes through
        the image pipeline and serves responsive AVIF/WebP (§18). */

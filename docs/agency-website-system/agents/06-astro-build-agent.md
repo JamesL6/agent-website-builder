@@ -130,6 +130,7 @@ The build handoff is not complete until navigation-inclusion and schema decision
 - Do not convert a non-production HTML/CSS mockup directly into production without rebuilding it as Astro components/routes (§17).
 - Do not hand-code lead forms in individual pages (§11).
 - Do not duplicate custom form markup outside shared form components/renderers (§11).
+- Do not render two process narratives on one page: if the approved copy includes its own process section, omit the shared post-body process section there (§12 precedence; `post_body_sections.process`). `npm run validate:built` enforces this against `dist/`.
 - Do not create `/services/...` URLs for generated restoration pages unless the master sheet changes.
 - Do not ship CSS-background hero/LCP images (§18).
 - Do not ship render-blocking noncritical third-party scripts (§19).

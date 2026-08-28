@@ -108,7 +108,10 @@ modules where the copy artifact says (`content-alert-list` → `ContentAlertList
 `included-panel` → `IncludedPanel`, `inner-subsections` → `InnerSubsections`); the two
 required `InlineCTA`s (after the first body section and closing the last narrative section —
 both, always, §12); sidebar nav props from the page map (parent hub, related pages, core
-hubs — the component enforces the caps); post-body sections per the recipe.
+hubs — the component enforces the caps); post-body sections per the recipe. §12 precedence:
+if the page's approved copy already includes its own process section (most parent-hub briefs
+do), OMIT the shared post-body process section on that page — post-body becomes
+reviews → service area. A page never renders two process narratives.
 
 Never reorder, drop, or reword the brief's heading structure (§ strict brief fidelity).
 Do not create `/services/...` URLs for generated restoration pages — URLs come from the page
@@ -127,7 +130,9 @@ design-recipe.yaml, active-page-map.yaml) — `npm run check` runs
 `scripts/validate-artifacts.mjs` against them and FAILS the build on schema
 violations, banned language, unbuilt variants, or unjustified deviations. Do
 not proceed past a validator error; fix the artifact upstream.
-Then run, in order: `npm run check` (0 errors), `npm run build` (passes), then self-checks on the
+ Then run, in order: `npm run check` (0 errors), `npm run build` (passes), `npm run
+validate:built` (scans `dist/` for duplicate process narratives and §7 banned/placeholder
+language — failures that only exist in the assembled pages), then self-checks on the
 preview: no horizontal overflow at 375 and 1440; sticky mobile CTA hidden at top / visible
 after scroll; every phone action uses the approved `tel:` source; rendered visible text
 contains none of the §7 banned phrases; homepage copy matches the Messaging Pack verbatim.
@@ -145,6 +150,7 @@ necessary but NEVER sufficient — visual approval belongs to the reviewer/human
 - Never restyle components per client; branding is `theme.css` + assets only.
 - Never use arbitrary Tailwind values (`p-[13px]`, `text-[#hex]`) — tokens and scale only.
 - Never hand-code one-off forms, footers, CTAs, or navigation (§11, §17).
+- Never render two process narratives on one page (§12 precedence — validate:built enforces).
 - Never ship a reserved review state when a real widget source exists (§16).
 - Never publish links to city/city-service routes that don't exist (§15).
 - Never mark the build approved, launch-ready, or "done" — that is QA's and the human's call.

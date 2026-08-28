@@ -157,6 +157,10 @@ function validateRecipe(file, doc) {
       err(file, `variants.${slot}: "${value}" is not a BUILT variant (built: ${built.join(', ')})`);
   }
 
+  const pbp = doc.variant_options?.post_body_sections?.process;
+  if (pbp !== undefined && !['auto', 'always', 'never'].includes(pbp))
+    err(file, `variant_options.post_body_sections.process must be auto|always|never, found "${pbp}"`);
+
   const count = doc.variant_options?.process_step_count;
   if (count !== undefined) {
     if (!Number.isInteger(count) || count < 3 || count > 5)
