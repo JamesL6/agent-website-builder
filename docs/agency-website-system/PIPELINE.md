@@ -83,6 +83,8 @@ Each handoff is a structured artifact, not prose in a chat message. Formats live
 
 A handoff that fails its schema is `Blocked`, not "close enough." The receiving agent rejects it back to the producer with the exact missing/invalid fields.
 
+These checks are ENFORCED IN CODE, not just described: `starter/scripts/validate-artifacts.mjs` validates the messaging pack, design recipe, and active page map (run via `npm run check` or `npm run validate:artifacts`; client builds place artifacts in `starter/artifacts/`). Every producing agent runs it on its own artifact before handing off; every consuming agent runs it before accepting. Added 2026-08-28 after the first pilot shipped a homepage H2 without its local target — the rule existed in prose in one stage's skill while the artifact was produced by a different stage, and no code bridged them.
+
 ## The Messaging Pack Rule
 
 The Homepage Messaging Pack is the wiring that keeps internal planning language off customer pages:

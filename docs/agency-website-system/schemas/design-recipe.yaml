@@ -49,7 +49,10 @@ variants:
 # Per-variant knobs the design agent sets alongside the variant choice. These are
 # what make two clients using the SAME variant still look different.
 variant_options:
-  process_step_count: 3                # 3-5 supported by both process variants
+  process_step_count: 3                # 3-5 supported by both process variants. 3 is the default;
+                                       # any other value REQUIRES a recorded justification in
+                                       # exceptions[] (enforced by validate-artifacts.mjs) — deviation
+                                       # is allowed, silent deviation is not.
   service_card_count: 6                # 5-7 recommended
   service_card_chips: true             # residential/commercial chips on image_overlay_grid
   hero_h1_line_count: 4                # explicit line groups come from the messaging pack (§24)

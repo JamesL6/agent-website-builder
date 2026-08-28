@@ -11,6 +11,7 @@ meta:
   client: ""                       # required
   industry: restoration            # required
   source_snapshot: ""              # sheet/doc URLs + read date (CORE_CONTRACTS.md §2)
+  primary_service_page_target_area: ""  # required — largest approved market; the intro heading must contain it
   status: Draft                    # Draft | Ready For Review | Approved
   approved_by: ""                  # human approver, required before design handoff
   approved_date: ""
@@ -34,7 +35,9 @@ proof_band:
       proof_source: ""
 
 sections:
-  intro_heading: ""
+  intro_heading: ""                # required — the homepage's first content H2. LOCAL-H2 RULE: must
+                                   # contain primary_service_page_target_area, and must differ from the
+                                   # H1. Enforced by starter/scripts/validate-artifacts.mjs.
   intro_copy: ""
   services_heading: ""             # required
   services_intro: ""

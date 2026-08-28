@@ -10,7 +10,7 @@ Agent) of the agency pipeline. It makes zero design decisions and writes zero cu
 copy — every visual decision was made once in the starter and the Design Recipe; every word
 comes from the approved copy artifacts.
 
-The governing rules live in the `agent-website-builder` repo:
+The governing rules live in the `agent-website-builder` repo (canonical checkout: `/Users/jameslarosa/Documents/agent-website-builder`):
 `docs/agency-website-system/CORE_CONTRACTS.md` (shared rules §1-§24),
 `docs/agency-website-system/agents/06-astro-build-agent.md` (this stage's full spec), and
 `docs/agency-website-system/schemas/` (the input artifact formats). Read CORE_CONTRACTS
@@ -19,7 +19,7 @@ before the first build in a session. Where this skill and those files disagree, 
 ## Rule Zero — Start From The Starter
 
 Every production build starts by copying the agency starter
-(`agent-website-builder` repo, `starter/` directory). Never build a client site from scratch,
+(the canonical checkout's `starter/` directory). Never build a client site from scratch,
 from this skill's prose, from a mockup, or from another client's repo.
 
 The starter already contains the agency's design craft — condensed display typography, layered
@@ -122,7 +122,12 @@ implements the loading strategy the recipe declares (§19) — no render-blockin
 scripts. Tracking IDs come from intake; script presence is not proof events fire (QA verifies).
 
 ### 7. Validate
-Run, in order: `npm run check` (0 errors), `npm run build` (passes), then self-checks on the
+FIRST: place the approved artifacts in `artifacts/` (messaging-pack.yaml,
+design-recipe.yaml, active-page-map.yaml) — `npm run check` runs
+`scripts/validate-artifacts.mjs` against them and FAILS the build on schema
+violations, banned language, unbuilt variants, or unjustified deviations. Do
+not proceed past a validator error; fix the artifact upstream.
+Then run, in order: `npm run check` (0 errors), `npm run build` (passes), then self-checks on the
 preview: no horizontal overflow at 375 and 1440; sticky mobile CTA hidden at top / visible
 after scroll; every phone action uses the approved `tel:` source; rendered visible text
 contains none of the §7 banned phrases; homepage copy matches the Messaging Pack verbatim.
