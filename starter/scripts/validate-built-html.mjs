@@ -19,14 +19,25 @@
  *      mega-menu and service-area links to ~50 city hubs that did not exist yet,
  *      404ing on every page. Never wire nav to routes that are not built.
  *
- * Usage: node scripts/validate-built-html.mjs [distDir]   (default: dist)
- * Run AFTER `astro build` — `npm run check:built` does both.
- * Skips /templates/ preview routes (noindex approval surfaces, not client pages).
+ *   4. §17 index state — /templates/ routes must ALWAYS be noindex; every other
+ *      page must be indexable at launch. Pre-launch, site.previewMode noindexes
+ *      the whole site (one switch, never per-page markup) — that's a WARNING in
+ *      default mode and an ERROR with --launch (`npm run validate:launch`), which
+ *      also requires /robots.txt and /sitemap.xml in the build. Added 2026-08-28
+ *      after a build pasted noindex into 54 page files with no rule mandating it
+ *      and no stage removing it — the site could have launched invisible.
+ *
+ * Usage: node scripts/validate-built-html.mjs [distDir] [--launch]
+ * Run AFTER `astro build` — `npm run check:built` does both; `npm run
+ * validate:launch` is the pre-launch gate.
+ * /templates/ preview routes are checked ONLY for required noindex.
  */
 import { readFileSync, readdirSync, statSync, existsSync } from 'node:fs';
 import { join, relative } from 'node:path';
 
-const DIST = process.argv[2] || 'dist';
+const argv = process.argv.slice(2);
+const LAUNCH = argv.includes('--launch');
+const DIST = argv.find((a) => !a.startsWith('--')) || 'dist';
 
 // Keep in sync with BANNED in validate-artifacts.mjs (§7).
 const BANNED = [
@@ -36,7 +47,9 @@ const BANNED = [
 ];
 
 let errors = 0;
+let warnings = 0;
 const err = (file, msg) => { errors++; console.error(`  ✗ ${file}: ${msg}`); };
+const warn = (msg) => { warnings++; console.warn(`  ⚠ ${msg}`); };
 
 if (!existsSync(DIST)) {
   console.error(`✗ ${DIST}/ not found — run \`npm run build\` first (or \`npm run check:built\`).`);
@@ -76,13 +89,20 @@ const resolves = (href) => {
 };
 const EXTERNAL = /^(https?:)?\/\/|^(tel:|mailto:|sms:|javascript:|#)/;
 const deadLinks = new Map(); // href -> Set of pages linking it
+const noindexPages = [];
 
 let checked = 0;
 for (const filePath of htmlFiles(DIST)) {
   const file = relative(DIST, filePath);
-  if (file.startsWith('templates/')) continue; // noindex approval surfaces
-  checked++;
   const html = readFileSync(filePath, 'utf8');
+  const noindexed = /<meta(?=[^>]*name="robots")[^>]*noindex[^>]*>/i.test(html);
+  if (file.startsWith('templates/')) {
+    // approval surfaces: ALWAYS noindex, before and after launch (§17)
+    if (!noindexed) err(file, 'template preview route missing noindex,nofollow (§17)');
+    continue;
+  }
+  checked++;
+  if (noindexed) noindexPages.push(file);
 
   // --- 1. §12 precedence: one process narrative per page -------------------
   const mounts = (html.match(/data-section="process"/g) ?? []).length;
@@ -129,8 +149,20 @@ for (const [href, pages] of [...deadLinks.entries()].sort()) {
   );
 }
 
+if (noindexPages.length) {
+  const detail = `${noindexPages.length} of ${checked} page(s) noindex (e.g. ${noindexPages[0]})`;
+  if (LAUNCH)
+    err('launch gate', `${detail} — a launched site must be indexable: set site.previewMode to false, rebuild, re-run (§17)`);
+  else
+    warn(`${detail} — expected while site.previewMode is true; launch requires ZERO (npm run validate:launch)`);
+}
+if (LAUNCH) {
+  for (const required of ['/robots.txt', '/sitemap.xml'])
+    if (!built.has(required)) err('launch gate', `${required} missing from the build (§21)`);
+}
+
 if (errors) {
   console.error(`\n✗ validate:built failed — ${errors} error(s) across ${checked} page(s). Fix the page composition or the upstream artifact; do not ship.`);
   process.exit(1);
 }
-console.log(`✓ validate:built passed — ${checked} built page(s): one process narrative per page, no §7 banned language.`);
+console.log(`✓ validate:built passed${LAUNCH ? ' (LAUNCH mode)' : ''} — ${checked} page(s): one process narrative each, no §7 banned language, no dead internal links${LAUNCH ? ', all pages indexable, robots.txt + sitemap.xml present' : ''}.${warnings ? ` ${warnings} warning(s) above.` : ''}`);

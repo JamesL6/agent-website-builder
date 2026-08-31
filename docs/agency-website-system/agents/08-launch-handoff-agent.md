@@ -41,6 +41,7 @@ The shared agent contract, standard output items, and refuse/pause conditions ap
 - Forms submit to the correct destination.
 - GA4/GTM/Meta Pixel/call tracking are verified.
 - Live `/sitemap.xml` and `robots.txt` pass the checks in Live Sitemap Verification below.
+- BEFORE DNS cutover: flip `site.previewMode` to `false`, rebuild, and pass `npm run validate:launch` — launch is blocked while any production page is noindex (§17). This is the deliberate "make them index" step; nothing else in the pipeline removes noindex.
 - Sitemap is submitted or ready for submission.
 - Client handoff packet is complete.
 
