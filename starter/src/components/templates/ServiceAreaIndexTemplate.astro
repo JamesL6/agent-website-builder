@@ -2,8 +2,11 @@
 /**
  * Service-area index (/service-area/) — the crawlable list every city hub hangs off (§14, §15).
  * Compact hero → the SAME shared service-area map the homepage renders (site.serviceArea) →
- * counties → city hub links → that city's approved city-service links. Every link comes from
- * shared site data, so this page, the map, the footer, and schema cannot disagree.
+ * a plain list of CITY HUB links grouped by county. Hub-and-spoke (owner decision 2026-09-09):
+ * this page links the city hubs; each city hub links its own city-service pages. Never list every
+ * city-service page here — at 50 cities × 32 services that is a 1,600-link dump (§15). The map's
+ * accordion above already exposes the full tree to crawlers with progressive disclosure.
+ * Every link comes from shared site data, so this page, the map, the footer, and schema agree.
  */
 import PageHero from '../PageHero.astro';
 import ServiceAreaMap from '../ServiceAreaMap.astro';
@@ -32,16 +35,13 @@ const { eyebrow, h1, intro, listHeading, ctaHeading, ctaSupport } = Astro.props;
       {site.serviceArea.counties.map((county) => (
         <div class="rounded-md border border-border bg-white p-6 shadow-sm">
           <h3 class="text-xs font-bold uppercase tracking-eyebrow text-ink-muted">{county.name}</h3>
-          <ul class="mt-4 space-y-4">
+          <ul class="mt-4 space-y-2.5">
             {county.cities.map((city) => (
               <li>
                 <a href={city.url} class="font-display text-lg font-bold text-ink underline-offset-3 hover:text-accent hover:underline">{city.name}</a>
-                {city.services?.length > 0 && (
-                  <ul class="mt-1.5 flex flex-wrap gap-x-3 gap-y-1 text-sm">
-                    {city.services.map((s) => (
-                      <li><a href={s.url} class="text-ink-muted hover:text-accent">{s.label.replace(`${city.name} `, '')}</a></li>
-                    ))}
-                  </ul>
+              </li>
+            ))}
+          </ul>
                 )}
               </li>
             ))}
