@@ -66,7 +66,7 @@ import { site } from '../data/site';
         ))}
       </ul>
       <p class="mt-8 text-center text-sm text-ink-muted">
-        Still stuck? <a href="/contact/" class="font-semibold text-accent underline">Send us a message</a>
+        Still stuck? <a href={site.utilityNav.find((l) => l.id === 'contact')?.url ?? '/'} class="font-semibold text-accent underline">Send us a message</a>
         and we will point you in the right direction.
       </p>
     </div>

@@ -187,8 +187,7 @@ const year = new Date().getFullYear();
     <div class="mx-auto flex max-w-6xl flex-col items-center justify-between gap-2 px-4 py-5 text-xs text-on-dark/45 sm:flex-row md:px-6">
       <p>© {year} {site.legalName}. All rights reserved.</p>
       <p class="flex gap-4">
-        <a href="/privacy-policy/" class="transition hover:text-on-dark">Privacy Policy</a>
-        <a href="/terms/" class="transition hover:text-on-dark">Terms</a>
+        {site.legalLinks.map((l) => <a href={l.url} class="transition hover:text-on-dark">{l.label}</a>)}
       </p>
     </div>
   </div>

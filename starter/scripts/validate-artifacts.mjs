@@ -257,6 +257,39 @@ function validatePageCopy(file, doc) {
   });
 }
 
+// ---------------------------------------------------------------- redirect map
+
+// Stage 2 output (schemas/redirect-map.yaml). Rebuilds only. Every old URL that mattered gets
+// a decision; internal destinations must exist in the page map so no redirect lands on a 404.
+function validateRedirectMap(file, doc, pageMapUrls) {
+  if (isBlank(doc.meta?.client)) err(file, 'meta.client empty');
+  if (isBlank(doc.meta?.source_site)) err(file, 'meta.source_site empty — the old domain being redirected');
+  if (!['Draft', 'Ready For Review', 'Approved'].includes(doc.meta?.status))
+    err(file, `meta.status "${doc.meta?.status}" invalid`);
+  const froms = new Set();
+  const rows = doc.redirects ?? [];
+  rows.forEach((r, i) => {
+    const at = `redirects[${i}] (${r?.from ?? '?'})`;
+    if (isBlank(r?.from) || !String(r.from).startsWith('/')) err(file, `${at}: from must be an old-site path starting with "/"`);
+    else if (froms.has(r.from)) err(file, `${at}: duplicate from`);
+    else froms.add(r.from);
+    if (![301, 410].includes(r?.status)) err(file, `${at}: status must be 301 or 410, found ${r?.status}`);
+    if (r?.status === 301) {
+      if (isBlank(r?.to)) err(file, `${at}: 301 needs a destination`);
+      else if (String(r.to).startsWith('/')) {
+        if (pageMapUrls && !pageMapUrls.has(r.to)) err(file, `${at}: destination ${r.to} is not in the active page map — a redirect must never land on a 404`);
+      } else if (!/^https?:\/\//.test(r.to)) err(file, `${at}: destination must be a site path or absolute URL`);
+    }
+    if (isBlank(r?.reason)) err(file, `${at}: reason empty — record why this mapping (rankings, backlinks, equivalent page)`);
+  });
+  rows.forEach((r, i) => {
+    if (r?.status === 301 && froms.has(r.to)) err(file, `redirects[${i}]: ${r.from} → ${r.to} chains into another redirect — point at the final destination`);
+  });
+  (doc.unmapped_old_urls ?? []).forEach((u, i) => {
+    if (isBlank(u?.url) || isBlank(u?.reason)) err(file, `unmapped_old_urls[${i}] needs url + reason (deliberate 404s are decisions, not omissions)`);
+  });
+}
+
 // ---------------------------------------------------------------- runner
 
 const VALIDATORS = {
@@ -277,6 +310,16 @@ for (const [name, fn] of Object.entries(VALIDATORS)) {
   ran++;
   try { fn(name, parse(readFileSync(p, 'utf8'))); }
   catch (e) { err(name, `failed to parse: ${e.message}`); }
+}
+
+const rm = join(dir, 'redirect-map.yaml');
+if (existsSync(rm)) {
+  ran++;
+  let pageMapUrls = null;
+  const pm = join(dir, 'active-page-map.yaml');
+  if (existsSync(pm)) { try { pageMapUrls = new Set((parse(readFileSync(pm, 'utf8')).pages ?? []).map((p) => p.url)); } catch { /* reported above */ } }
+  try { validateRedirectMap('redirect-map.yaml', parse(readFileSync(rm, 'utf8')), pageMapUrls); }
+  catch (e) { err('redirect-map.yaml', `failed to parse: ${e.message}`); }
 }
 
 const copyDir = join(dir, 'copy');

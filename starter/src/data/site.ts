@@ -39,6 +39,20 @@ export const site = {
     { label: 'Reviews', url: '/#reviews' },
     { label: 'Contact', url: '/contact/' },
   ],
+  /**
+   * Header utility links and footer legal links — the shell reads these, never hardcodes them.
+   * A client without one of these pages REMOVES the entry (no dead links, §15); the operational
+   * page templates under components/templates/ build the pages themselves.
+   */
+  utilityNav: [
+    { id: 'about', label: 'About', url: '/about/' },
+    { id: 'reviews', label: 'Reviews', url: '/reviews/' },
+    { id: 'contact', label: 'Contact', url: '/contact/' },
+  ],
+  legalLinks: [
+    { label: 'Privacy Policy', url: '/privacy-policy/' },
+    { label: 'Terms', url: '/terms/' },
+  ],
   socialLinks: [] as { platform: string; url: string }[],
   /** Public contact email — shown on the contact page. */
   email: 'info@example-restoration.com',

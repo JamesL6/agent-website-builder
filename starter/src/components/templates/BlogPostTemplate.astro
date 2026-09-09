@@ -1,0 +1,31 @@
+---
+/**
+ * Blog post — the inner-page template (two columns, sticky form sidebar) with a dateline.
+ * Body copy is the client's approved post, passed through the default slot.
+ */
+import InnerPageTemplate from './InnerPageTemplate.astro';
+
+interface Props {
+  title: string;
+  /** ISO date string. */
+  date: string;
+  url: string;
+  intro?: string;
+  blogUrl?: string;
+  related?: { label: string; url: string }[];
+}
+const { title, date, url, intro, blogUrl = '/blog/', related = [] } = Astro.props;
+const fmt = new Date(date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+---
+
+<InnerPageTemplate
+  heroEyebrow={`Blog · ${fmt}`}
+  h1={title}
+  heroIntro={intro}
+  parentHub={{ label: 'All posts', url: blogUrl }}
+  current={{ label: title, url }}
+  relatedNav={related}
+>
+  <slot />
+  <slot name="post-body" slot="post-body" />
+</InnerPageTemplate>

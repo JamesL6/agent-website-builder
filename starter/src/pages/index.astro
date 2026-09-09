@@ -11,6 +11,12 @@ const routes: [string, string][] = [
   ['/templates/inner-page/', 'Inner-page template — service, child, city hub'],
   ['/templates/city-service/', 'Generated city-service page'],
   ['/templates/contact-page/', 'Contact page (§13)'],
+  ['/templates/about/', 'About page (inner template + GalleryImage grid)'],
+  ['/templates/reviews/', 'Reviews page (widget at full width)'],
+  ['/templates/service-area/', 'Service-area index (map + every city link)'],
+  ['/templates/legal/', 'Legal page (privacy / terms)'],
+  ['/templates/blog/', 'Blog index'],
+  ['/templates/blog-post/', 'Blog post (inner template)'],
   ['/templates/sections-a/', 'Services grid + differentiator'],
   ['/templates/sections-b/', 'Process + reviews'],
   ['/templates/sections-c/', 'Service-area map + FAQ'],
@@ -29,7 +35,8 @@ const routes: [string, string][] = [
     <meta name="robots" content="noindex,nofollow" />
     <title>Agency Restoration Starter — template previews</title>
   </head>
-  <body class="bg-surface text-ink">
+  <!-- data-starter-directory: validate-built-html skips production-page checks here. A client build replaces this file, so the marker never ships. -->
+  <body class="bg-surface text-ink" data-starter-directory>
     <main class="mx-auto max-w-3xl px-6 py-16">
       <p class="text-xs font-bold uppercase tracking-eyebrow text-accent">Agency starter</p>
       <h1 class="mt-2 font-display text-4xl font-bold">Template previews</h1>

@@ -19,6 +19,13 @@
  *      mega-menu and service-area links to ~50 city hubs that did not exist yet,
  *      404ing on every page. Never wire nav to routes that are not built.
  *
+ *   5. §18 images — every <img> on a production page has width, height, and alt (alt=""
+ *      only when aria-hidden/presentational); no raw .jpg/.png/.gif outside the optimized
+ *      /_astro/ output (agency assets under /logos/ are the documented exception); any image
+ *      inside the hero (data-page-hero) or marked fetchpriority="high" is never lazy-loaded —
+ *      the LCP image must load eagerly.
+ *   6. §11 forms — every production page carries the shared request form
+ *      (data-component="request-service") and at least one tap-to-call tel: link.
  *   4. §17 index state — /templates/ routes must ALWAYS be noindex; every other
  *      page must be indexable at launch. Pre-launch, site.previewMode noindexes
  *      the whole site (one switch, never per-page markup) — that's a WARNING in
@@ -101,6 +108,9 @@ for (const filePath of htmlFiles(DIST)) {
     if (!noindexed) err(file, 'template preview route missing noindex,nofollow (§17)');
     continue;
   }
+  // The starter's own root is a directory of preview routes, not a production page; a client
+  // build replaces src/pages/index.astro, so this marker never reaches a client site.
+  if (html.includes('data-starter-directory')) continue;
   checked++;
   if (noindexed) noindexPages.push(file);
 
@@ -130,6 +140,32 @@ for (const filePath of htmlFiles(DIST)) {
   for (const phrase of BANNED)
     if (visible.includes(phrase))
       err(file, `§7 banned phrase "${phrase}" in rendered visible text`);
+
+  // --- 5. §18 images ---------------------------------------------------------
+  const heroBlocks = [...html.matchAll(/<section[^>]*data-page-hero[^>]*>([\s\S]*?)<\/section>/g)].map((m) => m[1]).join('\n');
+  for (const m of html.matchAll(/<img\b([^>]*)>/g)) {
+    const a = m[1];
+    const attr = (n) => a.match(new RegExp(`\\b${n}="([^"]*)"`))?.[1];
+    const src = attr('src') ?? '';
+    const tag = `<img src="${src.slice(0, 60)}${src.length > 60 ? '…' : ''}">`;
+    if (attr('width') === undefined || attr('height') === undefined)
+      err(file, `${tag} missing width/height — layout shifts while it loads (§18)`);
+    const alt = attr('alt');
+    if (alt === undefined) err(file, `${tag} has no alt attribute (§18)`);
+    else if (alt === '' && !/aria-hidden="true"|role="presentation"/.test(a))
+      err(file, `${tag} has empty alt but is not marked decorative (§18)`);
+    if (/\.(jpe?g|png|gif)(\?|$)/i.test(src) && !src.startsWith('/_astro/') && !src.startsWith('/logos/'))
+      err(file, `${tag} is a raw raster asset outside the optimized pipeline (§18 — import it and render through OptimizedImage/HeroImage/GalleryImage)`);
+    const lazy = attr('loading') === 'lazy';
+    if (lazy && (attr('fetchpriority') === 'high' || heroBlocks.includes(m[0])))
+      err(file, `${tag} is lazy-loaded inside the hero / marked high priority — the LCP image must load eagerly (§18)`);
+  }
+
+  // --- 6. §11 forms + tap-to-call on every production page -------------------
+  if (!html.includes('data-component="request-service"'))
+    err(file, 'no shared request form on the page (§11 — RequestServicePanel must be present, via sidebar, section, or footer band)');
+  if (!/href="tel:/.test(html))
+    err(file, 'no tap-to-call tel: link on the page (§9)');
 
   // --- 3. §15 dead internal links (aggregated across pages below) ----------
   // 404.html is exempt: its links are the site shell's, so any dead one also appears on every
@@ -169,4 +205,4 @@ if (errors) {
   console.error(`\n✗ validate:built failed — ${errors} error(s) across ${checked} page(s). Fix the page composition or the upstream artifact; do not ship.`);
   process.exit(1);
 }
-console.log(`✓ validate:built passed${LAUNCH ? ' (LAUNCH mode)' : ''} — ${checked} page(s): one process narrative each, no §7 banned language, no dead internal links${LAUNCH ? ', all pages indexable, robots.txt + sitemap.xml present' : ''}.${warnings ? ` ${warnings} warning(s) above.` : ''}`);
+console.log(`✓ validate:built passed${LAUNCH ? ' (LAUNCH mode)' : ''} — ${checked} page(s): one process narrative each, no §7 banned language, images sized/alt/eager-LCP, form + tel on every page, no dead internal links${LAUNCH ? ', all pages indexable, robots.txt + sitemap.xml present' : ''}.${warnings ? ` ${warnings} warning(s) above.` : ''}`);

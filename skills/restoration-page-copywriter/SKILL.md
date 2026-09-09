@@ -145,8 +145,9 @@ Once briefs are approved, write ALL remaining pages in one parallel sprint — n
 page-by-page across conversation turns. Serial writing at real depth (~15k tokens/page)
 stalls a 26-page site for hours and invites mid-run scope re-negotiation.
 
-1. **Lead writes `copy-spec.md` first** (per client, ~1 page). It locks everything parallel
-   writers must not decide for themselves:
+1. **Lead writes `copy-spec.md` first** (per client, ~1 page; template:
+   `docs/agency-website-system/templates/copy-spec.md` in the canonical repo). It locks everything
+   parallel writers must not decide for themselves:
    - the claim matrix: approved claims listed explicitly WITH claim states; forbidden ones
      enumerated (no insurance-will-cover, no outcome guarantees, no medical claims, no
      dollar figures, no credentials beyond what the verified intake supports)

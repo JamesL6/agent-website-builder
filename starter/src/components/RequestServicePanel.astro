@@ -27,7 +27,7 @@ const router = site.leadRouter;
 const routerReady = Boolean(router.submitUrl && router.clientId);
 ---
 
-<div class="overflow-hidden rounded-md bg-white text-ink shadow-xl">
+<div class="overflow-hidden rounded-md bg-white text-ink shadow-xl" data-component="request-service">
   <div class="bg-accent px-6 py-5 text-white">
     <p id={`${idPrefix}-title`} class="font-display text-3xl font-bold">Request Service</p>
     <p class="mt-1 text-sm text-white/90">{site.form.responseNotice}</p>

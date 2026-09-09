@@ -1,0 +1,22 @@
+# Redirect Map — Stage 2 output (rebuild clients only). Validated by starter/scripts/validate-artifacts.mjs
+# when placed at starter/artifacts/redirect-map.yaml (cross-checked against active-page-map.yaml if present).
+# Rule: no launch without redirect decisions for every old URL that carried rankings, backlinks, or traffic.
+# Redirects are implemented server-side (vercel.json), generated FROM this file — never hand-typed.
+meta:
+  client: ""
+  source_site: ""                 # old domain, e.g. https://www.oldclientsite.com
+  crawled_at: ""                  # ISO date of the crawl this map was built from
+  status: Draft                   # Draft | Ready For Review | Approved
+  approved_by: ""
+
+redirects:
+  - from: "/old-path/"            # path on the OLD site — unique
+    to: "/new-path/"              # path on the NEW site (must exist in the active page map) or absolute external URL
+    status: 301                   # 301 = moved; 410 = gone, no equivalent (then `to` is omitted)
+    reason: ""                    # ranking page | backlinks | equivalent service | merged into hub | …
+    evidence:                     # from the crawl / analytics — supports the decision, may be 0
+      sessions_12mo: 0
+      backlinks: 0
+      ranking_keywords: 0
+
+unmapped_old_urls: []             # old URLs deliberately left to 404 — each { url, reason }
