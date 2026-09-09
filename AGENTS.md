@@ -45,3 +45,28 @@ When evaluating plans or implementation decisions, call out:
 - what is inferred
 - what is unknown
 - what the next concrete action should be
+
+## Shared Working Tree Rules (added 2026-09-09)
+
+Multiple agent sessions (Claude Code and Codex) work in this checkout at the same time. Four
+times, a session has rewritten shared files from stale context and silently reverted committed
+work — deleting `starter/scripts/validate-built-html.mjs`, stripping `validate:*` entries from
+`starter/package.json`, removing `data-section` markers and schema checks. So:
+
+1. **Never write a shared file from memory.** Before editing anything under `starter/scripts/`,
+   `starter/package.json`, `starter/src/components/`, `starter/artifacts/`, or `docs/`, run
+   `git diff <file>` and re-read the file as it is on disk NOW. Preserve every line you did not
+   write. If a file you remember does not match disk, disk wins.
+2. **Never delete, weaken, or bypass a validator.** `scripts/validate-artifacts.mjs`,
+   `scripts/validate-built-html.mjs`, and the `validate:*` / `check*` npm scripts are committed
+   enforcement (PIPELINE.md → Rejection Encoding Rule). A failing validator names a real defect —
+   fix the defect. If you believe a check is wrong, leave it in place and raise it with the human.
+3. **Commit only your own paths** with targeted `git add <paths>`; never `git add -A` or
+   `git commit -a`. `git pull --rebase` before pushing. Do not leave system-level work
+   uncommitted for days — it is one stale overwrite away from being lost.
+4. **Client sites do not live in `starter/`.** Rule Zero (build skill, step 1): copy `starter/`
+   into the client's own repo and build there. `starter/` is the template every future client
+   starts from; client data, photos, pages, and themes in it are a defect, not a build.
+5. Validation commands, from `starter/`: `npm run check` (artifacts), `npm run check:built`
+   (build + built-HTML: process duplication, §7 language, dead links, index state),
+   `npm run validate:launch` (pre-launch gate).
