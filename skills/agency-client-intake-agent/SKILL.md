@@ -10,7 +10,7 @@ for the website pipeline. This is Stage 1. Everything downstream — briefs, cop
 build — trusts what this stage outputs, so this stage's job is to be untrusting: verify,
 cross-check, and block on anything unknown.
 
-Full spec: `agent-website-builder` repo,
+Full spec: `agent-website-builder` repo (canonical checkout: `/Users/jameslarosa/Documents/agent-website-builder`),
 `docs/agency-website-system/agents/01-client-intake-agent.md`; shared rules in
 `docs/agency-website-system/CORE_CONTRACTS.md` (§2 shared contract, §3 source-of-truth
 order, §6 claims). Where this skill and those files disagree, those files win.
@@ -21,6 +21,14 @@ order, §6 claims). Where this skill and those files disagree, those files win.
 - Brand assets: logo files, photos, brand guidelines if any.
 - Anything the AM captured on the onboarding call that isn't in the sheet yet (goes INTO the
   sheet, not into chat — chat is not a source of truth).
+- **The client's current website URL — or the human's explicit confirmation that there is no
+  existing site.** HARD STOP (owner decision 2026-09-09): do not proceed past intake without one
+  of the two. Never assume "no site"; never guess a URL. Ask, wait, then proceed.
+
+INTERIM (until the `AM Verified Website Intake` tab exists on the master sheet — open item as of
+2026-09-09): the human may supply the intake facts directly in chat. Record them verbatim in the
+Source Snapshot so they are auditable, and mark `Verified Intake Status = Human-supplied (chat)`
+rather than `Verified`. The gate below still applies to everything else.
 
 ## Source-Of-Truth Order (§3 — never deviate)
 
@@ -68,7 +76,9 @@ For each service row, apply the interpretation rules:
   `Needs Client Confirmation`. Never assume a parent implies its children.
 
 ### 4. Crawl the current site (candidate signals only)
-If the client has a live site, crawl it to SUGGEST: services the AM may want to verify,
+If a current-site URL was supplied, crawl it. If the human confirmed there is none, record
+`No existing site` in the Source Snapshot (Stage 2 then produces a no-existing-site audit). If
+neither, stop and ask — this is the hard stop above. When there is a site, crawl it to SUGGEST: services the AM may want to verify,
 phone/NAP mismatches, pages/claims the intake doesn't mention. Every finding is a question
 for the AM, never an answer. Website copy proves nothing about what the client offers today.
 

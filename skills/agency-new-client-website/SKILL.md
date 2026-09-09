@@ -27,7 +27,9 @@ on disk, use the checkout above and tell the human the others exist.
 Ask for, and do not start without:
 1. The client's Local SEO Sheet URL (`AM Verified Website Intake` tab filled in by the AM).
 2. Brand assets: logo, photos, brand guidelines if any.
-3. The client's current website URL (or confirmation there isn't one).
+3. The client's current website URL, or the human's EXPLICIT confirmation that there isn't one.
+   Hard stop: never assume either. Interim (until the intake tab exists): intake facts may come
+   in chat; record them verbatim in the Source Snapshot.
 
 ## The Stages
 
