@@ -23,7 +23,7 @@
  *      page must be indexable at launch. Pre-launch, site.previewMode noindexes
  *      the whole site (one switch, never per-page markup) — that's a WARNING in
  *      default mode and an ERROR with --launch (`npm run validate:launch`), which
- *      also requires /robots.txt and /sitemap.xml in the build. Added 2026-08-28
+ *      also requires /robots.txt, /sitemap.xml, and /llms.txt in the build (§21). Added 2026-08-28
  *      after a build pasted noindex into 54 page files with no rule mandating it
  *      and no stage removing it — the site could have launched invisible.
  *
@@ -161,7 +161,7 @@ if (noindexPages.length) {
     warn(`${detail} — expected while site.previewMode is true; launch requires ZERO (npm run validate:launch)`);
 }
 if (LAUNCH) {
-  for (const required of ['/robots.txt', '/sitemap.xml'])
+  for (const required of ['/robots.txt', '/sitemap.xml', '/llms.txt'])
     if (!built.has(required)) err('launch gate', `${required} missing from the build (§21)`);
 }
 

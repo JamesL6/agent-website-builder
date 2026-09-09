@@ -64,6 +64,7 @@ The sitemap and robots format rules live in CORE_CONTRACTS.md §21. This agent v
 2. When child sitemap files are present, verify each of them on the live domain against §21.
 3. Verify the live `robots.txt` references the preferred production sitemap URL, normally `https://www.clientdomain.com/sitemap.xml` (§21).
 4. Submit `/sitemap.xml` as the primary sitemap in Google Search Console. `/sitemap-index.xml` may also exist, but `/sitemap.xml` must work.
+5. Fetch `/llms.txt` on the live domain: HTTP `200`, plain text, business facts match `site.ts`, and every link resolves (§21). It is build-generated — if anything is wrong, fix `site.ts` or the build, never the file.
 
 ## Outputs
 

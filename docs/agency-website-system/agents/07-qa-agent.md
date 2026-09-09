@@ -82,7 +82,7 @@ Every check below runs against these client-specific requirements, not only the 
 - Forms validate; shared form component usage; no duplicated custom form markup (§11).
 - Generated-page validation passes.
 - Launch audit passes.
-- Sitemap endpoint checks (§21).
+- Sitemap, `robots.txt`, and `/llms.txt` endpoint checks (§21).
 - Index state (§17): `npm run validate:launch` — every non-template page indexable (no stray noindex), `/templates/` still noindex, `robots.txt` and `/sitemap.xml` present. A preview build warns instead of failing; the launch build must pass clean.
 - `robots.txt` references the preferred sitemap entry point (§21).
 - Internal links resolve.

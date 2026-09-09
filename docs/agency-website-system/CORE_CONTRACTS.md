@@ -293,7 +293,7 @@ Capped sidebar navigation:
 - Prefer WOFF2, `@font-face`, `font-display: swap`, and only the weights/styles actually used.
 - Do not default to ultra-light weights: readable body fonts at 400/500, strong headings at 700-900. Do not copy the logo font into the site unless it is provided, licensed/web-safe, and readable at body sizes.
 
-## 21. Sitemap And Robots Contract
+## 21. Sitemap, Robots And llms.txt Contract
 
 - Every site ships `/sitemap.xml` as a real XML endpoint: HTTP `200`, XML content type, valid sitemap or sitemap-index XML. Never an HTML redirect page, meta-refresh page, branded redirect shell, or normal site page.
 - Larger sites: `/sitemap.xml` as a sitemap index pointing to child files (`/sitemap-0.xml`, …). Child files return HTTP `200`, XML content type, and canonical production URLs.
@@ -301,6 +301,8 @@ Capped sidebar navigation:
 - `robots.txt` references the preferred sitemap entry point, normally `https://www.clientdomain.com/sitemap.xml`.
 - Search Console uses `/sitemap.xml` as the primary submitted sitemap.
 - Build/launch audits fail if `/sitemap.xml` is missing, returns HTML, is a redirect/meta-refresh shell, does not parse, has missing/non-XML children, contains non-canonical URLs, or `robots.txt` does not reference the preferred sitemap.
+- Every site ships `/llms.txt` (llmstxt.org format). It is GENERATED at build by `starter/postbuild.mjs` from `site.ts` (name, approved footer blurb, phone, locations, availability) and from the routes that actually exist in `dist/` — never hand-authored, never listing an unbuilt route, never carrying copy that is not already approved elsewhere on the site. `npm run validate:launch` fails if it is missing.
+- Sitemap, `robots.txt`, and `llms.txt` need NO per-client work (added 2026-09-09): `site.siteUrl` and `site.previewMode` drive all three via `@astrojs/sitemap` + `postbuild.mjs`, which run inside `npm run build`. A build that hand-authors any of them, or hardcodes a domain in them, is a defect.
 
 ## 22. Structured Data (JSON-LD) Contract
 

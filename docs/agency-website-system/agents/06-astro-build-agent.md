@@ -80,7 +80,7 @@ Confirm each item before writing code. Each check points at the contract that de
 1. Convert approved pages into structured data/routes.
 2. Map briefs into approved reusable block types.
 3. Record navigation-inclusion and schema decisions for every new page (§22, §23).
-4. Add or verify `/sitemap.xml`, child sitemap files when needed, and `robots.txt` (§21).
+4. `/sitemap.xml`, child sitemaps, `robots.txt`, and `/llms.txt` are generated automatically by `npm run build` (`@astrojs/sitemap` + `postbuild.mjs`, §21) from `site.siteUrl` and `site.previewMode` — verify the output, never hand-author it.
 5. Stage and optimize approved images through the Astro/Sharp image pipeline (§18).
 6. Add or update shared components only when the need is reusable.
 7. Add page-specific content without duplicating forms, CTAs, or footers (§11).
@@ -95,16 +95,12 @@ Confirm each item before writing code. Each check points at the contract that de
 For Romexterra-style Astro sites:
 
 ```bash
-npm run optimize:images
-npm run build
-npm run validate:images
-npm run validate:forms
-npm run validate:service-pages
-npm run validate:sitemap
-npm run audit:launch
+npm run check            # artifacts: Design Recipe, Messaging Pack, page map, Copy Sprint output
+npm run check:built      # build (sitemap/robots/llms.txt generated) + built-HTML checks
+npm run validate:launch  # pre-launch gate: indexable, robots + sitemap + llms.txt present
 ```
 
-Use `npm run validate:all` when available and appropriate.
+PLANNED, not yet implemented: `validate:images`, `validate:forms`, `validate:service-pages`, `audit:launch`. Do not cite a script that does not exist in `package.json`.
 
 ## Outputs
 

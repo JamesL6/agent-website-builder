@@ -129,6 +129,11 @@ width/height/alt). Every third-party script (reviews widget, map, chat, GA4, cal
 implements the loading strategy the recipe declares (§19) — no render-blocking noncritical
 scripts. Tracking IDs come from intake; script presence is not proof events fire (QA verifies).
 
+`/sitemap.xml`, `robots.txt`, and `/llms.txt` are generated automatically by `npm run build`
+(`@astrojs/sitemap` + `postbuild.mjs`, §21) from `site.siteUrl` and `site.previewMode` — there is
+nothing to author. llms.txt lists only routes that exist in the build and uses only approved copy
+already in `site.ts`; never hand-write, edit, or hardcode a domain into any of the three.
+
 ### 7. Validate
 FIRST: place the approved artifacts in `artifacts/` (messaging-pack.yaml,
 design-recipe.yaml, active-page-map.yaml) — `npm run check` runs
