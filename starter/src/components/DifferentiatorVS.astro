@@ -6,6 +6,7 @@
  * ✓ uses the semantic success token, not the brand accent.
  */
 import { site } from '../data/site';
+import { Icon } from 'astro-icon/components';
 
 interface Row {
   title: string;
@@ -63,9 +64,7 @@ const {
         {answers.map((row) => (
           <li class="flex gap-4 border-b border-border px-7 py-5 last:border-b-0">
             <span class="mt-0.5 inline-flex size-6 shrink-0 items-center justify-center rounded-full bg-success" aria-hidden="true">
-              <svg class="size-3.5 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M5 12.5l4.5 4.5L19 7.5" />
-              </svg>
+              <Icon name="lucide:check" class="size-3.5 text-white" stroke-width={3} aria-hidden="true" />
             </span>
             <div>
               <h3 class="font-display text-lg font-bold">{row.title}</h3>

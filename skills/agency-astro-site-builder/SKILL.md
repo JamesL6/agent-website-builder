@@ -159,6 +159,7 @@ necessary but NEVER sufficient — visual approval belongs to the reviewer/human
 - Never write, reword, or "improve" customer-facing copy — not even a button label.
 - Never restyle components per client; branding is `theme.css` + assets only.
 - Never use arbitrary Tailwind values (`p-[13px]`, `text-[#hex]`) — tokens and scale only.
+- Never add hand-drawn or third-party icon SVGs — Lucide via `<Icon name="lucide:…" />` only (§17).
 - Never hand-code one-off forms, footers, CTAs, or navigation (§11, §17).
 - Never render two process narratives on one page (§12 precedence — validate:built enforces).
 - Never re-negotiate scope mid-build (depth tiers, sampling, "which pages matter?") — scope

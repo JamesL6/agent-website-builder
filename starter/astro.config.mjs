@@ -1,6 +1,7 @@
 import { defineConfig } from 'astro/config';
 import tailwindcss from '@tailwindcss/vite';
 import sitemap from '@astrojs/sitemap';
+import icon from 'astro-icon';
 import { site } from './src/data/site';
 
 /**
@@ -11,6 +12,8 @@ import { site } from './src/data/site';
 export default defineConfig({
   site: site.siteUrl,
   integrations: [
+    // §17: Lucide is the only icon set, inlined at build (no runtime JS). Usage: <Icon name="lucide:phone" />
+    icon({ include: { lucide: ['*'] } }),
     sitemap({
       /**
        * §21: only approved canonical, indexable routes belong in the sitemap.

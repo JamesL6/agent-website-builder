@@ -19,7 +19,7 @@ update the other in the same pass.
 6. Astro Build Agent — `agents/06-astro-build-agent.md` — `$agency-astro-site-builder`
 7. SEO, Tracking And QA Agent — `agents/07-qa-agent.md` (spec only)
 8. Launch, Tracking And Handoff Agent — `agents/08-launch-handoff-agent.md` (spec only)
-9. Design Review Agent (planned, Phase 3) — independent visual reviewer between build and human approval.
+9. Design Review Agent (planned, Phase 3) — independent visual reviewer between build and human approval. It scores the §24 evidence set (four screenshots) against exactly three things: (1) the starter's `/templates/*` preview routes as the baseline — a correct build differs from them ONLY in tokens, copy, photography, and approved variants; (2) the client's approved Design Recipe + Design Brief; (3) the Premium Visual Acceptance Rubric and the visual rules in CORE_CONTRACTS. It does NOT compare against live reference sites (owner decision 2026-09-09) — those were inputs to building the starter, not review targets.
 
 Orchestration: `$agency-new-client-website` (the conductor skill) runs stages 1-8 in order,
 invoking stage skills where they exist and pausing at every human approval gate.

@@ -9,6 +9,7 @@
  */
 import { site } from '../data/site';
 import { megaMenus } from '../data/megaNav';
+import { Icon } from 'astro-icon/components';
 
 interface Props { chips?: string[] }
 const {
@@ -33,7 +34,7 @@ const {
     <a href={site.phoneHref}
        class="inline-flex size-11 shrink-0 items-center justify-center rounded-md bg-accent text-white transition hover:bg-accent-hover md:hidden"
        aria-label={`Call ${site.phoneDisplay}`}>
-      <svg class="size-5" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M6.6 10.8c1.4 2.8 3.8 5.1 6.6 6.6l2.2-2.2c.3-.3.7-.4 1-.2 1.1.4 2.3.6 3.6.6.6 0 1 .4 1 1V20c0 .6-.4 1-1 1C10.6 21 3 13.4 3 4c0-.6.4-1 1-1h3.5c.6 0 1 .4 1 1 0 1.2.2 2.4.6 3.6.1.3 0 .7-.2 1l-2.3 2.2z"/></svg>
+      <Icon name="lucide:phone" class="size-5" aria-hidden="true" />
     </a>
 
     <a href="/" class="shrink-0 font-display text-2xl font-bold leading-none text-ink md:text-3xl">
@@ -48,7 +49,7 @@ const {
           <button type="button" class="nav-top nav-top--btn" aria-expanded="false"
                   aria-controls={`mega-${menu.id}`} data-mega-trigger>
             {menu.label}
-            <svg class="mega-chev size-3.5" viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M5.2 7.5 10 12.3l4.8-4.8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+            <Icon name="lucide:chevron-down" class="mega-chev size-3.5" aria-hidden="true" />
           </button>
 
           <div id={`mega-${menu.id}`} class="mega-panel" data-mega-panel hidden>
@@ -92,7 +93,7 @@ const {
         href={site.phoneHref}
         class="flex items-center gap-2.5 rounded-md bg-accent px-4 py-2.5 text-white shadow-md transition hover:bg-accent-hover lg:gap-3 lg:px-7 lg:py-3"
       >
-        <svg class="hidden size-6 shrink-0 lg:block" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M6.6 10.8c1.4 2.8 3.8 5.1 6.6 6.6l2.2-2.2c.3-.3.7-.4 1-.2 1.1.4 2.3.6 3.6.6.6 0 1 .4 1 1V20c0 .6-.4 1-1 1C10.6 21 3 13.4 3 4c0-.6.4-1 1-1h3.5c.6 0 1 .4 1 1 0 1.2.2 2.4.6 3.6.1.3 0 .7-.2 1l-2.3 2.2z"/></svg>
+        <Icon name="lucide:phone" class="hidden size-6 shrink-0 lg:block" aria-hidden="true" />
         <span class="leading-none">
           <span class="block text-[0.6rem] font-bold uppercase tracking-[0.12em] opacity-90 lg:text-[0.65rem] lg:tracking-[0.15em]">Call {site.emergencyAvailability}</span>
           <span class="mt-0.5 block whitespace-nowrap font-display text-base font-bold leading-none lg:mt-1 lg:text-xl">{site.phoneDisplay}</span>
@@ -102,7 +103,7 @@ const {
 
     <button type="button" class="inline-flex size-11 shrink-0 items-center justify-center rounded-md border border-border text-ink md:hidden"
             aria-expanded="false" aria-controls="mobile-drawer" data-drawer-trigger aria-label="Open menu">
-      <svg class="size-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16" stroke-linecap="round"/></svg>
+      <Icon name="lucide:menu" class="size-6" aria-hidden="true" />
     </button>
   </div>
 
@@ -115,7 +116,7 @@ const {
         <div class="border-b border-border">
           <button type="button" class="m-row m-row--btn" aria-expanded="false" data-acc-trigger>
             {menu.label}
-            <svg class="acc-chev size-4 shrink-0 text-ink-muted" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M5.2 7.5 10 12.3l4.8-4.8" stroke-linecap="round"/></svg>
+            <Icon name="lucide:chevron-down" class="acc-chev size-4 shrink-0 text-ink-muted" aria-hidden="true" />
           </button>
           <!--
             Level 2 uses the SAME row treatment as level 1 — the drawer is one consistent list,
@@ -127,7 +128,7 @@ const {
               <div class="m-sub">
                 <button type="button" class="m-row m-row--sub" aria-expanded="false" data-acc-trigger>
                   {col.label}
-                  <svg class="acc-chev size-4 shrink-0 text-ink-muted" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M5.2 7.5 10 12.3l4.8-4.8" stroke-linecap="round"/></svg>
+                  <Icon name="lucide:chevron-down" class="acc-chev size-4 shrink-0 text-ink-muted" aria-hidden="true" />
                 </button>
                 <div data-acc-panel hidden>
                   {col.children.map((leaf) => (

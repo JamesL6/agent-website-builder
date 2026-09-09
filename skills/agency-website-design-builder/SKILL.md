@@ -239,6 +239,10 @@ Rules:
 
 ## Premium Visual Acceptance Rubric
 
+Review targets (owner decision 2026-09-09): the build is scored against the starter's `/templates/*`
+preview routes (baseline), the approved Design Recipe + Brief, and this rubric + CORE_CONTRACTS —
+never against live reference sites.
+
 Before handing a design brief to the Astro Build Agent, score the homepage against this rubric.
 
 Required scoring format: `Pass`, `Needs Revision`, or `Fail`.
@@ -689,6 +693,7 @@ Inner-body reusable modules:
 - Subsection cards may include internal links and a compact `Learn more` action when the brief calls for child-page routing. Do not create link cards for unrelated pages just to fill space.
 - Alert rows should be short, scannable, and tied to user risk or urgency. Use them for symptoms, unsafe conditions, contamination warnings, or “call now” decision points.
 - Keep these modules restrained: no excessive icons, no nested cards, no oversized decorative blocks, and no repeated card grid after card grid.
+- Icons (standard, decided 2026-09-09): Lucide only, via `astro-icon` — never hand-drawn SVGs, never another set. Briefs name icons as `lucide:<name>` and only in sanctioned slots (§17); a client override is an exception recorded in the recipe.
 - Article H3 treatment (standard, decided 2026-08-28): subsection H3s in the left column carry a 3px accent-colored left rule with a ~14px indent — no icons, no cards. This is the approved way to make long editorial copy scannable while keeping the column editorial; it is baked into `InnerPageTemplate.astro` and inherits the client accent token automatically. Do not spec icon-led or card-led H3s in design briefs; a client request for them is an exception, not a default.
 - Future service, city, and city-service pages should reuse these body modules instead of inventing one-off body layouts.
 - The first left-column body section must place a page-specific `inline-cta` after the full opening body section, not between the opening section's paragraphs. The final left-column narrative section must end with the same `inline-cta` component/format before the template moves into post-body sections such as process, reviews, service area, or FAQ.
