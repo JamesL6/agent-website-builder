@@ -49,6 +49,8 @@ the starter (`npm run dev` inside the canonical checkout's `starter/`) and LOOK 
 route. A brief specifies which variant, tokens, copy, and photography fill these templates —
 never a new layout. If a client genuinely needs something these cannot express, propose a new
 variant for the registry (`design-recipe.yaml` → BUILT/PLANNED) instead of briefing a one-off.
+No external UI component kits (Tailwind UI, shadcn, Flowbite, DaisyUI…) — never imported, never
+proposed; the starter is the design system (§17, owner decision 2026-09-09).
 
 | Page type / pattern | Reference implementation (under `starter/src/`) | Preview route |
 |---|---|---|

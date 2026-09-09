@@ -265,6 +265,7 @@ Capped sidebar navigation:
 - Template preview routes are excluded from header/footer navigation, service listings, generated page maps, XML sitemaps, and Search Console submissions.
 - Pre-launch index state is ONE switch, never per-page markup: `site.previewMode` in `src/data/site.ts` (true → every page emits `noindex,nofollow`; `/templates/` routes pass `noindex` explicitly and stay noindex after launch). Launch = set it false, rebuild, and pass `npm run validate:launch`, which FAILS while any non-template page is noindex or `/robots.txt`/`/sitemap.xml` is missing. Added 2026-08-28 after a build pasted noindex into 54 separate page files with no rule mandating it and no stage removing it — the site could have launched invisible and nothing would have caught it.
 - Navigation, footers, forms, CTAs, and schema are controlled through shared data/config/components, never one-off hard-coded markup.
+- No external UI component kits (owner decision 2026-09-09): Tailwind UI, shadcn, Flowbite, DaisyUI, and similar are not used, imported, or proposed. The starter's own components ARE the design system; styling is Tailwind utilities + the client token file only. A need the starter cannot express becomes a new registry variant, built in-house. External kits may be looked at for inspiration when designing a new variant, never imported.
 
 ## 18. Image Optimization Contract
 
