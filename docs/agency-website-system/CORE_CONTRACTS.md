@@ -172,11 +172,7 @@ Behavior:
 - Subtle attention treatment (pulse dot, glow, shadow lift, or slide-up) that respects `prefers-reduced-motion`.
 - Safe-area inset padding, minimum 44px tap target, high contrast, and enough bottom page padding that the bar never covers content, forms, footer interactions, cookie banners, or chat widgets.
 
-Astro implementation:
-
-- Shared `StickyMobileCTA.astro` (or equivalent starter component), mounted from the shared layout/shell so all page types inherit it — never a one-off page element.
-- Mark the first hero with `[data-page-hero]` and the CTA with `[data-mobile-sticky-cta]` (or documented equivalents) so QA has stable selectors.
-- Toggle an `is-visible` class after the hero threshold is passed.
+Implemented by `StickyMobileCTA.astro`, mounted from `BaseLayout` so every page inherits it; selectors `[data-page-hero]` and `[data-mobile-sticky-cta]` are stable for QA. Do not re-implement per page.
 
 ## 11. Shared Request-Service Form Contract
 
@@ -206,13 +202,9 @@ Structure:
 - Precedence (owner decision 2026-08-28): a page never carries two process narratives. When a page's approved copy already includes its own process section — most parent-hub master briefs require an in-article process H2 — the shared post-body process section is OMITTED on that page and its post-body order becomes **reviews → service area**. The Design Recipe records this per build (`post_body_sections.process: auto`), and `npm run validate:built` fails any built page that renders two.
 - Post-body sections must be the SAME sections the homepage renders, from the same shared client data — not re-specified per page (owner decision 2026-08-25). In particular: the process section uses the client's one chosen process variant with identical content on every page, and the service-area module (counties → city hubs → city-service links) appears on inner pages directly below reviews. Passing per-page copy to these sections is how two pages drift out of sync; keep their content in shared site data so every page inherits one source.
 
-Sticky sidebar implementation:
+Sticky sidebar mechanics (sticky on the `aside`, no inner scroll, `overflow-x: clip` on ancestors, static below the article on mobile) are implemented in `InnerPageTemplate.astro` and `global.css`. Do not re-implement.
 
-- Apply `position: sticky` directly to the sidebar `aside`/right-column element, with an offset below the sticky header, `display: grid`, and standard card gaps.
-- Do not put sticky behavior on a nested wrapper without a proven browser/layout reason. No internally scrollable sidebar, no sidebar scrollbar, no viewport-height overflow cap. The page scrolls; the column sticks and releases naturally.
-- Avoid ancestor overflow rules that break sticky positioning: use `overflow-x: clip`, not `overflow-x: hidden`, on root/page wrappers.
-
-Capped sidebar navigation:
+Capped sidebar navigation (`SidebarNav.astro` enforces the caps):
 
 - Never render a full uncapped sibling list.
 - Always include the parent hub (or `View all [Parent Service] services` link) and the current page, highlighted.
@@ -237,8 +229,7 @@ Capped sidebar navigation:
 ## 15. Service-Area Module Contract
 
 - Use a real, scalable map provider — typically Leaflet/OpenStreetMap — unless another provider is approved. Never ship a fake decorative map in production.
-- Map loading: load without blocking initial render, but do not rely only on scroll/IntersectionObserver triggers. Include a `load`/`DOMContentLoaded` fallback that initializes the map automatically so users never see a permanent placeholder. (This supersedes any older "load only when near viewport" rule.)
-- Map stacking: the map container must create its own stacking context (`isolation: isolate`). Leaflet's panes use `z-index: 400` and its controls `1000`, and its container creates no stacking context — so without isolation the map paints over the sticky site header while scrolling. Applies to any embedded map, widget, or third-party embed that sets internal z-indexes.
+- Map loading and stacking are implemented in `ServiceAreaMap.astro` / `RegionalServiceExplorer.astro`: non-blocking near-viewport load with a mandatory ~2.5s auto-init fallback (never IntersectionObserver-only — a permanent placeholder is a defect), and `isolation: isolate` on the container so Leaflet's panes never paint over the sticky header. Do not re-implement.
 - The section is an internal-link module, not just a visual: default hierarchy is county/state selector → city hub link → expandable city-service links. The city name links to the city hub; a separate expander reveals that city's approved city-service pages.
 - Do not duplicate cities as decorative pills when the accordion/list already exposes them.
 - For large city/city-service builds: stacked layout — intro copy above, map/explorer below, county/city lists inside or below the explorer with controlled height. Never place a short copy column beside a very tall accordion.
@@ -252,8 +243,7 @@ Capped sidebar navigation:
 - When a review widget snippet, app ID, embed source, or approved review source exists, the build must render a real dedicated review section from that source. A reserved review module is valid only while the source is missing, and must be replaced before launch.
 - Homepage review widgets use a stacked layout: intro copy above, real widget full row width below. No default split-column review layouts.
 - Inner pages: sidebar review widgets belong in the sidebar; homepage/full-width widget snippets belong in large review sections. If separate snippets/app IDs are provided per placement, preserve that mapping exactly. When the real widget is too heavy for the sidebar, use a compact proof card linking to the full-width section — never present the card as the widget itself.
-- Review sections must pass phone-width overflow QA: constrain section, copy panel, widget wrapper, and iframe/embed containers with `min-width: 0`, `max-width: 100%`, safe wrapping, and overflow containment.
-- Elfsight-style widgets: async platform script plus lazy app container (or equivalent non-render-blocking strategy).
+- Phone-width overflow containment and non-render-blocking widget loading are implemented in `ReviewSection.astro`; widget IDs per placement come from `site.reviews`.
 - Review section copy is customer-facing only (see §7). No fake reviews, ratings, badges, or claims (see §6).
 
 ## 17. Astro-First Production Contract
@@ -277,7 +267,7 @@ Capped sidebar navigation:
 - Right-sized AVIF/WebP variants per role (logo, badge, thumbnail, gallery, hero, service card) — not one universal max size.
 - Every rendered `img` in final output has explicit `width` and `height`.
 - Never reference raw `.png`/`.jpg` client uploads in production pages without a documented exception.
-- Starters provide `npm run optimize:images` and `npm run validate:images`; image validation is part of standard pre-deploy QA. The validator fails builds for oversized/unoptimized images, missing dimensions, missing useful alt text, lazy-loaded LCP images, stale/raw image URLs, or workflow bypasses.
+- Enforced by `npm run validate:built` on the built HTML: every `img` has width/height and alt (or is marked decorative), no raw `.jpg`/`.png`/`.gif` outside the optimized `/_astro/` output (agency assets under `/logos/` excepted), and no lazy-loaded image inside the hero or marked `fetchpriority="high"`. `HeroImage`, `OptimizedImage`, and `GalleryImage` produce compliant output by construction.
 
 ## 19. Third-Party Loading Contract
 
