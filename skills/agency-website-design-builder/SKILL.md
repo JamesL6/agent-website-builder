@@ -40,6 +40,34 @@ Use the most specific approved source first:
 
 Do not invent claims, badges, ratings, certifications, locations, response times, review counts, or services through design.
 
+## Living Wireframes — Reference Implementations (look before you design)
+
+The wireframe is code, not this document. Every pattern described below already exists as a
+starter component, and the approval surfaces are `noindex` preview routes that render those
+components with realistic service-shaped placeholder data (§17). Before writing any brief, run
+the starter (`npm run dev` inside the canonical checkout's `starter/`) and LOOK at the relevant
+route. A brief specifies which variant, tokens, copy, and photography fill these templates —
+never a new layout. If a client genuinely needs something these cannot express, propose a new
+variant for the registry (`design-recipe.yaml` → BUILT/PLANNED) instead of briefing a one-off.
+
+| Page type / pattern | Reference implementation (under `starter/src/`) | Preview route |
+|---|---|---|
+| Homepage (`emergency_split_hero`) | `pages/index.astro` composition | `/templates/homepage/` |
+| Service, child, and city hub pages | `components/templates/InnerPageTemplate.astro` | `/templates/inner-page/` |
+| City-service pages (generated) | `components/templates/CityServicePage.astro` via `pages/[citySlug].astro` | build output only |
+| Contact page (§13) | `components/templates/ContactPageTemplate.astro` | `/templates/contact-page/` |
+| Services grid + differentiator | `ServiceGrid.astro`, `DifferentiatorVS.astro` | `/templates/sections-a/` |
+| Process + reviews | `ProcessSection.astro`, `ReviewSection.astro` | `/templates/sections-b/` |
+| Service-area map + FAQ | `ServiceAreaMap.astro`, `FAQSection.astro` | `/templates/sections-c/` |
+| Footer (three bands, tap-to-call first) | `SiteFooter.astro` | `/templates/sections-d/` |
+| Alternate variants: icon cards, stepper, regional explorer | `ServiceGridIcons`, `ProcessStepper`, `RegionalServiceExplorer` | `/templates/variants-b1/`, `/templates/variants-b2/` |
+| Mobile sticky CTA (§10) | `StickyMobileCTA.astro` | `/templates/sticky-cta-options/` |
+| Grouped mega-menu header | `MegaMenuHeader.astro` | `/templates/mega-menu/` |
+
+Canonical checkout: `/Users/jameslarosa/Documents/agent-website-builder`. Verify a route actually
+renders before citing it in a brief (some newer surfaces may not be committed yet); the variant
+registry in `agency-astro-site-builder` is the authority on which enums are BUILT.
+
 ## Homepage Messaging Pack Gate
 
 The exact customer-facing homepage copy — H1, subhead, CTA labels, trust bullets, section headings, final CTA, footer summary — must be locked in an **approved** Homepage Messaging Pack before homepage design work starts. This is what stops the design step from inventing positioning while it arranges the UI.
