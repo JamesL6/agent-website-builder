@@ -17,6 +17,12 @@ if (!existsSync(index)) {
   process.exit(1);
 }
 
+// Production origin comes from the sitemap the build just emitted (astro.config `site`,
+// which reads site.siteUrl) — never hardcoded here, so it cannot drift per client.
+const ORIGIN =
+  readFileSync(index, 'utf8').match(/<loc>(https?:\/\/[^/<]+)/)?.[1] ??
+  process.env.SITE_URL ?? 'https://example.com';
+
 // §21: /sitemap.xml is a real XML file containing the sitemap index.
 writeFileSync(join(dist, 'sitemap.xml'), readFileSync(index));
 
@@ -34,8 +40,8 @@ writeFileSync(
   join(dist, 'robots.txt'),
   preview
     ? `# PRE-LAUNCH. site.previewMode is true, so every page is noindex,nofollow.\n` +
-      `# Flip site.previewMode to false to launch; this file regenerates on the next build.\nUser-agent: *\nDisallow: /\n\nSitemap: https://superiorrestorationems.com/sitemap.xml\n`
-    : `User-agent: *\nAllow: /\n\nSitemap: https://superiorrestorationems.com/sitemap.xml\n`,
+      `# Flip site.previewMode to false to launch; this file regenerates on the next build.\nUser-agent: *\nDisallow: /\n\nSitemap: ${ORIGIN}/sitemap.xml\n`
+    : `User-agent: *\nAllow: /\n\nSitemap: ${ORIGIN}/sitemap.xml\n`,
 );
 
 console.log(

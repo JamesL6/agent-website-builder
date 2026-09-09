@@ -1,0 +1,19 @@
+---
+/** City-service CATEGORY page: /{city}-{state}/{hub}/ — generated for every approved city. */
+import CityServicePage from '../../components/templates/CityServicePage.astro';
+import { cities } from '../../data/cities';
+import { cityServiceContent } from '../../data/cityServiceContent';
+import { site } from '../../data/site';
+
+export function getStaticPaths() {
+  const hubs = cityServiceContent.filter((c) => !c.child);
+  return cities.flatMap((city) =>
+    hubs.map((content) => ({
+      params: { citySlug: `${city.slug}-${site.stateAbbr.toLowerCase()}`, hub: content.hub },
+      props: { city, content },
+    })),
+  );
+}
+const { city, content } = Astro.props;
+---
+<CityServicePage city={city} content={content} />

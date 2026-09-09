@@ -8,6 +8,11 @@ import { site } from '../data/site';
 
 interface Props {
   /**
+   * Which mount this is (hero, sidebar, contact page…). Sent to the lead router as
+   * `form_location` so you can see WHICH form on a 1,700-page site converted.
+   */
+  formLocation?: string;
+  /**
    * Unique prefix for field ids when the shared panel renders more than once on
    * a page (hero + footer). Duplicate ids break label targeting — every second
    * mount MUST pass its own prefix.
@@ -15,7 +20,11 @@ interface Props {
   idPrefix?: string;
 }
 
-const { idPrefix = 'rs' } = Astro.props;
+const { idPrefix = 'rs', formLocation = 'sidebar' } = Astro.props;
+
+const router = site.leadRouter;
+/** Never post to a placeholder endpoint — an unconfigured router must fail loudly, not swallow leads. */
+const routerReady = Boolean(router.submitUrl && router.clientId);
 ---
 
 <div class="overflow-hidden rounded-md bg-white text-ink shadow-xl">
@@ -25,6 +34,8 @@ const { idPrefix = 'rs' } = Astro.props;
   </div>
 
   <div class="space-y-4 p-6">
+    {/* The router redirects non-JSON submissions back to page_url with ?form_status=… */}
+    <div data-form-status hidden class="rounded-sm border-l-4 px-4 py-3 text-sm leading-snug"></div>
     <p class="rounded-sm border-l-4 border-accent bg-surface px-4 py-3 text-sm leading-snug">
       <strong>{site.form.emergencyNoticeLead}</strong>
       {' '}Call{' '}
@@ -32,7 +43,38 @@ const { idPrefix = 'rs' } = Astro.props;
       {' '}now for immediate assistance.
     </p>
 
-    <form class="space-y-4" method="post" action="#" aria-labelledby={`${idPrefix}-title`}>
+    {!routerReady && (
+      <p class="rounded-sm border-l-4 border-amber-500 bg-amber-50 px-4 py-3 text-sm leading-snug text-amber-900">
+        <strong>Form routing not configured.</strong> Set <code>site.leadRouter</code> before launch
+        (B-08). Submissions are disabled rather than silently discarded.
+      </p>
+    )}
+
+    <form
+      class="space-y-4"
+      method="post"
+      action={routerReady ? router.submitUrl : undefined}
+      data-lead-form
+      aria-labelledby={`${idPrefix}-title`}
+    >
+      {/* Router contract — required on every submission. */}
+      <input type="hidden" name="client_id" value={router.clientId} />
+      <input type="hidden" name="site_id" value={router.siteId} />
+      <input type="hidden" name="form_type" value="request_service" />
+      <input type="hidden" name="service_type" value="General Restoration" />
+      <input type="hidden" name="form_location" value={formLocation} />
+      <input type="hidden" name="page_url" data-page-url value="" />
+      <input type="hidden" name="idempotency_key" data-idempotency value="" />
+      {/* Attribution — populated from the landing URL, persisted for the session. */}
+      <input type="hidden" name="utm_source" data-utm="utm_source" value="" />
+      <input type="hidden" name="utm_medium" data-utm="utm_medium" value="" />
+      <input type="hidden" name="utm_campaign" data-utm="utm_campaign" value="" />
+      <input type="hidden" name="gclid" data-utm="gclid" value="" />
+      <input type="hidden" name="fbclid" data-utm="fbclid" value="" />
+      {/* Honeypot — the router treats a filled `company_website` as spam and silently drops it. */}
+      <div class="absolute left-[-9999px] h-0 w-0 overflow-hidden" aria-hidden="true">
+        <label>Company website<input type="text" name="company_website" tabindex="-1" autocomplete="off" /></label>
+      </div>
       <div>
         <label for={`${idPrefix}-name`} class="mb-1 block text-xs font-bold uppercase tracking-wide text-ink-muted">Name *</label>
         <input id={`${idPrefix}-name`} name="name" type="text" required autocomplete="name" placeholder="Your name"
@@ -54,8 +96,8 @@ const { idPrefix = 'rs' } = Astro.props;
 
       <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <div>
-          <label for={`${idPrefix}-service`} class="mb-1 block text-xs font-bold uppercase tracking-wide text-ink-muted">Service needed *</label>
-          <select id={`${idPrefix}-service`} name="service" required
+          <label for={`${idPrefix}-damage`} class="mb-1 block text-xs font-bold uppercase tracking-wide text-ink-muted">Service needed *</label>
+          <select id={`${idPrefix}-damage`} name="damage_type" required
             class="w-full rounded-sm border border-border bg-white min-h-11 px-3 py-2.5 text-sm outline-none transition focus:border-accent">
             <option value="" selected disabled>Select a service…</option>
             {site.services.map((s) => <option value={s.id}>{s.label}</option>)}
@@ -75,10 +117,88 @@ const { idPrefix = 'rs' } = Astro.props;
           class="w-full rounded-sm border border-border min-h-11 px-3 py-2.5 text-sm outline-none transition focus:border-accent"></textarea>
       </div>
 
-      <button type="submit"
-        class="w-full rounded-md bg-accent py-3.5 font-bold text-white shadow-md transition hover:bg-accent-hover">
+      {router.turnstileSiteKey && (
+        <div class="cf-turnstile" data-sitekey={router.turnstileSiteKey} data-theme="light" data-size="flexible"></div>
+      )}
+
+      <button type="submit" disabled={!routerReady}
+        class="w-full rounded-md bg-accent py-3.5 font-bold text-white shadow-md transition hover:bg-accent-hover disabled:cursor-not-allowed disabled:opacity-50">
         Send Service Request →
       </button>
     </form>
   </div>
 </div>
+
+<script>
+  /**
+   * Lead-form wiring for the Cloudflare lead router.
+   *
+   * The router REQUIRES `page_url` and a unique `idempotency_key`, and it verifies Turnstile —
+   * so this form already depends on JavaScript. Generating the key here is therefore safe.
+   * Attribution is read from the landing URL and kept in sessionStorage so a lead submitted three
+   * pages later still carries the campaign that brought them in.
+   *
+   * The visible City/ZIP field is folded into `message`: the router's lead schema has no city
+   * column, and dropping what the visitor typed would lose real qualifying information.
+   */
+  (() => {
+    const KEYS = ['utm_source', 'utm_medium', 'utm_campaign', 'gclid', 'fbclid'];
+    const params = new URLSearchParams(location.search);
+
+    // Persist first-touch attribution for the session.
+    for (const k of KEYS) {
+      const v = params.get(k);
+      if (v && !sessionStorage.getItem(`attr:${k}`)) {
+        try { sessionStorage.setItem(`attr:${k}`, v); } catch { /* private mode */ }
+      }
+    }
+
+    // Surface the router's redirect-back result, then clean the URL.
+    const status = params.get('form_status');
+    if (status) {
+      const ok = status === 'success';
+      for (const el of document.querySelectorAll<HTMLElement>('[data-form-status]')) {
+        el.hidden = false;
+        el.className =
+          'rounded-sm border-l-4 px-4 py-3 text-sm leading-snug ' +
+          (ok ? 'border-green-600 bg-green-50 text-green-900' : 'border-amber-500 bg-amber-50 text-amber-900');
+        el.textContent = ok
+          ? 'Thank you — your request is in. We will be in touch shortly. If this is urgent, please call.'
+          : 'Something went wrong sending that. Please try again, or call us directly.';
+      }
+      params.delete('form_status');
+      params.delete('form_location');
+      const q = params.toString();
+      history.replaceState({}, '', location.pathname + (q ? `?${q}` : ''));
+    }
+
+    for (const form of document.querySelectorAll<HTMLFormElement>('form[data-lead-form]')) {
+      const set = (sel: string, value: string) => {
+        const el = form.querySelector<HTMLInputElement>(sel);
+        if (el) el.value = value;
+      };
+      set('[data-page-url]', location.href.split('?')[0]);
+      for (const k of KEYS) {
+        const v = params.get(k) || sessionStorage.getItem(`attr:${k}`) || '';
+        set(`[data-utm="${k}"]`, v);
+      }
+
+      form.addEventListener('submit', () => {
+        // Fresh key per attempt so a genuine resubmit is not swallowed as a duplicate.
+        const id = form.querySelector<HTMLInputElement>('[data-idempotency]');
+        if (id) {
+          id.value =
+            typeof crypto !== 'undefined' && crypto.randomUUID
+              ? crypto.randomUUID()
+              : `${Date.now()}-${Math.random().toString(36).slice(2)}`;
+        }
+        // Fold City/ZIP into the message — the router has no city field.
+        const city = form.querySelector<HTMLInputElement>('[name="city"]');
+        const message = form.querySelector<HTMLTextAreaElement>('[name="message"]');
+        if (city && city.value.trim() && message && !message.value.includes('City/ZIP:')) {
+          message.value = `City/ZIP: ${city.value.trim()}\n\n${message.value}`.trim();
+        }
+      });
+    }
+  })();
+</script>

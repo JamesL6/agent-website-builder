@@ -54,7 +54,8 @@ variant for the registry (`design-recipe.yaml` → BUILT/PLANNED) instead of bri
 |---|---|---|
 | Homepage (`emergency_split_hero`) | `pages/index.astro` composition | `/templates/homepage/` |
 | Service, child, and city hub pages | `components/templates/InnerPageTemplate.astro` | `/templates/inner-page/` |
-| City-service pages (generated) | `components/templates/CityServicePage.astro` via `pages/[citySlug].astro` | build output only |
+| City hub pages (generated) | `pages/[citySlug].astro` — copy from `data/cities.ts` `cityHubCopy` | build output only |
+| City-service pages (generated) | `components/templates/CityServicePage.astro` via `pages/[citySlug]/[hub].astro` — content from `data/cityServiceContent.ts` | `/templates/city-service/` |
 | Contact page (§13) | `components/templates/ContactPageTemplate.astro` | `/templates/contact-page/` |
 | Services grid + differentiator | `ServiceGrid.astro`, `DifferentiatorVS.astro` | `/templates/sections-a/` |
 | Process + reviews | `ProcessSection.astro`, `ReviewSection.astro` | `/templates/sections-b/` |
@@ -64,8 +65,8 @@ variant for the registry (`design-recipe.yaml` → BUILT/PLANNED) instead of bri
 | Mobile sticky CTA (§10) | `StickyMobileCTA.astro` | `/templates/sticky-cta-options/` |
 | Grouped mega-menu header | `MegaMenuHeader.astro` | `/templates/mega-menu/` |
 
-Canonical checkout: `/Users/jameslarosa/Documents/agent-website-builder`. Verify a route actually
-renders before citing it in a brief (some newer surfaces may not be committed yet); the variant
+Canonical checkout: `/Users/jameslarosa/Documents/agent-website-builder`. The starter's root
+(`/`) is a directory of these routes. Verify a route renders before citing it in a brief; the variant
 registry in `agency-astro-site-builder` is the authority on which enums are BUILT.
 
 ## Homepage Messaging Pack Gate

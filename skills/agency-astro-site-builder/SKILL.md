@@ -49,9 +49,12 @@ back to the Stage 4 copy sprint and keep building the pages whose approved copy 
 
 ### 1. Create the client project
 Copy `starter/` to the client's own project/repo (e.g. `coastal-restoration-website`).
-Exclude `node_modules`, `dist`, `.astro`. Remove the starter's demo pages
-(`demo-client-b.astro`) but KEEP the `/templates/` preview routes (they are noindex approval
-surfaces). Run `npm install`; verify `npm run build` passes before changing anything.
+Exclude `node_modules`, `dist`, `.astro`. The starter's `src/pages/index.astro` is a
+noindex DIRECTORY of the `/templates/` preview routes, not a homepage — replace it with the real
+homepage in step 4. KEEP the `/templates/` preview routes (noindex approval surfaces). The
+starter ships with `site.previewMode: true`, empty `cities`/`cityServiceContent`/`footerAreaLinks`,
+and empty tracking/review/router IDs — every one of those is filled from the verified intake,
+approved page map, and Copy Sprint artifacts, never invented. Run `npm install`; verify `npm run build` passes before changing anything.
 
 ### 2. Apply the theme — one file only
 Paste the recipe's approved brand tokens into `src/styles/theme.css`. This is the ONLY file

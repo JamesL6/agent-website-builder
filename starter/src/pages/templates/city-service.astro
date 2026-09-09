@@ -1,0 +1,36 @@
+---
+/**
+ * Template preview route (§17): the generated city-service page (CityServicePage.astro) rendered
+ * with one inline example city + content entry, so the layout can be approved before a client's
+ * real cities and Copy Sprint content exist. noindex, excluded from nav/sitemaps.
+ */
+import CityServicePage from '../../components/templates/CityServicePage.astro';
+import type { City } from '../../data/cities';
+import type { CityServiceContent } from '../../data/cityServiceContent';
+
+const city: City = { slug: 'example-city', name: 'Example City', county: 'Example', zone: 'home', near: [] };
+const content: CityServiceContent = {
+  hub: 'water-damage-restoration',
+  child: 'water-extraction',
+  name: 'Water Extraction',
+  h1: 'Water Extraction in {city}, ST',
+  heroIntro: 'Standing water removed fast, then dried and verified — for {city} homes and businesses.',
+  metaDescription: 'Water extraction in {city}: pumps, extractors, moisture readings, and documentation from the first visit.',
+  openingH2: 'Water Extraction for {city} Properties',
+  opening: [
+    'Standing water keeps soaking into subfloor, drywall, and framing until it is removed. We extract first, then dry, then verify with moisture readings — and we document each step for your records.',
+    '{zone}',
+  ],
+  sections: [
+    { h2: 'What Extraction Involves', body: ['Truck-mounted or portable extraction depending on access, followed by removal of materials that cannot be dried in place.'],
+      subsections: [{ h3: 'Category of Water', body: ['Clean, grey, or black water changes what can be saved. We tell you which you have and why.'] }] },
+    { h2: 'Drying and Verification', body: ['Air movers and dehumidifiers are placed from moisture readings, not guesswork, and readings are logged across the drying period.'] },
+  ],
+  faqs: [
+    { q: 'How fast should water be extracted?', a: 'As soon as it is safe. Materials absorb water continuously, so every hour matters.' },
+    { q: 'Do you serve all of {county} County?', a: 'We serve every approved city in our service area, including {city}.' },
+  ],
+  closing: 'Call and a real person answers. We will tell you honestly what to expect on arrival.',
+};
+---
+<CityServicePage city={city} content={content} noindex />

@@ -12,6 +12,9 @@
 
   /* Secondary brand color */
   --color-brand-2: #1b5e8a;
+  /* AA-safe variant of brand-2 for links/small UI on light surfaces.
+     Some logo colors fail WCAG AA as text — this slot keeps the hue and passes. */
+  --color-brand-2-text: #1b5e8a;
 
   /* Dark scale — tint toward brand temperature, never flat black */
   --color-dark: #0c0f14;

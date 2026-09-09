@@ -16,6 +16,7 @@
  * one weakens the rest). NAP cards must match approved GBP data exactly (§13).
  */
 import { site } from '../data/site';
+import { telHref } from '../utils/phone';
 import RequestServicePanel from './RequestServicePanel.astro';
 
 interface FooterLink {
@@ -173,7 +174,7 @@ const year = new Date().getFullYear();
               <div class="rounded-md border border-dark-3 bg-dark p-5">
                 <p class="font-display text-lg font-bold">{loc.name}</p>
                 <p class="mt-1 text-sm leading-relaxed text-on-dark/65">{loc.address}</p>
-                <a href={`tel:${loc.phone.replace(/[^+\d]/g, '')}`} class="mt-2 inline-block text-sm font-bold text-accent-bright">
+                <a href={telHref(loc.phone)} class="mt-2 inline-block text-sm font-bold text-accent-bright">
                   {loc.phone}
                 </a>
               </div>

@@ -1,0 +1,241 @@
+---
+/**
+ * Shared renderer for all 1,600 city-service pages.
+ * Interpolates {city} {county} {near} {zone} into the service content entry, then renders
+ * through InnerPageTemplate so these pages get the same layout, sidebar and post-body
+ * sections as every other inner page (§12).
+ */
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import InnerPageTemplate from './InnerPageTemplate.astro';
+import InlineCTA from '../InlineCTA.astro';
+import ReviewSection from '../ReviewSection.astro';
+import ServiceAreaMap from '../ServiceAreaMap.astro';
+import FAQSection from '../FAQSection.astro';
+import { Image } from 'astro:assets';
+import logo from '../../assets/brand/logo.png';
+import { site } from '../../data/site';
+import { cities, zoneCopy, type City } from '../../data/cities';
+import type { CityServiceContent } from '../../data/cityServiceContent';
+
+interface Props { city: City; content: CityServiceContent; /** template preview routes only (§17) */ noindex?: boolean }
+const { city, content, noindex = false } = Astro.props;
+const ST = site.stateAbbr;
+const st = ST.toLowerCase();
+
+const nearby = city.near.map((n) => cities.find((c) => c.name === n)).filter(Boolean) as City[];
+const vars: Record<string, string> = {
+  city: city.name,
+  county: city.county,
+  near: nearby.slice(0, 3).map((n) => n.name).join(', ') || city.county + ' County',
+  zone: zoneCopy[city.zone],
+};
+/**
+ * Token interpolation. The indefinite article in front of {city} has to agree with the city
+ * that lands there: 8 of the 50 cities start with a vowel (Allen, Anna, Irving, Addison,
+ * Argyle, Aubrey, Arlington, Euless), so a hand-written "a {city} property" renders as
+ * "a Irving property" on 208 pages. Corrected here rather than in the 47 source strings,
+ * so entries written later cannot reintroduce it.
+ */
+const cityVowel = /^[AEIOU]/.test(city.name);
+const t = (s: string) =>
+  s
+    .replace(/\ba \{city\}/g, `${cityVowel ? 'an' : 'a'} {city}`)
+    .replace(/\bA \{city\}/g, `${cityVowel ? 'An' : 'A'} {city}`)
+    .replace(/\{(city|county|near|zone)\}/g, (_, k) => vars[k]);
+
+const selfUrl = content.child
+  ? `/${city.slug}-${st}/${content.hub}/${content.child}/`
+  : `/${city.slug}-${st}/${content.hub}/`;
+
+/**
+ * Sibling services in the same category, in this same city.
+ *
+ * The window ROTATES by this page's own position in the category. A fixed `.slice(0, 7)`
+ * surfaced the same seven siblings from every page, so in the 16-page water category five
+ * services collected 16 inbound links each while eight collected exactly one — 400 pages
+ * reachable only from their city hub. Rotating spreads inbound links evenly across the
+ * category while staying deterministic, so the build is reproducible.
+ */
+const inHub = (await import('../../data/cityServiceContent')).cityServiceContent.filter(
+  (c) => c.hub === content.hub,
+);
+const selfIdx = Math.max(
+  inHub.findIndex((c) => c.child === content.child),
+  0,
+);
+const others = inHub.filter((c) => c.child !== content.child);
+const siblings = others
+  .map((_, k) => others[(selfIdx + k) % others.length])
+  .slice(0, Math.min(7, others.length))
+  .map((c) => ({
+    label: `${c.name} in ${city.name}`,
+    url: c.child ? `/${city.slug}-${st}/${c.hub}/${c.child}/` : `/${city.slug}-${st}/${c.hub}/`,
+  }));
+
+/**
+ * Page chrome speaks in the voice of its category, not one house emergency voice.
+ * The approved static hub pages already set three registers: /biohazard-cleanup/ is
+ * confidential and deliberately carries NO testimonials, /remodeling/ is consultative,
+ * the restoration hubs are emergency. These 1,600 generated pages must not contradict
+ * them, so the strings below are lifted from those approved pages rather than invented.
+ * Two build agents independently flagged the old single-voice chrome: it put "Book trauma
+ * cleanup" and "answering 24/7" on sensitive and planned-purchase pages.
+ */
+const svc = content.name.toLowerCase();
+type CtaVoice = { eyebrow?: string; heading: string; support: string };
+type Voice = {
+  phoneLabel: string;
+  secondaryLabel: string;
+  openCta: CtaVoice;
+  closeHeading: string;
+  closeCta: CtaVoice;
+  faqSupport: string;
+  showReviews: boolean;
+};
+const VOICES: Record<'sensitive' | 'planned' | 'emergency', Voice> = {
+  sensitive: {
+    phoneLabel: 'Call',
+    secondaryLabel: 'Request a callback',
+    openCta: {
+      eyebrow: 'Confidential',
+      heading: 'Call for a confidential conversation',
+      support: 'Speak to a person, not a script. We will explain what the work involves and what happens next, with no pressure to book.',
+    },
+    closeHeading: `Arranging ${content.name} in ${city.name}, ${ST}`,
+    closeCta: {
+      eyebrow: 'Private and discreet',
+      heading: 'Request discreet help',
+      support: 'Call to speak to someone directly, or send the form and we will respond privately within one business day.',
+    },
+    faqSupport: 'Call any time for a confidential conversation.',
+    /** Owner decision 2026-09-08: reviews DO render on biohazard pages, same as every other
+     *  service page. This reverses the earlier tonal judgement in D-51. */
+    showReviews: true,
+  },
+  planned: {
+    phoneLabel: 'Call',
+    secondaryLabel: 'Request a consultation',
+    openCta: {
+      eyebrow: 'Free on-site estimate',
+      heading: 'Planning a project?',
+      support: "Send us the details and we'll arrange a consultation. No pressure, and the on-site estimate is free.",
+    },
+    closeHeading: `Book a ${content.name} Consultation in ${city.name}, ${ST}`,
+    closeCta: {
+      eyebrow: 'No obligation',
+      heading: `Book a ${svc} consultation in ${city.name}`,
+      support: "Send the form with a few details and we'll be in touch within one business day to arrange a visit.",
+    },
+    faqSupport: 'Questions before you commit to anything? Just ask.',
+    showReviews: true,
+  },
+  emergency: {
+    phoneLabel: 'Call Now',
+    secondaryLabel: 'Request Service',
+    openCta: {
+      heading: `Need ${svc} in ${city.name}?`,
+      support: "Call and a real person answers. Free on-site estimate, and we'll tell you honestly what it involves.",
+    },
+    closeHeading: `Get ${content.name} in ${city.name}, ${ST}`,
+    closeCta: {
+      heading: `Book ${svc} in ${city.name}`,
+      support: "Call to speak to someone now, or send the form and we'll respond within one business day.",
+    },
+    faqSupport: "Still have questions? We're answering 24/7.",
+    showReviews: true,
+  },
+};
+const voice =
+  content.hub === 'biohazard-cleanup' ? VOICES.sensitive
+  : content.hub === 'remodeling' ? VOICES.planned
+  : VOICES.emergency;
+---
+
+<BaseLayout
+  title={`${t(content.h1)} | ${site.name}`}
+  description={t(content.metaDescription)}
+  header="mega_menu_grouped_services"
+  noindex={noindex}
+  schema={{
+    service: { name: `${content.name} in ${city.name}, ${ST}`, serviceType: content.name },
+    areaServedCity: city.name,
+    breadcrumbs: [
+      { name: 'Home', url: '/' },
+      { name: `${city.name}, ${ST}`, url: `/${city.slug}-${st}/` },
+      { name: content.name, url: selfUrl },
+    ],
+  }}
+>
+  <Image slot="logo" src={logo} alt={site.name} class="h-9 w-auto md:h-11" loading="eager" />
+
+  <InnerPageTemplate
+    heroEyebrow={`${content.name} · ${city.name}, ${ST}`}
+    h1={t(content.h1)}
+    heroIntro={t(content.heroIntro)}
+    parentHub={{ label: `All services in ${city.name}`, url: `/${city.slug}-${st}/` }}
+    current={{ label: `${content.name} in ${city.name}`, url: selfUrl }}
+    relatedNav={siblings}
+    coreHubs={[
+      { label: 'Water Damage Restoration', url: '/water-damage-restoration/' },
+      { label: 'Fire Damage Restoration', url: '/fire-damage-restoration/' },
+      { label: 'Mold Remediation', url: '/mold-remediation/' },
+      { label: 'Biohazard Cleanup', url: '/biohazard-cleanup/' },
+      { label: 'Remodeling', url: '/remodeling/' },
+    ]}
+  >
+    <h2>{t(content.openingH2)}</h2>
+    {content.opening.map((p) => <p set:html={t(p)} />)}
+
+    <InlineCTA phoneLabel={voice.phoneLabel} eyebrow={voice.openCta.eyebrow} heading={voice.openCta.heading} support={voice.openCta.support} secondaryLabel={voice.secondaryLabel} />
+
+    {content.sections.map((s) => (
+      <>
+        <h2>{t(s.h2)}</h2>
+        {s.body.map((p) => <p set:html={t(p)} />)}
+        {s.subsections?.map((ss) => (
+          <>
+            <h3>{t(ss.h3)}</h3>
+            {ss.body.map((p) => <p set:html={t(p)} />)}
+          </>
+        ))}
+      </>
+    ))}
+
+    <h2>{`Also Serving Areas Near ${city.name}`}</h2>
+    <p>
+      Our {city.name} crews also cover {nearby.map((n) => n.name).join(', ')}. If your property sits
+      between two of these, call and we will tell you straight whether we can reach you.
+    </p>
+
+    <h2>{voice.closeHeading}</h2>
+    <p set:html={t(content.closing)} />
+
+    <InlineCTA phoneLabel={voice.phoneLabel} eyebrow={voice.closeCta.eyebrow} heading={voice.closeCta.heading} support={voice.closeCta.support} secondaryLabel={voice.secondaryLabel} />
+  </InnerPageTemplate>
+
+  {voice.showReviews && (
+    <ReviewSection
+      eyebrow="What our customers say"
+      heading="What our customers say"
+      intro="Most of our work comes from referrals and repeat customers. Here's what they've said about working with us."
+    />
+  )}
+  <ServiceAreaMap {...site.serviceArea} mapCaption={site.serviceArea.caption} />
+
+  <FAQSection
+    eyebrow="Common questions"
+    heading={`${content.name} in ${city.name} — Common Questions`}
+    support={voice.faqSupport}
+    faqs={content.faqs.map((f) => ({ question: t(f.q), answer: t(f.a) }))}
+  />
+</BaseLayout>
+
+<style is:global>
+  :root {
+    --color-accent: #c8391a; --color-accent-hover: #a52c12; --color-accent-bright: #f2683d;
+    --color-brand-2: #0098d0; --color-brand-2-text: #0079a8;
+    --color-dark: #0a1b2e; --color-dark-2: #102741; --color-dark-3: #1b3a55;
+    --color-surface: #f4f7f9; --color-surface-2: #eaf0f4; --color-border: #d8e2e9;
+    --color-ink: #12222f; --color-ink-muted: #4a5c69; --color-on-dark: #eef4f8;
+  }
+</style>

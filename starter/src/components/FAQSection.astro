@@ -19,6 +19,24 @@ interface Props {
 }
 
 const { eyebrow, heading, support, faqs, id = 'faq' } = Astro.props;
+
+/**
+ * FAQPage JSON-LD is emitted HERE rather than per page, so every page that renders FAQs gets it
+ * automatically and the schema can never drift from the visible copy (§22). Answers are stripped
+ * of markup because schema text must match what the reader sees.
+ */
+const faqPlain = (t: string) => t.replace(/<[^>]+>/g, '').replace(/\s+/g, ' ').trim();
+const faqSchema = faqs?.length
+  ? {
+      '@context': 'https://schema.org',
+      '@type': 'FAQPage',
+      mainEntity: faqs.map((f) => ({
+        '@type': 'Question',
+        name: faqPlain(f.question),
+        acceptedAnswer: { '@type': 'Answer', text: faqPlain(f.answer) },
+      })),
+    }
+  : null;
 ---
 
 <section class="bg-surface py-16 md:py-20" id={id}>
@@ -50,3 +68,4 @@ const { eyebrow, heading, support, faqs, id = 'faq' } = Astro.props;
     </div>
   </div>
 </section>
+{faqSchema && <script type="application/ld+json" set:html={JSON.stringify(faqSchema)} is:inline />}

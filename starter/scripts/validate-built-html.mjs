@@ -15,7 +15,7 @@
  *   2. §7 banned / placeholder language in rendered VISIBLE text (attribute
  *      text like input placeholders is ignored — only what a visitor reads).
  *   3. §15 dead internal links — every internal <a href="/..."> must resolve to
- *      a built route or file in dist/. Added 2026-08-28 after a build shipped
+ *      a built route or file in dist/ (404.html exempt — its links are the shell's). Added 2026-08-28 after a build shipped
  *      mega-menu and service-area links to ~50 city hubs that did not exist yet,
  *      404ing on every page. Never wire nav to routes that are not built.
  *
@@ -132,6 +132,10 @@ for (const filePath of htmlFiles(DIST)) {
       err(file, `§7 banned phrase "${phrase}" in rendered visible text`);
 
   // --- 3. §15 dead internal links (aggregated across pages below) ----------
+  // 404.html is exempt: its links are the site shell's, so any dead one also appears on every
+  // real page and is reported there. In the starter, 404 is the ONLY shelled non-template page,
+  // and the shell's example nav points at page types a client build creates.
+  if (file === '404.html') continue;
   for (const m of html.matchAll(/<a\s[^>]*href="([^"]*)"/g)) {
     const href = m[1];
     if (EXTERNAL.test(href) || !href.startsWith('/')) continue;

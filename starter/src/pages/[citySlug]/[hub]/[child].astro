@@ -1,0 +1,18 @@
+---
+/** City-service page: /{city}-tx/{hub}/{child}/ — generated for every approved city. */
+import CityServicePage from '../../../components/templates/CityServicePage.astro';
+import { cities } from '../../../data/cities';
+import { cityServiceContent } from '../../../data/cityServiceContent';
+
+export function getStaticPaths() {
+  const children = cityServiceContent.filter((c) => c.child);
+  return cities.flatMap((city) =>
+    children.map((content) => ({
+      params: { citySlug: `${city.slug}-tx`, hub: content.hub, child: content.child! },
+      props: { city, content },
+    })),
+  );
+}
+const { city, content } = Astro.props;
+---
+<CityServicePage city={city} content={content} />

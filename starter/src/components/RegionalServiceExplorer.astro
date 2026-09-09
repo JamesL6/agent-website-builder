@@ -7,6 +7,7 @@
  * non-blocking, auto-init on load, never IO-only.
  */
 import 'leaflet/dist/leaflet.css';
+import { site } from '../data/site';
 
 interface CityService {
   label: string;
@@ -33,12 +34,31 @@ interface Props {
   mapZoom?: number;
   polygon?: [number, number][];
   mapCaption?: string;
+  /** Popup text on the service-area boundary. */
+  areaLabel?: string;
   id?: string;
 }
 
-const { eyebrow, heading, intro, counties, mapCenter, mapZoom = 8, polygon = [], mapCaption, id = 'areas' } = Astro.props;
+const { eyebrow, heading, intro, counties, mapCenter, mapZoom = 8, polygon = [], mapCaption, areaLabel, id = 'areas' } = Astro.props;
 
-const mapConfig = JSON.stringify({ center: mapCenter, zoom: mapZoom, polygon });
+/**
+ * Map pins come from `site.locations` — the SAME array the footer NAP cards and
+ * LocalBusiness schema read — so a pin can never disagree with a printed
+ * address (§15). Only locations with coordinates are plotted; a location
+ * missing lat/lng is skipped rather than guessed, and that is a QA flag.
+ * No representative/decorative city markers are ever added.
+ */
+const gbpMarkers = site.locations
+  .filter((l) => typeof l.lat === 'number' && typeof l.lng === 'number')
+  .map((l) => ({ name: l.name, address: l.address, phone: l.phone, lat: l.lat, lng: l.lng }));
+
+const mapConfig = JSON.stringify({
+  center: mapCenter,
+  zoom: mapZoom,
+  polygon,
+  areaLabel: areaLabel ?? mapCaption,
+  locations: gbpMarkers,
+});
 ---
 
 <section class="bg-dark py-16 text-on-dark md:py-20" id={id}>
@@ -120,69 +140,99 @@ const mapConfig = JSON.stringify({ center: mapCenter, zoom: mapZoom, polygon });
 </section>
 
 <script>
-  // County tab switching + city search filter.
-  document.querySelectorAll<HTMLElement>('[data-region-explorer]').forEach((root) => {
-    const tabs = root.querySelectorAll<HTMLButtonElement>('[data-county-tab]');
-    const panels = root.querySelectorAll<HTMLElement>('[data-county-panel]');
-    const search = root.querySelector<HTMLInputElement>('[data-city-search]');
+  /**
+   * §15 loading contract. Assets load only when the map is NEAR the viewport
+   * (rootMargin pre-warms it), because Leaflet + tiles are heavy.
+   *
+   * CRITICAL: the observer is not the only trigger. A safety fallback
+   * initializes the map anyway shortly after load if the observer has not
+   * fired. An IntersectionObserver-only map shipped on a real client site and
+   * left users staring at a permanent "Interactive service area map"
+   * placeholder — never remove this fallback.
+   *
+   * Tiles: OpenStreetMap raster, no API key, attribution required and included.
+   * Markers: ONLY the business's active Google Business Profile locations, read
+   * from shared site data (same source as the footer NAP cards and
+   * LocalBusiness schema) so pins and addresses cannot drift. No
+   * representative/decorative city markers.
+   */
+  async function initServiceAreaMap(el: HTMLElement) {
+    if (el.dataset.mapInitialized) return;
+    el.dataset.mapInitialized = 'true';
 
-    tabs.forEach((tab) => {
-      tab.addEventListener('click', () => {
-        tabs.forEach((t) => {
-          const active = t === tab;
-          t.classList.toggle('bg-accent', active);
-          t.classList.toggle('text-white', active);
-          t.classList.toggle('bg-dark-3', !active);
-          t.classList.toggle('text-on-dark/70', !active);
-          t.setAttribute('aria-pressed', String(active));
-        });
-        panels.forEach((p) => p.classList.toggle('hidden', p.dataset.countyPanel !== tab.dataset.countyTab));
-        if (search) search.value = '';
-        root.querySelectorAll<HTMLElement>('[data-city-row]').forEach((r) => r.classList.remove('hidden'));
-      });
-    });
-
-    search?.addEventListener('input', () => {
-      const q = search.value.trim().toLowerCase();
-      // Search spans all counties: show every panel while a query is active.
-      panels.forEach((p) => p.classList.toggle('hidden', q === '' && p.dataset.countyPanel !== root.querySelector<HTMLButtonElement>('[data-county-tab][aria-pressed="true"]')?.dataset.countyTab));
-      root.querySelectorAll<HTMLElement>('[data-city-row]').forEach((row) => {
-        row.classList.toggle('hidden', q !== '' && !(row.dataset.cityName ?? '').includes(q));
-      });
-    });
-  });
-
-  // §15 map loading contract — same auto-init pattern as ServiceAreaMap, guarded per container.
-  async function initExplorerMaps() {
-    const containers = document.querySelectorAll<HTMLElement>('[data-service-area-map]');
-    if (containers.length === 0) return;
     const L = (await import('leaflet')).default;
-    containers.forEach((el) => {
-      if (el.dataset.mapInitialized) return;
-      el.dataset.mapInitialized = 'true';
-      const cfg = JSON.parse(el.dataset.mapConfig ?? '{}');
-      const map = L.map(el, { scrollWheelZoom: false }).setView(cfg.center, cfg.zoom);
-      L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+    const cfg = JSON.parse(el.dataset.mapConfig ?? '{}');
+    const map = L.map(el, { scrollWheelZoom: false }).setView(cfg.center, cfg.zoom);
+
+    L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      maxZoom: 19,
+      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+    }).addTo(map);
+
+    const accent =
+      getComputedStyle(document.documentElement).getPropertyValue('--color-accent').trim() || '#cc2a2a';
+
+    // Service-area boundary: brand-accent dashed outline + translucent fill.
+    let bounds: any = null;
+    if (Array.isArray(cfg.polygon) && cfg.polygon.length > 2) {
+      const poly = L.polygon(cfg.polygon, {
+        color: accent,
+        weight: 2,
+        dashArray: '6 6',
+        fillColor: accent,
+        fillOpacity: 0.12,
       }).addTo(map);
-      if (cfg.polygon && cfg.polygon.length > 2) {
-        const accent = getComputedStyle(document.documentElement).getPropertyValue('--color-accent').trim() || '#cc2a2a';
-        const poly = L.polygon(cfg.polygon, {
-          color: accent,
-          weight: 2,
-          dashArray: '6 6',
-          fillColor: accent,
-          fillOpacity: 0.12,
-        }).addTo(map);
-        map.fitBounds(poly.getBounds(), { padding: [24, 24] });
+      if (cfg.areaLabel) poly.bindPopup(cfg.areaLabel);
+      bounds = poly.getBounds();
+    }
+
+    // GBP location pins only.
+    (cfg.locations ?? []).forEach((loc: any) => {
+      const marker = L.circleMarker([loc.lat, loc.lng], {
+        radius: 8,
+        color: '#ffffff',
+        weight: 2,
+        fillColor: accent,
+        fillOpacity: 1,
+      }).addTo(map);
+      const tel = String(loc.phone ?? '').replace(/[^+0-9]/g, '');
+      const phoneLine = tel ? '<br><a href="tel:' + tel + '">' + loc.phone + '</a>' : '';
+      marker.bindPopup('<strong>' + loc.name + '</strong><br>' + loc.address + phoneLine);
+      bounds = bounds ? bounds.extend(marker.getLatLng()) : L.latLngBounds([marker.getLatLng()]);
+    });
+
+    // Auto-fit to the boundary plus every pin.
+    if (bounds) map.fitBounds(bounds, { padding: [28, 28] });
+  }
+
+  function setupServiceAreaMaps() {
+    document.querySelectorAll<HTMLElement>('[data-service-area-map]').forEach((el) => {
+      if (!('IntersectionObserver' in window)) {
+        initServiceAreaMap(el);
+        return;
       }
+      const io = new IntersectionObserver(
+        (entries) => {
+          if (entries.some((e) => e.isIntersecting)) {
+            io.disconnect();
+            initServiceAreaMap(el);
+          }
+        },
+        { rootMargin: '400px' }
+      );
+      io.observe(el);
+      // Anti-placeholder fallback (see note above).
+      setTimeout(() => {
+        if (!el.dataset.mapInitialized) {
+          io.disconnect();
+          initServiceAreaMap(el);
+        }
+      }, 2500);
     });
   }
-  if (document.readyState === 'complete') {
-    initExplorerMaps();
-  } else {
-    window.addEventListener('load', initExplorerMaps);
-  }
+
+  if (document.readyState === 'complete') setupServiceAreaMaps();
+  else window.addEventListener('load', setupServiceAreaMaps);
 </script>
 
 <style>

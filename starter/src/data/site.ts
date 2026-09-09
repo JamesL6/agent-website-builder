@@ -1,7 +1,9 @@
 /**
  * Shared site data — single source for phone/DNI, NAP, navigation, and claims-bearing values.
  * Every component reads from here; nothing hard-codes a phone number or address (§9, §22).
- * Values below are realistic placeholders for the template preview routes ONLY (§17).
+ * Values below are realistic example data for the template preview routes ONLY (§17).
+ * A client build (Rule Zero) fills this file from the verified intake + approved copy artifacts —
+ * it is THE per-client swap point together with theme.css.
  */
 export const site = {
   name: 'Example Restoration Co.',
@@ -49,10 +51,12 @@ export const site = {
   locations: [
     {
       name: 'Example Restoration Co. of Example City',
-      address: '123 Placeholder Ave, Example City, ST 00000',
+      address: '123 Example Ave, Example City, ST 00000',
       phone: '(555) 000-1234',
       gbpUrl: 'https://maps.google.com/?q=Example+Restoration+Example+City',
       hours: 'Open 24 hours',
+      lat: 41.8781,
+      lng: -87.6298,
     },
     {
       name: 'Example Restoration Co. of Northtown',
@@ -60,14 +64,33 @@ export const site = {
       phone: '(555) 000-5678',
       gbpUrl: 'https://maps.google.com/?q=Example+Restoration+Northtown',
       hours: 'Open 24 hours',
+      lat: 42.0451,
+      lng: -87.6877,
     },
     {
       name: 'Example Restoration Co. of Southville',
-      address: '789 Placeholder Blvd, Southville, ST 00002',
+      address: '789 Example Blvd, Southville, ST 00002',
       phone: '(555) 000-9012',
       hours: 'Open 24 hours',
+      lat: 41.6,
+      lng: -87.85,
     },
-  ] as { name: string; address: string; phone: string; gbpUrl?: string; hours?: string }[],
+  ] as {
+    name: string;
+    address: string;
+    phone: string;
+    gbpUrl?: string;
+    hours?: string;
+    /**
+     * Map pin coordinates for this location, from its Google Business Profile.
+     * The service-area map renders markers ONLY from this array — the same
+     * source the footer NAP cards and LocalBusiness schema use — so pins,
+     * printed addresses, and structured data cannot drift apart (§15, §22).
+     * A location without coords renders no pin (and is a QA flag, not a guess).
+     */
+    lat?: number;
+    lng?: number;
+  }[],
   footerBlurb:
     'Emergency restoration for homes and businesses across the Example City area — mitigation through rebuild, one call.',
 
@@ -159,6 +182,39 @@ export const site = {
     /** Response-time promise: a real client commitment — confirm before shipping. */
     responseNotice: 'Non-emergency requests are returned within one business day.',
     emergencyNoticeLead: 'Currently experiencing an emergency?',
+  },
+  // ---------------------------------------------------------------- launch + platform config
+
+  /**
+   * PRE-LAUNCH SWITCH (§17). While true, every page emits <meta name="robots" content="noindex,nofollow">
+   * and postbuild writes a Disallow-all robots.txt. Launch = set false, rebuild, and pass
+   * `npm run validate:launch`. /templates/ routes pass noindex explicitly and stay noindex regardless.
+   */
+  previewMode: true,
+  /** Production origin — canonical URLs, sitemap, robots, and schema all derive from it (§21, §22). No trailing slash. */
+  siteUrl: 'https://example.com',
+  /** Full state + regional label used by schema areaServed (§22). */
+  stateName: 'Example State',
+  regionName: 'Example City metro area',
+  /** City-hub links for the footer areas band — from the approved page map's city hubs (§15). */
+  footerAreaLinks: [] as { label: string; url: string }[],
+  /** LeadConnector DNI scripts (§9). Empty = not loaded. */
+  callTracking: { numberPoolUrl: '', userSessionUrl: '' },
+  /** Review widget IDs per placement (§16). Empty = ReviewSection renders its reserved state — must be real before launch. */
+  reviews: { homepage: '', inner: '', reviewsPage: '' },
+  /** GTM preferred; GA4 only when not using GTM. Empty = nothing loads. */
+  analytics: { gtmId: '', ga4Id: '' },
+  /**
+   * Agency lead router (§11). submitUrl is agency infrastructure shared by every client;
+   * clientId / siteId / turnstileSiteKey are per client and stay EMPTY until the router row exists.
+   * RequestServicePanel disables the form until submitUrl + clientId are set — an unconfigured
+   * router fails loudly instead of swallowing leads.
+   */
+  leadRouter: {
+    submitUrl: 'https://agency-lead-router-production.login-cce.workers.dev/submit',
+    clientId: '',
+    siteId: '',
+    turnstileSiteKey: '',
   },
 };
 

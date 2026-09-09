@@ -5,18 +5,40 @@
  */
 import '../styles/global.css';
 import SiteHeader from '../components/SiteHeader.astro';
+import MegaMenuHeader from '../components/MegaMenuHeader.astro';
 import SiteFooter from '../components/SiteFooter.astro';
 import StickyMobileCTA from '../components/StickyMobileCTA.astro';
 import { site } from '../data/site';
+import SchemaOrg from '../components/SchemaOrg.astro';
 
 interface Props {
+  /**
+   * Header variant (design-recipe `header` enum).
+   * `mega_menu_grouped_services` is REQUIRED for clients with >1 service category
+   * and child pages; `utility_strip_sticky_header` is the flat-nav fallback.
+   */
+  header?: 'utility_strip_sticky_header' | 'mega_menu_grouped_services';
   title: string;
   description: string;
   /** Template preview routes set this to true (§17). */
   noindex?: boolean;
+  /**
+   * Page-specific JSON-LD (§22). The sitewide business entity is emitted on EVERY page by
+   * SchemaOrg itself; this only carries what is unique to this page.
+   */
+  schema?: {
+    service?: { name: string; serviceType?: string };
+    areaServedCity?: string;
+    breadcrumbs?: { name: string; url: string }[];
+    faqs?: { question: string; answer: string }[];
+    itemList?: { name: string; url: string }[];
+    collection?: boolean;
+    isHomepage?: boolean;
+  };
 }
 
-const { title, description, noindex = false } = Astro.props;
+const { title, description, noindex = false, header = 'utility_strip_sticky_header', schema = {} } = Astro.props;
+const canonicalUrl = new URL(Astro.url.pathname, Astro.site).href;
 ---
 
 <!doctype html>
@@ -26,22 +48,59 @@ const { title, description, noindex = false } = Astro.props;
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{title}</title>
     <meta name="description" content={description} />
-    {noindex && <meta name="robots" content="noindex,nofollow" />}
+    {(noindex || site.previewMode) && <meta name="robots" content="noindex,nofollow" />}
+    {/* Self-referencing canonical on every page — Stage 7 QA verifies canonical URLs
+        (agents/07). Built from Astro.url against the configured production `site`, so it
+        cannot drift from the route that renders it. */}
+    <link rel="canonical" href={canonicalUrl} />
+    {/* Turnstile — loaded ONCE here, not per form. The request panel renders twice on most
+        pages (hero + sidebar), and a second api.js tag makes Turnstile warn
+        "Turnstile already has been loaded". */}
+    {site.leadRouter.turnstileSiteKey && (
+      <script is:inline async defer src="https://challenges.cloudflare.com/turnstile/v0/api.js"></script>
+    )}
+    {/* Analytics — renders only when an ID is set, so an unconfigured site ships no broken tag. */}
+    {site.analytics.gtmId && (
+      <script is:inline set:html={`(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);})(window,document,'script','dataLayer','${site.analytics.gtmId}');`} />
+    )}
+    {!site.analytics.gtmId && site.analytics.ga4Id && (
+      <>
+        <script is:inline async src={`https://www.googletagmanager.com/gtag/js?id=${site.analytics.ga4Id}`}></script>
+        <script is:inline set:html={`window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','${site.analytics.ga4Id}');`} />
+      </>
+    )}
+    {/* Structured data on every page: one business entity, plus whatever this page adds (§22). */}
+    <SchemaOrg url={canonicalUrl} name={title} description={description} {...schema} />
   </head>
   <body class="pb-20 md:pb-0">
-    <SiteHeader />
+    {site.analytics.gtmId && (
+      <noscript set:html={`<iframe src="https://www.googletagmanager.com/ns.html?id=${site.analytics.gtmId}" height="0" width="0" style="display:none;visibility:hidden"></iframe>`} />
+    )}
+    {header === 'mega_menu_grouped_services' ? (
+      <MegaMenuHeader><slot name="logo" slot="logo" /></MegaMenuHeader>
+    ) : (
+      <SiteHeader><slot name="logo" slot="logo" /></SiteHeader>
+    )}
     <main>
       <slot />
     </main>
     <SiteFooter
       blurb={site.footerBlurb}
-      areaLinks={[
-        { label: 'Example City', url: '/service-areas/example-city/' },
-        { label: 'Northtown', url: '/service-areas/northtown/' },
-        { label: 'Southville', url: '/service-areas/southville/' },
-        { label: 'View all areas', url: '/#areas' },
-      ]}
+      areaLinks={site.footerAreaLinks}
     />
     <StickyMobileCTA />
-  </body>
+    {/* Elfsight platform script — once per page, and at the END of body so the widget divs
+      already exist when it scans. Loaded async in <head> it can run before they are in the DOM
+      and the lazy widgets then never initialise. */}
+  {(site.reviews.homepage || site.reviews.inner || site.reviews.reviewsPage) && (
+    <script is:inline async src="https://elfsightcdn.com/platform.js"></script>
+  )}
+  {/* Call tracking / DNI — last in <body> so all tel: links exist before the swapper runs (§9). */}
+  {site.callTracking.numberPoolUrl && (
+    <script is:inline src={site.callTracking.numberPoolUrl}></script>
+  )}
+  {site.callTracking.userSessionUrl && (
+    <script is:inline src={site.callTracking.userSessionUrl}></script>
+  )}
+</body>
 </html>

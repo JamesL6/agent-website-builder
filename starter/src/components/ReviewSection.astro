@@ -14,11 +14,18 @@ interface Props {
   intro?: string;
   /** Optional approved external reviews URL for the reserved state's outbound link. */
   reviewsUrl?: string;
+  /**
+   * Which Elfsight widget to render. Defaults to `inner`, so the 35 inner pages need no edit.
+   * An explicit `widget` slot still wins over config.
+   */
+  variant?: 'homepage' | 'inner' | 'reviewsPage';
   id?: string;
 }
 
-const { eyebrow, heading, intro, reviewsUrl, id = 'reviews' } = Astro.props;
-const hasWidget = Astro.slots.has('widget');
+const { eyebrow, heading, intro, reviewsUrl, id = 'reviews', variant = 'inner' } = Astro.props;
+const widgetId = site.reviews?.[variant] || '';
+/** Slot wins; then config; otherwise the reserved state (§16). */
+const hasWidget = Astro.slots.has('widget') || Boolean(widgetId);
 ---
 
 <section class="bg-surface py-16 md:py-20" id={id}>
@@ -28,8 +35,10 @@ const hasWidget = Astro.slots.has('widget');
     {intro && <p class="mt-4 max-w-2xl text-ink-muted">{intro}</p>}
 
     <div class="mt-10 min-w-0 max-w-full overflow-hidden">
-      {hasWidget ? (
+      {Astro.slots.has('widget') ? (
         <slot name="widget" />
+      ) : widgetId ? (
+        <div class={`elfsight-app-${widgetId}`} data-elfsight-app-lazy></div>
       ) : (
         <div class="rounded-md border border-border bg-white px-8 py-12 text-center shadow-sm">
           <svg class="mx-auto size-10 text-accent" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">

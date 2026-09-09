@@ -1,0 +1,155 @@
+---
+/**
+ * City hub — ONE dynamic route generating every approved service-area city (§14).
+ *
+ * §14 CITY PAGE HUB CONTRACT:
+ *  · H1 pattern: "Restoration Services in {city}, {state_abbreviation}"
+ *  · The page is a ROUTING HUB: introduce support in that city, summarise each service briefly,
+ *    and link each summary onward to THIS city's own service pages. Not a local-colour essay.
+ *  · Do NOT duplicate service-page copy. Do NOT link city-service routes that are not approved
+ *    (children come from cityServiceContent, so only approved entries can appear).
+ *
+ * Differentiation between cities is FACTUAL: county, real neighbouring service-area cities, and
+ * honest geographic response framing (zoneCopy). No invented landmarks or local detail.
+ *
+ * ALL customer-facing copy comes from `cityHubCopy` in src/data/cities.ts — produced and approved
+ * in the Copy Sprint (PIPELINE → Copy Sprint Rule). This file is layout only: no prose, no claims.
+ */
+import BaseLayout from '../layouts/BaseLayout.astro';
+import InnerPageTemplate from '../components/templates/InnerPageTemplate.astro';
+import InlineCTA from '../components/InlineCTA.astro';
+import InnerSubsections from '../components/InnerSubsections.astro';
+import ProcessSection from '../components/ProcessSection.astro';
+import ReviewSection from '../components/ReviewSection.astro';
+import ServiceAreaMap from '../components/ServiceAreaMap.astro';
+import FAQSection from '../components/FAQSection.astro';
+import { Image } from 'astro:assets';
+import logo from '../assets/brand/logo.png';
+import { site } from '../data/site';
+import { cities, zoneCopy, cityHubCopy as copy } from '../data/cities';
+import { cityServiceContent } from '../data/cityServiceContent';
+
+export function getStaticPaths() {
+  const st = site.stateAbbr.toLowerCase();
+  return cities.map((c) => ({ params: { citySlug: `${c.slug}-${st}` }, props: { city: c } }));
+}
+
+const { city } = Astro.props;
+const ST = site.stateAbbr;
+const st = ST.toLowerCase();
+const nearby = city.near.map((n) => cities.find((c) => c.name === n)).filter(Boolean) as typeof cities;
+
+/** Token interpolation for cityHubCopy strings. */
+const vars: Record<string, string> = {
+  city: city.name,
+  county: city.county,
+  state: ST,
+  near: nearby.map((n) => n.name).join(', ') || `${city.county} County`,
+  zone: zoneCopy[city.zone],
+  /** Indefinite article must agree with the city name. */
+  an: /^[AEIOU]/.test(city.name) ? 'an' : 'a',
+};
+const t = (s: string) => s.replace(/\{(\w+)\}/g, (m, k) => vars[k] ?? m);
+
+const cityUrl = (hub: string, child?: string) =>
+  child ? `/${city.slug}-${st}/${hub}/${child}/` : `/${city.slug}-${st}/${hub}/`;
+
+/** This city's own service pages, grouped by service hub (site.services[].id === hub slug). */
+const serviceGroups = site.services.map((s) => ({
+  hub: s.id,
+  title: s.label,
+  categoryUrl: cityUrl(s.id),
+  summary: t(copy.serviceSummaries[s.id] ?? copy.serviceSummaryFallback),
+  children: cityServiceContent
+    .filter((c) => c.hub === s.id && c.child)
+    .map((c) => ({ label: `${c.name} in ${city.name}`, url: cityUrl(c.hub, c.child) })),
+}));
+const hereUrl = `/${city.slug}-${st}/`;
+---
+
+<BaseLayout
+  title={t(copy.title)}
+  description={t(copy.metaDescription)}
+  header="mega_menu_grouped_services"
+  schema={{
+    collection: true,
+    areaServedCity: city.name,
+    breadcrumbs: [
+      { name: 'Home', url: '/' },
+      { name: copy.serviceAreasLabel, url: copy.serviceAreasUrl },
+      { name: `${city.name}, ${ST}`, url: hereUrl },
+    ],
+    itemList: serviceGroups.flatMap((g) => [
+      { name: `${g.title} in ${city.name}`, url: g.categoryUrl },
+      ...g.children.map((c) => ({ name: c.label, url: c.url })),
+    ]),
+  }}
+>
+  <Image slot="logo" src={logo} alt={site.name} class="h-9 w-auto md:h-11" loading="eager" />
+
+  <InnerPageTemplate
+    heroEyebrow={`${city.county} County`}
+    h1={t(copy.h1)}
+    heroIntro={t(copy.heroIntro)}
+    current={{ label: `${city.name}, ${ST}`, url: hereUrl }}
+    parentHub={{ label: copy.serviceAreasLabel, url: copy.serviceAreasUrl }}
+    coreHubs={site.services.map((s) => ({ label: s.label, url: s.url }))}
+    relatedNav={nearby.map((n) => ({ label: `${n.name}, ${ST}`, url: `/${n.slug}-${st}/` }))}
+  >
+    <h2>{t(copy.openingH2)}</h2>
+    {copy.opening.map((p) => <p>{t(p)}</p>)}
+    <p>{zoneCopy[city.zone]}</p>
+
+    <InlineCTA heading={t(copy.emergencyCta.heading)} support={t(copy.emergencyCta.support)} />
+
+    <h2>{t(copy.handleH2)}</h2>
+    <p>{t(copy.handleIntro)}</p>
+    <InnerSubsections
+      items={serviceGroups.map((g) => ({ title: g.title, text: g.summary, url: g.categoryUrl, linkLabel: `${g.title} in ${city.name}` }))}
+    />
+
+    {serviceGroups.some((g) => g.children.length > 0) && (
+      <>
+        <h2>{t(copy.everyServiceH2)}</h2>
+        <p>{t(copy.everyServiceIntro)}</p>
+        {serviceGroups.filter((g) => g.children.length > 0).map((g) => (
+          <>
+            <h3><a href={g.categoryUrl}>{`${g.title} in ${city.name}`}</a></h3>
+            <ul>{g.children.map((c) => <li><a href={c.url}>{c.label}</a></li>)}</ul>
+          </>
+        ))}
+      </>
+    )}
+
+    <h2>{t(copy.whyH2)}</h2>
+    {copy.why.map((p) => <p>{t(p)}</p>)}
+
+    {nearby.length > 0 && (
+      <>
+        <h2>{t(copy.nearbyH2)}</h2>
+        <p>{t(copy.nearbyIntro)}</p>
+        <ul>
+          {nearby.map((n) => (
+            <li><a href={`/${n.slug}-${st}/`}>{t(copy.nearbyLinkLabel.replace('{nearCity}', n.name))}</a></li>
+          ))}
+        </ul>
+      </>
+    )}
+
+    <h2>{t(copy.closingH2)}</h2>
+    <p>{t(copy.closing)}</p>
+
+    <InlineCTA heading={t(copy.closingCta.heading)} support={t(copy.closingCta.support)} />
+  </InnerPageTemplate>
+
+  <!-- Post-body: the SAME shared sections every page renders (§12), from shared site data -->
+  <ProcessSection {...site.process} />
+  <ReviewSection eyebrow={copy.reviews.eyebrow} heading={copy.reviews.heading} intro={copy.reviews.intro} />
+  <ServiceAreaMap {...site.serviceArea} mapCaption={site.serviceArea.caption} />
+  <FAQSection
+    eyebrow={copy.faq.eyebrow}
+    heading={t(copy.faq.heading)}
+    support={t(copy.faq.support)}
+    faqs={copy.faq.items.map((f) => ({ question: t(f.q), answer: t(f.a) }))}
+  />
+</BaseLayout>
