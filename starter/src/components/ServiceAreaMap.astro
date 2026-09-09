@@ -39,6 +39,12 @@ interface Props {
   /** Popup text on the service-area boundary. */
   areaLabel?: string;
   id?: string;
+  /**
+   * Per-city expandable city-service links inside the accordion. Default true (homepage/inner
+   * pages: the county → city → city-service flair point). The service-area index passes false —
+   * that page links city hubs only; each hub links its own services (owner decision 2026-09-09).
+   */
+  showCityServices?: boolean;
 }
 
 const {
@@ -52,6 +58,7 @@ const {
   mapCaption,
   areaLabel,
   id = 'areas',
+  showCityServices = true,
 } = Astro.props;
 
 /**
@@ -99,7 +106,7 @@ const mapConfig = JSON.stringify({
                       <span class="font-semibold text-ink">{city.name}</span>
                     )}
                   </div>
-                  {city.services && city.services.length > 0 && (
+                  {showCityServices && city.services && city.services.length > 0 && (
                     <details class="mt-1 pl-3.5">
                       <summary class="cursor-pointer list-none text-xs font-semibold text-accent [&::-webkit-details-marker]:hidden">
                         {city.name} services ▾

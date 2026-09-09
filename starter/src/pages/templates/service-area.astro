@@ -1,5 +1,5 @@
 ---
-/** Template preview route (§17): service-area index — shared map + every county/city/city-service link. noindex. */
+/** Template preview route (§17): service-area index — shared map with county → city hub links only, then CTA. noindex. */
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import ServiceAreaIndexTemplate from '../../components/templates/ServiceAreaIndexTemplate.astro';
 import { site } from '../../data/site';
@@ -9,7 +9,6 @@ import { site } from '../../data/site';
     eyebrow="Where we work"
     h1={`Areas ${site.name} Serves`}
     intro="Every city below has its own page with the services we offer there. If your property sits between two, call and we will tell you straight whether we can reach you."
-    listHeading="Cities by county"
     ctaHeading="Not sure if we cover you?"
     ctaSupport="Call and a real person will answer."
   />
