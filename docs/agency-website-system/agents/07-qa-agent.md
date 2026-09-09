@@ -1,7 +1,8 @@
-# SEO, Tracking And QA Agent (7)
+# Review Agent (7) — Functional QA + Visual Review
 
 Status: Active
-Last updated: 2026-07-07
+Last updated: 2026-09-09 (Design Review Agent 9 merged in — owner decision)
+Runnable skill: `$agency-site-review`
 
 ## Purpose
 
@@ -11,10 +12,10 @@ Key rule: QA must run for both full launches and individual page updates. A sing
 
 ## Pipeline Position
 
-Stage E (Review and launch) in `PIPELINE.md`. Runs after the Astro Build Agent (6), alongside the Design Review Agent (9, Phase 3) when it exists, and ahead of the Launch, Tracking And Handoff Agent (8).
+Stage E (Review and launch) in `PIPELINE.md`. Runs after the Astro Build Agent (6) and the Internal Linking Agent (6b), ahead of the Launch Checklist (8). It is ONE stage with two sections — functional QA and visual review — so the builder gets a single consolidated round of findings.
 
 - Consumes: Active Page Map, Redirect Map, Homepage Messaging Pack, Final Page Copy, Design Recipe, and the Build Summary + Validation Results (see the handoff artifact map in `PIPELINE.md`).
-- Produces: the `QA Report`, consumed by the Launch Agent (8) and the human. The QA Report gates launch — the Stage E gate is human approval with no red blockers unless explicitly accepted.
+- Produces: the `Review Report` (functional status + visual scores), consumed by the Launch Checklist (8) and the human. The Review Report gates launch — the Stage E gate is human approval with no red blockers unless explicitly accepted.
 
 The shared agent contract, standard output items, and refuse/pause conditions apply (see CORE_CONTRACTS.md §2). Handoffs use the shared status vocabulary (see CORE_CONTRACTS.md §4).
 
@@ -23,7 +24,7 @@ The shared agent contract, standard output items, and refuse/pause conditions ap
 This agent is independent of the Astro Build Agent (6). The builder runs its own validation commands and captures its own screenshots, but the builder's self-run checks never count as QA approval (see CORE_CONTRACTS.md §24 ownership rule and `PIPELINE.md`, QA Ownership).
 
 - QA re-runs verification against the final build output and rendered pages itself. It may read the Build Summary + Validation Results for context, but it does not accept them as evidence.
-- Visual approval comes from the Design Review Agent (once built) and then the human; until the Design Review Agent exists, the human is the visual gate (see `PIPELINE.md`, QA Ownership).
+- Visual approval comes from this agent's Visual Review section, then the human (see `PIPELINE.md`, QA Ownership).
 
 ## Inputs
 
@@ -107,6 +108,20 @@ Every check below runs against these client-specific requirements, not only the 
 - Noncritical third-party scripts are not render-blocking (§19).
 - No unapproved remote font loading in production output (§20).
 
+## Visual Review (merged Design Review Agent, 2026-09-09)
+
+Capture the §24 evidence set — mobile initial `390x844`, mobile scrolled `390x844`, desktop `1440x1100`, tablet `1024x900` — for the homepage, one service page, one city hub, one city-service page, and the contact page. Score each area `Pass` / `Needs Revision` / `Fail` against EXACTLY three references (owner decision 2026-09-09):
+
+1. The starter's `/templates/*` preview routes — the baseline. A correct build differs from them ONLY in tokens, copy, photography, and approved variants. Any other difference is a miss.
+2. The client's approved Design Recipe + Design Brief — were the approved variants and tokens used?
+3. The Premium Visual Acceptance Rubric (design skill) and the §24 checks (overflow, H1 clipping, legibility on dark/brand surfaces, sticky CTA behavior, no oversized sparse blocks, no placeholder proof, no fake claims).
+
+Never compare against live reference sites — they were inputs to the starter, not review targets.
+
+Areas scored: Hero · Header / CTA · Typography / Density · Mobile Sticky CTA · Services · Proof / Reviews · Section Rhythm · Footer · Inner page (sidebar, body modules, post-body order) · Contact page (§13 order).
+
+Loop: send the builder ONE consolidated list of misses per round, each with the screenshot, the reference it fails against, and the exact change. Maximum 3 rounds, then escalate to the human with the scores, screenshots, and unresolved misses. The builder's own screenshots never count as evidence (§24).
+
 ## Post-Launch QA
 
 - Live pages crawl.
@@ -126,12 +141,13 @@ Every check below runs against these client-specific requirements, not only the 
 5. Verify `/sitemap.xml`, child sitemaps, canonical URLs, and `robots.txt` (§21).
 6. Verify forms and tracking setup.
 7. Verify redirect configuration.
-8. Produce red/yellow/green QA status.
-9. List blockers separately from accepted risks.
+8. Run the Visual Review and score it.
+9. Produce the Review Report: functional red/yellow/green + visual scores.
+10. List blockers separately from accepted risks.
 
 ## Outputs
 
-- `QA Report` — red/yellow/green status per check area.
+- `Review Report` — functional: red/yellow/green per check area; visual: Pass/Needs Revision/Fail per area with screenshot evidence.
 - `Launch Blockers`
 - `Accepted Risks`
 - `Retest Checklist`

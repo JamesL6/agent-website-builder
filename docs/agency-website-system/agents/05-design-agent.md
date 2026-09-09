@@ -12,7 +12,7 @@ Apply the agency's standard website design patterns while adapting the site to t
 Stage C (Content and design) in `PIPELINE.md`. Runs in parallel with long-form copywriting (4b): it starts once the Homepage Messaging Pack and brand tokens exist and does not wait for all long-form page copy.
 
 - Consumes: the approved Homepage Messaging Pack (`schemas/messaging-pack.yaml`), brand assets and guidelines, and the approved active page map.
-- Produces: the `Design Recipe` (`schemas/design-recipe.yaml`) and its prose companion `Design Brief`, consumed by the Astro Build Agent (6), the SEO, Tracking And QA Agent (7), and the Design Review Agent (9).
+- Produces: the `Design Recipe` (`schemas/design-recipe.yaml`) and its prose companion `Design Brief`, consumed by the Astro Build Agent (6), the SEO, Tracking And Review Agent (7), and the Review Agent (visual section) (9).
 - Stage C gate: Messaging Pack approved; Design Recipe valid; Premium Visual Acceptance Rubric has no `Fail` areas; human approves the homepage visual direction.
 
 The shared agent contract, standard output items, and refuse/pause conditions apply (see CORE_CONTRACTS.md §2). Handoffs use the shared status vocabulary (§4). The planning/implementation boundary applies (§5): design discussion updates planning artifacts only.

@@ -1,7 +1,7 @@
 # Pipeline
 
 Status: Active — orchestration source of truth
-Last updated: 2026-07-07
+Last updated: 2026-09-09 (stage merge: 2→1 rebuild branch, 9→7 Review, 8 as checklist, internal linking placed)
 
 This file defines how the agents run together: sequence, parallelism, handoff artifacts, stage gates, and the feedback loop. Shared rules live in `CORE_CONTRACTS.md`. Per-agent instructions live in `agents/`.
 
@@ -11,17 +11,16 @@ Each stage has a written spec here; stages marked with a `$skill` also have a ru
 skill in `~/.agents/skills/`. Spec and skill must be kept in sync manually — when one changes,
 update the other in the same pass.
 
-1. Client Intake Agent — `agents/01-client-intake-agent.md` — `$agency-client-intake-agent`
-2. Current Site Audit, Sitemap And Redirect Agent — `agents/02-site-audit-redirect-agent.md` (spec only)
+1. Client Intake Agent — `agents/01-client-intake-agent.md` — `$agency-client-intake-agent`. Includes the **rebuild branch** (former agent 2): when the client has a current site, intake also crawls it and produces the Redirect Map (`schemas/redirect-map.yaml`). `agents/02-site-audit-redirect-agent.md` remains as the crawl/classification procedure reference.
 3. Content Brief Agent — `agents/03-content-brief-agent.md` — `$restoration-content-brief-generator`
-4. Copywriting And Localization Agent — `agents/04-copywriting-localization-agent.md` — `$restoration-page-copywriter`
+4. Copywriting And Localization Agent — `agents/04-copywriting-localization-agent.md` — `$restoration-page-copywriter` (runs as the Copy Sprint)
 5. Template And Brand Adaptation Agent — `agents/05-design-agent.md` — `$agency-website-design-builder`
 6. Astro Build Agent — `agents/06-astro-build-agent.md` — `$agency-astro-site-builder`
-7. SEO, Tracking And QA Agent — `agents/07-qa-agent.md` (spec only)
-8. Launch, Tracking And Handoff Agent — `agents/08-launch-handoff-agent.md` (spec only)
-9. Design Review Agent (planned, Phase 3) — independent visual reviewer between build and human approval. It scores the §24 evidence set (four screenshots) against exactly three things: (1) the starter's `/templates/*` preview routes as the baseline — a correct build differs from them ONLY in tokens, copy, photography, and approved variants; (2) the client's approved Design Recipe + Design Brief; (3) the Premium Visual Acceptance Rubric and the visual rules in CORE_CONTRACTS. It does NOT compare against live reference sites (owner decision 2026-09-09) — those were inputs to building the starter, not review targets.
+6b. Internal Linking Agent — `$agency-internal-linking-agent` — runs after build, before review. Scope decisions (report-only vs. implements links, links per page, sideways city linking) are PENDING owner definition; until then it runs report-only.
+7. Review Agent — `agents/07-qa-agent.md` — `$agency-site-review`. ONE review stage with two sections: **functional** (forms, tracking, schema, index state, sitemap/robots/llms, redirects, banned language) and **visual** (the §24 evidence set scored against the `/templates/*` preview routes, the approved Design Recipe + Brief, and the rubric — never live reference sites). Loops with the builder at most 3 rounds, then escalates to the human. (Former Design Review Agent 9 merged here 2026-09-09.)
+8. Launch Checklist — `agents/08-launch-handoff-agent.md` — human-run, agent-verified. DNS, hosting, and access are executed by a person; the agent verifies every step and `npm run validate:launch` is the gate. Not an autonomous agent by design.
 
-Orchestration: `$agency-new-client-website` (the conductor skill) runs stages 1-8 in order,
+Orchestration: `$agency-new-client-website` (the conductor skill) runs the stages in order,
 invoking stage skills where they exist and pausing at every human approval gate.
 
 ## Execution Order And Parallelism
@@ -30,31 +29,31 @@ The old model was strictly serial (1 → 2 → 3 → 4 → 5 → 6 → 7 → 8).
 
 ```text
 Stage A  Intake
-         └─ 1. Client Intake Agent
+         └─ 1. Client Intake Agent → Verified Intake, draft Active Page Map
+              rebuild branch (current site exists) → Existing Site Crawl, Redirect Map
             Gate: Verified Intake Status = Verified AND AI Intake Validation Status = Passed
+                  (current-site URL supplied, or explicit "no existing site" — hard stop otherwise)
 
-Stage B  Mapping (parallel)
-         ├─ 2. Site Audit / Redirect Agent  → Existing Site Crawl, Redirect Map
-         └─ 3. Content Brief Agent          → Active Page Map briefs, Brief Assignments
-            Gate: Active Page Map approved; redirect decisions exist for rebuilds
+Stage B  Mapping
+         └─ 3. Content Brief Agent → Active Page Map briefs, Brief Assignments
+            Gate: Active Page Map approved; Redirect Map approved for rebuilds
 
 Stage C  Content and design (parallel)
          ├─ 4a. Copywriting Agent → Homepage Messaging Pack   (first deliverable)
-         ├─ 4b. Copywriting Agent → Final Page Copy per page  (as briefs allow)  — as ONE parallel sprint, see The Copy Sprint Rule
+         ├─ 4b. Copywriting Agent → ALL Final Page Copy as ONE parallel sprint (The Copy Sprint Rule)
          └─ 5.  Design Agent      → Design Recipe + Design Brief
                 Non-homepage pattern work may start in Draft; homepage design starts
                 only when the Homepage Messaging Pack is Approved and brand tokens exist.
-                Does NOT wait for all long-form page copy.
             Gate: Messaging Pack approved; Design Recipe valid; rubric has no Fail areas
 
 Stage D  Build
-         └─ 6. Astro Build Agent → Build Summary, Validation Results
-            Gate: recipe + final copy for the pages in scope; critical blockers resolved or accepted
+         ├─ 6.  Astro Build Agent → Build Summary, Validation Results
+         └─ 6b. Internal Linking Agent → Link Report (report-only until scope is defined)
+            Gate: recipe + final copy for every page in scope; validators pass
 
 Stage E  Review and launch
-         ├─ 9. Design Review Agent (Phase 3) → visual review loop with builder, max 3 rounds
-         ├─ 7. QA Agent → QA Report (pre-launch)
-         └─ 8. Launch Agent → Launch Report, Post-Launch QA, Handoff Packet
+         ├─ 7. Review Agent → Review Report (functional + visual); builder loop ≤ 3 rounds
+         └─ 8. Launch Checklist (human-run, agent-verified) → Launch Report, Post-Launch QA, Handoff Packet
             Gate: human approval; no red blockers unless explicitly accepted
 ```
 
@@ -84,21 +83,22 @@ Each handoff is a structured artifact, not prose in a chat message. Formats live
 
 | Artifact | Produced by | Consumed by | Schema |
 |---|---|---|---|
-| Verified Intake Summary + Blockers | 1 Intake | 2, 3, 4, 5 | (prose for now — schema TODO) |
-| Active Page Map | 1 Intake + 3 Brief | 2, 4, 5, 6, 7 | `schemas/active-page-map.yaml` |
-| Redirect Map | 2 Audit | 6, 7, 8 | (tab in Local SEO Sheet for MVP) |
+| Verified Intake Summary + Blockers | 1 Intake | 3, 4, 5 | (prose for now — schema TODO) |
+| Active Page Map | 1 Intake + 3 Brief | 4, 5, 6, 7 | `schemas/active-page-map.yaml` |
+| Redirect Map | 1 Intake (rebuild branch) | 6, 7, 8 | `schemas/redirect-map.yaml` |
 | Brief Assignments | 3 Brief | 4, 6 | (matrix in master sheet for MVP) |
-| Homepage Messaging Pack | 4 Copywriting | 5 Design, 6 Build, 7 QA | `schemas/messaging-pack.yaml` |
-| Final Page Copy | 4 Copywriting | 6 Build, 7 QA | `schemas/final-page-copy.yaml` |
-| Design Recipe | 5 Design | 6 Build, 7 QA, 9 Review | `schemas/design-recipe.yaml` |
+| Homepage Messaging Pack | 4 Copywriting | 5 Design, 6 Build, 7 Review | `schemas/messaging-pack.yaml` |
+| Final Page Copy | 4 Copywriting | 6 Build, 7 Review | `schemas/final-page-copy.yaml` |
+| Design Recipe | 5 Design | 6 Build, 7 Review | `schemas/design-recipe.yaml` |
 | Design Brief (prose companion to the recipe) | 5 Design | 6 Build | per agent spec |
-| Build Summary + Validation Results | 6 Build | 7 QA, 9 Review | per agent spec |
-| QA Report | 7 QA | 8 Launch, human | per agent spec |
+| Build Summary + Validation Results | 6 Build | 6b Linking, 7 Review | per agent spec |
+| Link Report | 6b Internal Linking | 7 Review | per skill (report-only until scope defined) |
+| Review Report (functional + visual) | 7 Review | 8 Launch, human | per agent spec |
 | Launch Report + Handoff Packet | 8 Launch | human, AM | per agent spec |
 
 A handoff that fails its schema is `Blocked`, not "close enough." The receiving agent rejects it back to the producer with the exact missing/invalid fields.
 
-These checks are ENFORCED IN CODE, not just described: `starter/scripts/validate-artifacts.mjs` validates the messaging pack, design recipe, and active page map (run via `npm run check` or `npm run validate:artifacts`; client builds place artifacts in `starter/artifacts/`). Every producing agent runs it on its own artifact before handing off; every consuming agent runs it before accepting. Added 2026-08-28 after the first pilot shipped a homepage H2 without its local target — the rule existed in prose in one stage's skill while the artifact was produced by a different stage, and no code bridged them. `starter/scripts/validate-built-html.mjs` (`npm run check:built`) extends the same principle to the BUILT site: it fails any page rendering two process narratives (§12 precedence) or §7 banned/placeholder language — the class of bug where two authorities are each correct in isolation and the failure only exists in the assembled artifact (added 2026-08-28 after the pilot duplicated the process section on all four parent hubs).
+These checks are ENFORCED IN CODE, not just described: `starter/scripts/validate-artifacts.mjs` validates the messaging pack, design recipe, active page map, redirect map, and Copy Sprint output (run via `npm run check` or `npm run validate:artifacts`; client builds place artifacts in `starter/artifacts/`). Every producing agent runs it on its own artifact before handing off; every consuming agent runs it before accepting. Added 2026-08-28 after the first pilot shipped a homepage H2 without its local target — the rule existed in prose in one stage's skill while the artifact was produced by a different stage, and no code bridged them. `starter/scripts/validate-built-html.mjs` (`npm run check:built`) extends the same principle to the BUILT site: it fails any page rendering two process narratives (§12 precedence) or §7 banned/placeholder language — the class of bug where two authorities are each correct in isolation and the failure only exists in the assembled artifact (added 2026-08-28 after the pilot duplicated the process section on all four parent hubs).
 
 ## The Messaging Pack Rule
 
@@ -107,12 +107,12 @@ The Homepage Messaging Pack is the wiring that keeps internal planning language 
 - The Copywriting Agent produces it from verified intake and approved claims, before homepage design starts.
 - The Design Agent arranges approved copy; it may request missing fields but never invents customer-facing copy.
 - The Astro Build Agent places approved copy; it never rewrites or invents it.
-- The QA Agent (and Design Review Agent) validate rendered homepage text against the pack and the banned-language rules (`CORE_CONTRACTS.md §7`).
+- The Review Agent validates rendered homepage text against the pack and the banned-language rules (`CORE_CONTRACTS.md §7`).
 
 ## QA Ownership
 
 - The builder runs its own validation commands and captures screenshots, but is never the final visual approver (`CORE_CONTRACTS.md §24`).
-- Visual approval comes from the Design Review Agent (once built) and then the human. Until the Design Review Agent exists, the human is the visual gate.
+- Visual approval comes from the Review Agent's visual section (`$agency-site-review`) and then the human.
 - The review loop is bounded: builder ↔ reviewer for at most 3 rounds, then escalate to the human with the rubric, screenshots, and the unresolved misses.
 
 ## Rejection Encoding Rule
@@ -131,12 +131,12 @@ Why this rule exists: between 2026-06-04 and 2026-06-11 the Green State homepage
 ## Stage Gates Summary
 
 - `Intake`: AM verified + AI validated.
-- `Sitemap Review`: active page map approved; redirect decisions for valuable old URLs (rebuilds).
+- `Mapping`: active page map approved; Redirect Map approved for rebuilds (`schemas/redirect-map.yaml`).
 - `Content`: messaging pack approved; final copy has no unsupported claims.
 - `Design`: recipe valid; Premium Visual Acceptance Rubric has no `Fail`; human approves direction.
 - `Build`: validation commands pass; navigation-inclusion and schema decisions recorded for every new page.
-- `Pre-Launch QA`: full checklist per QA agent spec; no red blockers unless accepted.
-- `Launch`: explicit owner approval.
+- `Review`: functional checklist + visual rubric per the Review Agent spec; builder loop ≤ 3 rounds; no red blockers unless accepted.
+- `Launch`: `npm run validate:launch` passes on the launch build; explicit owner approval; checklist executed by a human, verified by the agent.
 - `Post-Launch QA`: live crawl, redirects, forms, tracking events, sitemap submission.
 - `Handoff`: packet complete.
 

@@ -1,6 +1,6 @@
 # Design Recipe — handoff schema
 # Produced by: Template And Brand Adaptation Agent (5)
-# Consumed by: Astro Build Agent (6), QA Agent (7), Design Review Agent (9)
+# Consumed by: Astro Build Agent (6), Review Agent (7), Review Agent (7, visual section)
 #
 # Purpose: the controlled, enum-based instruction set the build agent implements.
 # The recipe replaces vague direction ("make it premium") with component variant selections.

@@ -59,6 +59,11 @@ proposed; the starter is the design system (§17, owner decision 2026-09-09).
 | City hub pages (generated) | `pages/[citySlug].astro` — copy from `data/cities.ts` `cityHubCopy` | build output only |
 | City-service pages (generated) | `components/templates/CityServicePage.astro` via `pages/[citySlug]/[hub].astro` — content from `data/cityServiceContent.ts` | `/templates/city-service/` |
 | Contact page (§13) | `components/templates/ContactPageTemplate.astro` | `/templates/contact-page/` |
+| About page | `InnerPageTemplate` + `GalleryImage.astro` grid | `/templates/about/` |
+| Reviews page (§16) | `components/templates/ReviewsPageTemplate.astro` | `/templates/reviews/` |
+| Service-area index (§14, §15) | `components/templates/ServiceAreaIndexTemplate.astro` | `/templates/service-area/` |
+| Legal pages (privacy, terms) | `components/templates/LegalPageTemplate.astro` | `/templates/legal/` |
+| Blog index / post | `components/templates/BlogIndexTemplate.astro`, `BlogPostTemplate.astro` | `/templates/blog/`, `/templates/blog-post/` |
 | Services grid + differentiator | `ServiceGrid.astro`, `DifferentiatorVS.astro` | `/templates/sections-a/` |
 | Process + reviews | `ProcessSection.astro`, `ReviewSection.astro` | `/templates/sections-b/` |
 | Service-area map + FAQ | `ServiceAreaMap.astro`, `FAQSection.astro` | `/templates/sections-c/` |
@@ -434,7 +439,6 @@ Required `Premium Homepage Quality Audit` format:
 ## Premium Homepage Quality Audit
 
 Reference Standard: Codified premium emergency homepage pattern from $agency-website-design-builder
-Optional Live Reference: Only if explicitly requested
 Client Preview:
 
 | Area | Premium Standard | Current Client Miss | Required Change |

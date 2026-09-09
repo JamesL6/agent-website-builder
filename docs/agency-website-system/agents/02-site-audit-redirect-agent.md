@@ -1,6 +1,8 @@
-# Current Site Audit, Sitemap And Redirect Agent (2)
+# Current Site Audit, Sitemap And Redirect — procedure reference (merged into Intake, 2026-09-09)
 
-Status: Active
+> MERGED: this is no longer a separate pipeline stage. The Client Intake Agent (1) runs it as its **rebuild branch** whenever the client has a current site. This file stays as the crawl/classification PROCEDURE reference. Output format: `schemas/redirect-map.yaml`, validated by `validate:artifacts`; redirects are implemented in `vercel.json` generated FROM that file.
+
+Status: Active (procedure reference)
 Last updated: 2026-07-07
 
 ## Purpose
@@ -16,7 +18,7 @@ Key rule: no launch without redirect decisions for old important URLs.
 Stage B (Mapping) in `PIPELINE.md`. Runs in parallel with the Content Brief Agent (3) once the Stage A intake gate has passed.
 
 - Consumes: the Verified Intake Summary and blockers from the Client Intake Agent (1), and the active page map from the intake/page-map process.
-- Produces: the `Existing Site Crawl` and the `Redirect Map`, consumed by the Astro Build Agent (6), the SEO, Tracking And QA Agent (7), and the Launch, Tracking And Handoff Agent (8).
+- Produces: the `Existing Site Crawl` and the `Redirect Map`, consumed by the Astro Build Agent (6), the Review Agent (7), and the Launch Checklist (8).
 - Stage B gate: the active page map is approved and redirect decisions exist for rebuilds.
 
 The shared agent contract, standard output items, and refuse/pause conditions apply (see CORE_CONTRACTS.md §2). Handoffs use the shared status vocabulary (see CORE_CONTRACTS.md §4). This agent inspects and reports on the existing site only; it does not change any site's source code (see CORE_CONTRACTS.md §5).
@@ -140,7 +142,7 @@ The proposed sitemap and redirect map must be approved before continuing to laun
 
 Redirect decisions for valuable old URLs and page deletions are human approval points; automation never silently approves them (see `PIPELINE.md`, Human Approval Points).
 
-For the MVP, the redirect map lives in the same client Local SEO Sheet as a `Redirect Map` tab.
+The redirect map is the `artifacts/redirect-map.yaml` artifact (`schemas/redirect-map.yaml`).
 
 ## Never Do
 

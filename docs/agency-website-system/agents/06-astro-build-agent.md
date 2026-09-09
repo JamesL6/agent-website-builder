@@ -25,7 +25,7 @@ Key rule: do not hand-code one-off forms, footers, CTAs, or page shells unless t
 Stage D (see `PIPELINE.md`). The build does not begin until the active page map, brief assignments, final page copy for in-scope pages, and the design recipe exist and critical blockers are resolved or explicitly accepted.
 
 - Consumes: Design Recipe (Agent 5), Homepage Messaging Pack and Final Page Copy (Agent 4), Active Page Map (Agents 1 + 3), Redirect Map (Agent 2).
-- Produces: Build Summary and Validation Results for the QA Agent (7) and the Design Review Agent (9).
+- Produces: Build Summary and Validation Results for the Review Agent (7).
 
 ## Inputs
 
@@ -115,7 +115,7 @@ The build handoff is not complete until navigation-inclusion and schema decision
 ## Approval Gate
 
 - Stage D → Stage E gate (`PIPELINE.md`): required validation commands pass; navigation-inclusion and schema decisions are recorded for every new page.
-- The builder runs its own validation and captures screenshots, but is never the final visual approver (§24). Visual approval comes from the Design Review Agent (Phase 3) and then the human; until the Design Review Agent exists, the human is the visual gate.
+- The builder runs its own validation and captures screenshots, but is never the final visual approver (§24). Visual approval comes from the Review Agent's visual section (7) and then the human; until the Review Agent (visual section) exists, the human is the visual gate.
 - The builder ↔ reviewer loop is bounded at 3 rounds, then escalates to the human (`PIPELINE.md`).
 
 ## Never Do

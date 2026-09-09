@@ -10,7 +10,7 @@ The shared agent contract, source-of-truth order, and handoff statuses apply (se
 
 ## Pipeline Position
 
-Stage B (Mapping), run in parallel with the Site Audit, Sitemap And Redirect Agent (2). See PIPELINE.md.
+Stage B (Mapping), run once the Stage A intake gate has passed (the former Site Audit stage is now the Intake Agent's rebuild branch). See PIPELINE.md.
 
 - Consumes: the Active Page Map drafted by the Client Intake Agent (1), plus the Verified Intake Summary and its blockers.
 - Fills: the `brief` block on every page in the Active Page Map (`brief.required`, `brief.brief_ref`, `brief.brief_status`) per `schemas/active-page-map.yaml`.

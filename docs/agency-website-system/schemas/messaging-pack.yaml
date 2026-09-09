@@ -1,6 +1,6 @@
 # Homepage Messaging Pack — handoff schema
 # Produced by: Copywriting And Localization Agent (4)
-# Consumed by: Design Agent (5), Astro Build Agent (6), QA Agent (7), Design Review Agent (9)
+# Consumed by: Design Agent (5), Astro Build Agent (6), Review Agent (7), Review Agent (7, visual section)
 #
 # Purpose: lock the exact customer-facing homepage copy BEFORE design starts, so the
 # design/build agents arrange approved words instead of inventing copy.

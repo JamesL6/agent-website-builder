@@ -1,11 +1,13 @@
-# Launch, Tracking And Handoff Agent (8)
+# Launch Checklist (8) — Human-Run, Agent-Verified
 
 Status: Active
-Last updated: 2026-07-07
+Last updated: 2026-09-09 (reframed as a checklist a human executes and the agent verifies — owner decision)
 
 ## Purpose
 
 Make the built website operational in production and give the agency/client a clean handoff.
+
+**Who does what (2026-09-09):** this is not an autonomous agent. DNS, hosting, SSL, environment variables, Search Console, and account access are executed by a PERSON, because they touch credentials, payment-adjacent access, and irreversible cutover. The agent's job is to verify every step with evidence (HTTP checks, rendered output, event observation) and to refuse to mark the step done without it. `npm run validate:launch` on the launch build is the mechanical gate before DNS cutover.
 
 This agent owns hosting/Vercel setup, domain/DNS, SSL, environment variables, GA4/GTM/Meta Pixel, call tracking/DNI, form routing, redirects, live `/sitemap.xml` and `robots.txt` verification, Search Console, client/admin access, the handoff packet, and post-launch monitoring.
 
@@ -13,9 +15,9 @@ Key rule: tracking and lead routing cannot wait until launch day.
 
 ## Pipeline Position
 
-Stage E (Review and launch) in `PIPELINE.md`. Runs after the QA Agent (7) approves the pre-launch build.
+Stage E (Review and launch) in `PIPELINE.md`. Runs after the Review Agent (7) approves the pre-launch build.
 
-- Consumes: the `QA Report` from the SEO, Tracking And QA Agent (7) and the `Redirect Map` from the Current Site Audit, Sitemap And Redirect Agent (2).
+- Consumes: the `Review Report` from the Review Agent (7) and the `Redirect Map` from the Intake Agent's rebuild branch (1; `schemas/redirect-map.yaml`).
 - Produces: the `Launch Report` and `Client Handoff Packet`, consumed by the human and the account manager.
 - Stage E gates: `Launch` requires explicit owner approval; `Post-Launch QA` covers the live crawl, redirects, forms, tracking events, and sitemap submission; `Handoff` requires a complete packet.
 
@@ -46,6 +48,20 @@ The shared agent contract, standard output items, and refuse/pause conditions ap
 - Client handoff packet is complete.
 
 ## Execution Steps
+
+Each step below names its executor. `Human` = a person does it; `Agent` = the agent verifies with evidence and records it in the Launch Report.
+
+| # | Step | Executor |
+|---|---|---|
+| 1 | Confirm Review Report has no red blockers (or explicit acceptance) | Agent |
+| 2 | Confirm DNS/hosting readiness; secrets configured outside the repo | Human sets · Agent verifies presence, never values |
+| 3 | Set `site.previewMode: false`, rebuild, `npm run validate:launch` passes | Agent |
+| 4 | DNS cutover, SSL | Human |
+| 5 | Redirects live: every Redirect Map row returns its status | Agent |
+| 6 | Forms submit to the router; DNI swaps; GTM/GA4/Pixel events observed | Agent |
+| 7 | `/sitemap.xml`, `robots.txt`, `/llms.txt` live; Search Console submission | Human submits · Agent verifies |
+| 8 | Handoff packet; post-launch monitoring scheduled | Agent drafts · Human sends |
+
 
 1. Confirm pre-launch QA status.
 2. Confirm DNS and hosting readiness.

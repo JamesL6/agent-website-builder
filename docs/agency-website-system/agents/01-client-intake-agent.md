@@ -125,6 +125,17 @@ Not allowed:
 - Do not approve claims found on the website without verification.
 - Do not final-select pages from the website crawl alone.
 
+## Rebuild Branch (former Stage 2, merged 2026-09-09)
+
+When the client has a current website (URL supplied — never assumed), intake also produces the migration inputs:
+
+1. Crawl the current site per the procedure in `agents/02-site-audit-redirect-agent.md` (sitemap discovery, linked pages, status codes, canonicals, titles).
+2. Classify every existing URL: keep, rewrite, merge, redirect, noindex, remove, or unknown (`Needs SEO Review`).
+3. Produce the `Redirect Map` as `artifacts/redirect-map.yaml` (`schemas/redirect-map.yaml`): every 301 destination must exist in the active page map; deliberate 404s are listed with a reason; no chains. `npm run validate:artifacts` checks it.
+4. Redirect decisions for valuable old URLs are a human approval point (Stage B gate). No launch without them.
+
+When the human confirms there is no existing site, record `No existing site` and skip this branch.
+
 ## Unknown Handling
 
 The MVP does not proceed with `Unknown` values for build-critical decisions.

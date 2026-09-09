@@ -82,6 +82,17 @@ neither, stop and ask — this is the hard stop above. When there is a site, cra
 phone/NAP mismatches, pages/claims the intake doesn't mention. Every finding is a question
 for the AM, never an answer. Website copy proves nothing about what the client offers today.
 
+### 4b. Rebuild branch (former Stage 2 — merged 2026-09-09)
+If a current-site URL was supplied, ALSO produce the migration inputs, following the crawl and
+classification procedure in `agents/02-site-audit-redirect-agent.md`:
+- classify every existing URL: keep / rewrite / merge / redirect / noindex / remove / unknown
+  (`Needs SEO Review` — never silently 404, noindex, or redirect to the homepage);
+- write the Redirect Map as `artifacts/redirect-map.yaml` (`schemas/redirect-map.yaml`): unique
+  `from`, 301 or 410, every 301 destination present in the active page map, no chains, every
+  deliberate 404 listed with a reason. `npm run validate:artifacts` checks it.
+- Redirect decisions for valuable old URLs are a HUMAN approval point at the Stage B gate.
+`No existing site` (human-confirmed) skips this branch and is recorded as such.
+
 ### 5. Produce the outputs
 - **Client Profile** — normalized business facts.
 - **Verified Service Matrix** — every service with its build classification.

@@ -10,7 +10,7 @@ where one doesn't, and STOP at every human gate. The AI drives; the human approv
 skip a gate because the output "looks obviously fine" — the gates are the product.
 
 Authority: `agent-website-builder` repo (canonical checkout: `/Users/jameslarosa/Documents/agent-website-builder`) — `docs/agency-website-system/PIPELINE.md`
-(orchestration), `CORE_CONTRACTS.md` (shared rules), `agents/01-08` (stage specs).
+(orchestration), `CORE_CONTRACTS.md` (shared rules), `agents/` (stage specs).
 
 ## Authority Path — read this first
 
@@ -33,27 +33,25 @@ Ask for, and do not start without:
 
 ## The Stages
 
-**Stage 1 — Intake.** Run `$agency-client-intake-agent`.
+**Stage 1 — Intake (+ rebuild branch).** Run `$agency-client-intake-agent`. If the client has a
+current site, the same run crawls it, classifies old URLs, and writes the Redirect Map
+(`artifacts/redirect-map.yaml`).
 → 🛑 **GATE 1 (AM/human):** resolve blockers; confirm the AM Summary and draft page map.
-Requires `Verified Intake Status = Verified` + `AI Intake Validation Status = Passed`.
-
-**Stage 2 — Site audit & redirects** (spec: `agents/02` — no skill yet, follow the spec).
-Crawl the existing site, classify old URLs, produce the redirect map. Runs in parallel with
-Stage 3. For rebuilds: no launch without redirect decisions.
-→ 🛑 **GATE 2 (human/SEO):** approve the final page map + redirect map.
+Requires `Verified Intake Status = Verified` (or `Human-supplied (chat)` during the interim) +
+`AI Intake Validation Status = Passed`.
 
 **Stage 3 — Content briefs.** Run `$restoration-content-brief-generator` flow per
 `agents/03`: assign approved master briefs, localize placeholders, route true gaps to the
 SEO owner (new briefs need human approval, then join the master library).
+→ 🛑 **GATE 2 (human/SEO):** approve the final page map — and, for rebuilds, the Redirect Map.
 
 **Stage 4 — Copy Sprint.** Run `$restoration-page-copywriter` per `agents/04`: FIRST the
 Homepage Messaging Pack, then ALL remaining Final Page Copy in one parallel sprint — one
 subagent per page (Sonnet, medium effort), each reading its own approved brief plus a
-per-client `copy-spec.md` the lead writes first (claim matrix with states, approved URL list
-from the page map, voice rules, word-count discipline, one reference page). Strict brief
-fidelity, claim states on everything. The lead verifies every artifact centrally
-(`artifacts/copy/*.yaml` — `npm run validate:artifacts` checks them). ALL copy is finished
-and approved before Stage 6: the builder assembles copy, it never writes any.
+per-client `copy-spec.md` the lead writes first (template: `docs/agency-website-system/
+templates/copy-spec.md`). Strict brief fidelity, claim states on everything. The lead verifies
+every artifact centrally (`artifacts/copy/*.yaml` — `npm run validate:artifacts` checks them).
+ALL copy is finished and approved before Stage 6: the builder assembles copy, it never writes any.
 → 🛑 **GATE 3 (human):** approve the Messaging Pack (homepage design cannot start before
 this) and spot-check page copy.
 
@@ -64,18 +62,25 @@ Brief. Rubric must have no Fail areas.
 direction.
 
 **Stage 6 — Build.** Run `$agency-astro-site-builder`: starter copy, theme, site data,
-homepage assembly, inner pages through the template, validation, Build Summary + preview URL.
-The builder never self-approves.
+homepage assembly, inner pages through the templates, `npm run check` + `npm run check:built`,
+Build Summary + preview URL. The builder never self-approves.
 
-**Stage 7 — QA** (spec: `agents/07` — no skill yet, follow the spec). Pre-launch checklist:
-forms submit, tracking fires, schema validates, sitemap/robots, redirects, images, banned
-language, §24 screenshots. Red/yellow/green report; blockers listed separately from
-accepted risks.
-→ 🛑 **GATE 5 (human):** review the preview + QA report. Final visual sign-off. Reserved
+**Stage 6b — Internal linking.** Run `$agency-internal-linking-agent` in REPORT-ONLY mode
+(scope — implements vs. reports, links per page, sideways city linking — is pending owner
+definition). Its Link Report goes to Review.
+
+**Stage 7 — Review.** Run `$agency-site-review`: ONE stage, two sections. Functional: forms
+submit, tracking fires, schema validates, sitemap/robots/llms, redirects, index state, images,
+banned language. Visual: the §24 screenshot set scored against the `/templates/*` previews, the
+approved recipe, and the rubric — never live reference sites. Builder loop ≤ 3 rounds, then
+escalate. Red/yellow/green + Pass/Needs Revision/Fail report; blockers separate from accepted risks.
+→ 🛑 **GATE 5 (human):** review the preview + Review Report. Final visual sign-off. Reserved
 review states must be resolved; red blockers need explicit risk acceptance to pass.
 
-**Stage 8 — Launch** (spec: `agents/08` — no skill yet, follow the spec). DNS/hosting,
-redirects live, tracking verified on production, sitemap submitted, handoff packet.
+**Stage 8 — Launch checklist** (spec: `agents/08` — human-run, agent-verified). A person executes
+DNS/hosting/SSL/secrets/Search Console; the agent verifies each step with evidence. Before
+cutover: `site.previewMode: false`, rebuild, `npm run validate:launch` passes. Then redirects
+live, forms/DNI/tracking observed on production, sitemap submitted, handoff packet.
 → 🛑 **GATE 6 (human):** explicit launch approval — automation never launches on its own.
 
 ## Conductor Rules
