@@ -44,6 +44,9 @@ the AM's status.
 ## Procedure
 
 ### 1. Read and snapshot
+Proof of access (REFERENCES.md): for each source you open, record fileId/URL, title, tab names or
+page count, and modified date in the Source Snapshot. A source that will not open is a hard stop —
+ask for a native Sheet, CSV, or pasted text; never fill the gap from another source.
 Read the `AM Verified Website Intake` tab. Record a Source Snapshot: sheet URL, tab, read
 date, template version, key rows used. (Someone will edit the sheet later; the snapshot is
 what the build traces back to.)

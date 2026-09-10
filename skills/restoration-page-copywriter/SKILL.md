@@ -155,9 +155,14 @@ stalls a 26-page site for hours and invites mid-run scope re-negotiation.
    - voice rules and the word-count warning: first drafts always come in short — verify
      against the brief's count before returning
    - one finished page as the reference implementation
-2. **Fan out one subagent per page** (Sonnet, medium effort is the default — page copy is
-   brief-execution, not judgment work). Each reads its own approved brief plus the spec and
-   returns a Final Page Copy artifact (`schemas/final-page-copy.yaml`) into `artifacts/copy/`.
+2. **Fan out one subagent per PARENT CATEGORY** — the hub page plus all its child pages
+   (owner decision 2026-09-10; Sonnet, high effort). One agent holding a whole category writes
+   consistent copy across siblings and cross-links them correctly; per-page agents are for
+   unusually high-stakes pages only. Each agent reads each page's brief FROM ITS GOOGLE DOC URL
+   in the page map (`brief.brief_ref` — never a local export) plus the spec, and returns one
+   Final Page Copy artifact per page (`schemas/final-page-copy.yaml`, `meta.brief_used` = that
+   Doc URL) into `artifacts/copy/`. `validate:artifacts` cross-checks every artifact's brief
+   against the page map.
    Pages with unusual stakes get extra briefing in the fan-out prompt (biohazard/trauma:
    non-graphic, discretion as the trust signal; remodeling: planned-purchase voice,
    form-first CTAs).

@@ -16,7 +16,7 @@ site builds). These rules exist because sessions have destroyed each other's wor
    raise it with the human.
 3. **Commit only your own paths** with targeted `git add <paths>` — never `git add -A` /
    `git commit -a`. `git pull --rebase` before pushing.
-4. Authorities: `docs/agency-website-system/CORE_CONTRACTS.md` (§1–24) governs all builds;
+4. Authorities: `docs/agency-website-system/CORE_CONTRACTS.md` (§1–24) governs all builds; `REFERENCES.md` says where the live libraries (master brief sheet, brief Docs) are and requires proof of access;
    `PIPELINE.md` governs stage order and gates. Where a skill and these files disagree,
    these files win.
 5. Validation commands (run from `starter/`): `npm run check` (artifacts),

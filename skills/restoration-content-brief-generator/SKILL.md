@@ -5,6 +5,15 @@ description: Creates execution-ready SEO content briefs for restoration service,
 
 # Restoration Content Brief Generator
 
+## Where the master brief library lives (read this before anything else)
+
+`docs/agency-website-system/REFERENCES.md` in the canonical checkout
+(`/Users/jameslarosa/Documents/agent-website-builder`): the Master Restoration SEO Template sheet,
+tab **`Content Briefs`**, links one Google Doc per master service page. Before drafting ANY brief,
+open that tab, find the page's Doc URL, open the Doc (record its title). If it exists, the job is
+assignment, not authoring — never draft a duplicate. Status columns, Page Map rows, and local
+markdown exports are not briefs. If the sheet or a Doc cannot be opened, stop and say so.
+
 Create restoration service-page briefs that are specific enough for SEO execution and flexible enough to match the actual SERP intent. Do not force a fixed H2 template across every page.
 
 ## Inputs

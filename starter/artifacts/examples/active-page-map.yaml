@@ -19,7 +19,7 @@ pages:
     url: /water-damage-restoration/
     page_type: parent_hub
     status: Ready To Build
-    brief: { required: true, brief_ref: "fixture-doc", brief_status: Assigned }
+    brief: { required: true, brief_ref: "https://docs.google.com/document/d/EXAMPLE-water-hub", brief_title: "Content Brief - Water Damage Restoration", brief_status: Assigned }
     navigation_inclusion: [header, footer]
     schema_plan: [Service, BreadcrumbList]
     blockers: []
@@ -28,7 +28,7 @@ pages:
     page_type: city_hub
     city: Example City
     status: Approved
-    brief: { required: true, brief_ref: "fixture-doc", brief_status: Assigned }
+    brief: { required: true, brief_ref: "https://docs.google.com/document/d/EXAMPLE-water-hub", brief_title: "Content Brief - Water Damage Restoration", brief_status: Assigned }
     navigation_inclusion: [hub_listing, sitemap_only]
     schema_plan: [Service, BreadcrumbList]
     blockers: []
@@ -37,7 +37,7 @@ pages:
     page_type: city_service
     city: Example City
     status: Approved
-    brief: { required: true, brief_ref: "fixture-doc", brief_status: Assigned }
+    brief: { required: true, brief_ref: "https://docs.google.com/document/d/EXAMPLE-water-hub", brief_title: "Content Brief - Water Damage Restoration", brief_status: Assigned }
     navigation_inclusion: [hub_listing, sitemap_only]
     schema_plan: [Service, BreadcrumbList]
     blockers: []

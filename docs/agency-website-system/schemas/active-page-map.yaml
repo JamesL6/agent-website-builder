@@ -24,8 +24,11 @@ pages:
     status: Proposed                 # Proposed | Client Requested | Approved | Needs Info | Ready For Content | Ready To Build | Built | QA Passed | Launched | Redirect Verified | Do Not Build
     brief:
       required: true                 # false for operational pages (§ Content Brief Agent page-type rules)
-      brief_ref: ""                  # Google Doc URL of approved master brief, when assigned
+      brief_ref: ""                  # Google Doc URL of the approved master brief (https://docs.google.com/document/d/…),
+                                     # from the master sheet's `Content Briefs` tab (REFERENCES.md). Never a local file path.
+      brief_title: ""                # the Doc's title as READ from Drive metadata — proof the brief was opened, not inferred
       brief_status: ""               # Assigned | New Brief Needed | No Brief Required | Needs SEO Decision
+                                     # Assigned REQUIRES brief_ref (Doc URL) + brief_title; validate:artifacts enforces it.
     navigation_inclusion: []         # §23: header | footer | sidebar | hub_listing | sitemap_only | hidden_approved
     schema_plan: []                  # §22 page-type schemas
     blockers: []                     # e.g. "sub-service Needs Client Confirmation", "claim unverified"

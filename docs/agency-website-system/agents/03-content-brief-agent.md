@@ -4,6 +4,9 @@ Status: Active / Last updated: 2026-07-07
 
 ## Purpose
 
+**Where the briefs live — read `REFERENCES.md` first.** The master sheet's `Content Briefs` tab links one Google Doc per master service page. A page is `Assigned` only after that Doc has been OPENED (metadata read → `brief_title` recorded in the page map). A row in the Page Map, a status column, or a local markdown export is not a brief. Added 2026-09-10 after a build claimed briefs existed, then claimed 77 were missing, without opening one; `validate:artifacts` now rejects an Assigned page without a Doc URL + title.
+
+
 Assign approved master content briefs to selected SEO/content pages, classify pages that do not need SEO briefs, and route true brief gaps to the technical/SEO decision owner. This agent decides which brief each page builds from; it does not write page copy — the Copywriting And Localization Agent (4) executes the briefs this agent assigns.
 
 The shared agent contract, source-of-truth order, and handoff statuses apply (see CORE_CONTRACTS.md §2, §3, §4).

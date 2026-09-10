@@ -65,7 +65,7 @@ Rules:
 ## The Copy Sprint Rule
 
 All non-homepage Final Page Copy is written as ONE parallel sprint immediately after briefs
-are approved — one subagent per page (Sonnet, medium effort), a per-client `copy-spec.md`
+are approved — one subagent per PARENT CATEGORY (hub + its children; Sonnet, high effort — owner decision 2026-09-10), a per-client `copy-spec.md`
 locking the claim matrix, the approved URL list, voice, and word-count discipline, and central
 verification of every artifact by the lead (`artifacts/copy/*.yaml`, checked by
 `npm run validate:artifacts`). The build stage assembles finished, approved copy; it never
@@ -84,7 +84,7 @@ Each handoff is a structured artifact, not prose in a chat message. Formats live
 | Artifact | Produced by | Consumed by | Schema |
 |---|---|---|---|
 | Verified Intake Summary + Blockers | 1 Intake | 3, 4, 5 | (prose for now — schema TODO) |
-| Active Page Map | 1 Intake + 3 Brief | 4, 5, 6, 7 | `schemas/active-page-map.yaml` |
+| Active Page Map (with `brief_ref` Doc URL + `brief_title` per Assigned page) | 1 Intake + 3 Brief | 4, 5, 6, 7 | `schemas/active-page-map.yaml` |
 | Redirect Map | 1 Intake (rebuild branch) | 6, 7, 8 | `schemas/redirect-map.yaml` |
 | Brief Assignments | 3 Brief | 4, 6 | (matrix in master sheet for MVP) |
 | Homepage Messaging Pack | 4 Copywriting | 5 Design, 6 Build, 7 Review | `schemas/messaging-pack.yaml` |

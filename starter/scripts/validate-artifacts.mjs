@@ -41,6 +41,7 @@ const BANNED = [
   'page map', 'page targets', 'target cities',
   'city-service pages are deferred', 'lorem ipsum', 'placeholder',
 ];
+const DOC_URL = /^https:\/\/docs\.google\.com\/document\/d\/[A-Za-z0-9_-]+/;
 // §7 soft-flag words — legitimate English; warn, never fail.
 const SOFT = ['brief', 'candidate', 'deferred', 'mockup', 'targets'];
 
@@ -225,6 +226,13 @@ function validatePageMap(file, doc) {
 
     if (p?.brief?.required === true && isBlank(p?.brief?.brief_status))
       err(file, `${at}: brief.required is true but brief_status is unset`);
+    if (p?.brief?.brief_status === 'Assigned') {
+      // A brief is a Google Doc that was OPENED — never a sheet row, a status column, or a local export.
+      if (!DOC_URL.test(String(p?.brief?.brief_ref ?? '')))
+        err(file, `${at}: brief_status Assigned but brief_ref is not a Google Doc URL (REFERENCES.md — the Content Briefs tab links the Doc; local files and sheet rows are not briefs)`);
+      if (isBlank(p?.brief?.brief_title))
+        err(file, `${at}: brief_status Assigned but brief_title empty — read the Doc's metadata and record its title (proof it was opened, not inferred)`);
+    }
 
     if (isBlank(p?.navigation_inclusion) ||
         (Array.isArray(p?.navigation_inclusion) && p.navigation_inclusion.length === 0))
@@ -244,10 +252,18 @@ function validatePageMap(file, doc) {
 // Copy Sprint output: one final-page-copy artifact per page in <dir>/copy/.
 // Validated so the sprint's parallel writers get mechanical verification —
 // the lead never takes an agent's word for claim safety or completeness.
-function validatePageCopy(file, doc) {
+function validatePageCopy(file, doc, pageMap) {
   if (isBlank(doc.meta?.page_id)) err(file, 'meta.page_id empty — must match the active page map');
   if (isBlank(doc.meta?.page_url)) err(file, 'meta.page_url empty');
   if (isBlank(doc.meta?.brief_used)) err(file, 'meta.brief_used empty — copy without a brief source is unreviewable');
+  else if (doc.meta.brief_used !== 'structured-requirements' && !DOC_URL.test(String(doc.meta.brief_used)))
+    err(file, `meta.brief_used "${doc.meta.brief_used}" is not a Google Doc URL or "structured-requirements" — copy must be written from the brief Doc, never a local export`);
+  if (pageMap) {
+    const page = (pageMap.pages ?? []).find((p) => p.page_id === doc.meta?.page_id || p.url === doc.meta?.page_url);
+    if (!page) err(file, `page ${doc.meta?.page_id ?? doc.meta?.page_url} is not in the active page map — copy for an unapproved page`);
+    else if (page.brief?.brief_status === 'Assigned' && doc.meta?.brief_used !== page.brief?.brief_ref)
+      err(file, `meta.brief_used does not match the page map's brief_ref for ${page.url} — the copy was written from something other than the assigned brief`);
+  }
   if (!['Draft', 'Ready For Review', 'Approved'].includes(doc.meta?.status))
     err(file, `meta.status "${doc.meta?.status}" invalid`);
   if (isBlank(doc.copy?.h1) && isBlank(doc.copy?.body)) err(file, 'copy.h1 and copy.body both empty');
@@ -324,9 +340,12 @@ if (existsSync(rm)) {
 
 const copyDir = join(dir, 'copy');
 if (existsSync(copyDir)) {
+  let pageMapDoc = null;
+  const pmPath = join(dir, 'active-page-map.yaml');
+  if (existsSync(pmPath)) { try { pageMapDoc = parse(readFileSync(pmPath, 'utf8')); } catch { /* reported above */ } }
   for (const f of readdirSync(copyDir).filter((f) => f.endsWith('.yaml') || f.endsWith('.yml'))) {
     ran++;
-    try { validatePageCopy(`copy/${f}`, parse(readFileSync(join(copyDir, f), 'utf8'))); }
+    try { validatePageCopy(`copy/${f}`, parse(readFileSync(join(copyDir, f), 'utf8')), pageMapDoc); }
     catch (e) { err(`copy/${f}`, `failed to parse: ${e.message}`); }
   }
 }

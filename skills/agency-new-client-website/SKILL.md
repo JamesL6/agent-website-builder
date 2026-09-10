@@ -31,6 +31,15 @@ Ask for, and do not start without:
    Hard stop: never assume either. Interim (until the intake tab exists): intake facts may come
    in chat; record them verbatim in the Source Snapshot.
 
+## Source preflight — before Stage 1 (added 2026-09-10)
+
+Open EVERY source the human supplied — the client sheet, the services doc, marketing PDFs, the
+current site — and the master brief sheet's `Content Briefs` tab (`REFERENCES.md`). Report what
+was actually read: title, tab names or page count, modified date. Anything that cannot be opened
+(an uploaded `.xlsx` sheet, a private Doc, a JS-only page) is a HARD STOP: ask for a native Sheet,
+CSV, pasted text, or access. Never infer a source's contents from a different source and never
+report "briefs exist" or "N briefs missing" from a status column — only from Docs you opened.
+
 ## The Stages
 
 **Stage 1 — Intake (+ rebuild branch).** Run `$agency-client-intake-agent`. If the client has a
@@ -40,9 +49,12 @@ current site, the same run crawls it, classifies old URLs, and writes the Redire
 Requires `Verified Intake Status = Verified` (or `Human-supplied (chat)` during the interim) +
 `AI Intake Validation Status = Passed`.
 
-**Stage 3 — Content briefs.** Run `$restoration-content-brief-generator` flow per
-`agents/03`: assign approved master briefs, localize placeholders, route true gaps to the
-SEO owner (new briefs need human approval, then join the master library).
+**Stage 3 — Content briefs.** Per `agents/03` and `REFERENCES.md`: for every page in the map,
+find its brief in the master sheet's `Content Briefs` tab, OPEN the Google Doc, record
+`brief_ref` (Doc URL) + `brief_title` in the page map → `Assigned`. Only a page with no Doc is a
+gap; route true gaps to the SEO owner via `$restoration-content-brief-generator` (new briefs need
+human approval, then join the library). `validate:artifacts` rejects Assigned pages without a
+Doc URL + title.
 → 🛑 **GATE 2 (human/SEO):** approve the final page map — and, for rebuilds, the Redirect Map.
 
 **Stage 4 — Copy Sprint.** Run `$restoration-page-copywriter` per `agents/04`: FIRST the
