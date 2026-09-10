@@ -153,9 +153,21 @@ stalls a 26-page site for hours and invites mid-run scope re-negotiation.
      dollar figures, no credentials beyond what the verified intake supports)
    - the approved URL list from the Active Page Map — writers may only link URLs on it
    - voice rules and the word-count warning: first drafts always come in short — verify
-     against the brief's count before returning
+     against the BRIEF's count before returning. The spec never restates per-page targets:
+     word count, H2 sequence, internal-link plan, FAQ set, cannibalization rules, and the
+     brief's "Client Onboarding Toggles / Claim Restrictions" all come from each brief Doc and
+     override anything the spec says (C&B 2026-09-10: the spec guessed 1,200–1,600 words where the
+     Doc said 1,800–2,400)
    - one finished page as the reference implementation
-2. **Fan out one subagent per PARENT CATEGORY** — the hub page plus all its child pages
+2. **City pages first, because they are the easy part if done right and ruinous if done wrong:**
+   NEVER one agent per city, never one artifact per city page. City hubs and city-service pages
+   are GENERATED from data. The brief Docs already carry `{{city}}`/`{{state}}` placeholders, so
+   write each service's city-service content ONCE — one `cityServiceContent` entry per approved
+   service (hub + children), tokens intact — and the city hub copy once (`cityHubCopy`). Then the
+   factual per-city dataset (`cities.ts`: county, real neighboring approved towns, zone) — verifiable
+   facts only, never invented local color. 88 cities × 7 pages = 616 pages from ~7 content entries
+   + 88 data rows. `validate:artifacts` REJECTS any copy artifact typed `city_hub`/`city_service`.
+3. **Fan out one subagent per PARENT CATEGORY** — the hub page plus all its child pages
    (owner decision 2026-09-10; Sonnet, high effort). One agent holding a whole category writes
    consistent copy across siblings and cross-links them correctly; per-page agents are for
    unusually high-stakes pages only. Each agent reads each page's brief FROM ITS GOOGLE DOC URL
@@ -166,7 +178,7 @@ stalls a 26-page site for hours and invites mid-run scope re-negotiation.
    Pages with unusual stakes get extra briefing in the fan-out prompt (biohazard/trauma:
    non-graphic, discretion as the trust signal; remodeling: planned-purchase voice,
    form-first CTAs).
-3. **Lead verifies every page centrally** — `npm run validate:artifacts` (it validates
+4. **Lead verifies every page centrally** — `npm run validate:artifacts` (it validates
    `artifacts/copy/*.yaml`), word count against the brief, claim scan, heading structure
    matches the brief exactly. Never take an agent's word for it.
 

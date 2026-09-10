@@ -30,9 +30,21 @@ ratings not from the live widget; §7 banned phrases.
 - Headings follow the brief exactly (order and wording). First H2 carries the page's local target.
 - Sentences short. One idea each.
 
+## Per-page targets come from the BRIEF DOC, not this spec
+Word count, H2 sequence, internal-link plan, FAQ set, cannibalization rules, and the brief's
+"Client Onboarding Toggles / Claim Restrictions" are read from each page's brief Google Doc
+(`brief_ref` in the page map) and override anything here. This spec carries only what the briefs
+cannot know: this client's facts, claim states, approved URLs, and voice.
+
 ## Word-count discipline
-Every brief states a target. First drafts come in short — count before returning, then expand
-with substance (process detail, what is documented, what to expect), never padding.
+Every brief states a target. First drafts come in short — count against the BRIEF's target before
+returning, then expand with substance (process detail, what is documented, what to expect), never
+padding.
+
+## City pages are data, not per-page copy
+Write each service's city-service content ONCE with `{city}`/`{county}` tokens (from the brief's
+`{{city}}`/`{{state}}` placeholders) into `cityServiceContent`; the city hub copy once into
+`cityHubCopy`; verifiable per-city facts into `cities.ts`. Never one artifact per city page.
 
 ## Reference implementation
 Read this finished page first: <path or URL of one approved page>

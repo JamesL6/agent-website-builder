@@ -267,6 +267,11 @@ function validatePageCopy(file, doc, pageMap) {
   if (!['Draft', 'Ready For Review', 'Approved'].includes(doc.meta?.status))
     err(file, `meta.status "${doc.meta?.status}" invalid`);
   if (isBlank(doc.copy?.h1) && isBlank(doc.copy?.body)) err(file, 'copy.h1 and copy.body both empty');
+  // City pages RENDER FROM DATA (cities.ts + cityServiceContent.ts with {city}/{county} tokens) —
+  // writing 600 individual city artifacts is the thin-content-at-scale failure the generators
+  // exist to prevent (PIPELINE → Copy Sprint Rule; C&B build 2026-09-10 planned 88 agents × 7 pages).
+  if (['city_hub', 'city_service'].includes(String(doc.meta?.page_type)))
+    err(file, `page_type ${doc.meta.page_type}: city pages are generated from per-city data, not per-page copy artifacts — write the service content ONCE with {city}/{county} tokens into cityServiceContent, and the factual per-city dataset into cities.ts`);
   scanLanguage(file, doc.copy ?? {});
   (doc.claims_used ?? []).forEach((c, i) => {
     if (isBlank(c?.state)) err(file, `claims_used[${i}] missing claim state (§6)`);
