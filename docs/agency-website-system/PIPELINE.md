@@ -74,7 +74,7 @@ scope re-negotiation. Added 2026-08-28 after a build wrote copy serially during 
 ~15k tokens/page, stalled two pages into 26, and paused to re-litigate scope the approved
 page map had already settled. City hub and city-service pages fall under the same rule: they
 render from per-city data files, so the sprint's deliverable for them is that approved
-dataset (localized master briefs + verifiable local facts, §14) — produced before build, never
+dataset (localized master briefs + intent-relevant fields only — county, state, nearby approved towns (also the internal-link structure), honest response framing; NO waterways, landmarks, housing stock, or local color (Google treats padded local pages as doorway pages; owner decision 2026-09-11), §14) — produced before build, never
 invented by the builder.
 
 ## Handoff Artifact Map

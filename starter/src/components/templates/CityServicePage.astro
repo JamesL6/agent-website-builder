@@ -19,7 +19,7 @@ import type { CityServiceContent } from '../../data/cityServiceContent';
 
 interface Props { city: City; content: CityServiceContent; /** template preview routes only (§17) */ noindex?: boolean }
 const { city, content, noindex = false } = Astro.props;
-const ST = site.stateAbbr;
+const ST = city.state;
 const st = ST.toLowerCase();
 
 const nearby = city.near.map((n) => cities.find((c) => c.name === n)).filter(Boolean) as City[];

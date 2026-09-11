@@ -164,8 +164,8 @@ stalls a 26-page site for hours and invites mid-run scope re-negotiation.
    are GENERATED from data. The brief Docs already carry `{{city}}`/`{{state}}` placeholders, so
    write each service's city-service content ONCE — one `cityServiceContent` entry per approved
    service (hub + children), tokens intact — and the city hub copy once (`cityHubCopy`). Then the
-   factual per-city dataset (`cities.ts`: county, real neighboring approved towns, zone) — verifiable
-   facts only, never invented local color. 88 cities × 7 pages = 616 pages from ~7 content entries
+   per-city dataset (`cities.ts`: county, state, real neighboring approved towns, zone) —
+   intent-relevant fields ONLY; never waterways, landmarks, housing stock, or local color. 88 cities × 7 pages = 616 pages from ~7 content entries
    + 88 data rows. `validate:artifacts` REJECTS any copy artifact typed `city_hub`/`city_service`.
 3. **Fan out one subagent per PARENT CATEGORY** — the hub page plus all its child pages
    (owner decision 2026-09-10; Sonnet, high effort). One agent holding a whole category writes
@@ -184,8 +184,9 @@ stalls a 26-page site for hours and invites mid-run scope re-negotiation.
 
 City hub and city-service pages are copy too — but their deliverable is DATA, not hand-written
 pages. They render from per-city data files (localized from the master briefs' {{city}}/{{state}}
-patterns plus genuinely local, verifiable facts per §14: county, neighborhoods, service-area
-specifics — never invented landmarks or fake local color). The sprint produces and verifies
+patterns plus intent-relevant fields per §14: county, state, nearby approved towns, honest
+response framing — never waterways, landmarks, housing stock, or local color: Google treats padded
+local pages as doorway pages). The sprint produces and verifies
 that per-city dataset alongside the service-page artifacts, and it is approved BEFORE build.
 The builder must never invent city content at build time; 50 near-identical city pages with a
 swapped city name is thin content, and 50 pages of fabricated local detail is worse.

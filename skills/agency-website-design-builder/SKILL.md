@@ -244,7 +244,7 @@ City hubs render from `pages/[citySlug].astro` with ALL copy from `cityHubCopy`;
 from `CityServicePage.astro` with content from `cityServiceContent.ts` — both Copy Sprint
 deliverables, interpolated per city. H1 `Restoration Services in {city}, {ST}`. Hubs are routing
 pages: short summaries linking to that city's own service pages; factual differentiation only
-(county, real neighboring approved cities, honest response framing) — never invented local color,
+(county, state, real neighboring approved cities, honest response framing) — never waterways, landmarks, housing stock, or local color (padded local pages read as doorway pages),
 never links to unapproved routes. The brief records which cities and which services per city (from
 the page map), nothing more.
 

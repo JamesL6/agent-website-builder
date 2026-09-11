@@ -9,7 +9,7 @@ export function getStaticPaths() {
   const hubs = cityServiceContent.filter((c) => !c.child);
   return cities.flatMap((city) =>
     hubs.map((content) => ({
-      params: { citySlug: `${city.slug}-${site.stateAbbr.toLowerCase()}`, hub: content.hub },
+      params: { citySlug: `${city.slug}-${city.state.toLowerCase()}`, hub: content.hub },
       props: { city, content },
     })),
   );

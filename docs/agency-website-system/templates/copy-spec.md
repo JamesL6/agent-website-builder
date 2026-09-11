@@ -44,7 +44,8 @@ padding.
 ## City pages are data, not per-page copy
 Write each service's city-service content ONCE with `{city}`/`{county}` tokens (from the brief's
 `{{city}}`/`{{state}}` placeholders) into `cityServiceContent`; the city hub copy once into
-`cityHubCopy`; verifiable per-city facts into `cities.ts`. Never one artifact per city page.
+`cityHubCopy`; the per-city table into `cities.ts` with intent-relevant fields only (county, state,
+nearby approved towns, response framing — no local trivia). Never one artifact per city page.
 
 ## Reference implementation
 Read this finished page first: <path or URL of one approved page>

@@ -9,10 +9,19 @@
  * written ONCE with tokens and interpolated per city. Tokens: {city} {county} {state} {near} {zone} {an}.
  * The values below are template examples — a client build replaces them with approved copy.
  */
+/**
+ * The per-city data table. INTENT-RELEVANT FIELDS ONLY (owner decision 2026-09-11): a person on
+ * "water damage restoration in {city}" needs the service, the coverage, and the neighboring towns
+ * we also serve — not waterways, housing stock, landmarks, or local color. Google treats local
+ * pages padded with unnecessary general information as doorway pages; slots + real coverage facts
+ * are the localization. Never add a field here that does not serve the search intent.
+ */
 export interface City {
   slug: string;
   name: string;
   county: string;
+  /** State abbreviation for THIS city (clients can span states — C&B is DE + MD). Drives the URL suffix and ", ST" labels. */
+  state: string;
   /** Geographic position relative to the client's base — drives honest response framing (zoneCopy). */
   zone: 'home' | 'near' | 'outer';
   /** Other APPROVED service-area cities nearby (by name). Real internal-link routing value. */
