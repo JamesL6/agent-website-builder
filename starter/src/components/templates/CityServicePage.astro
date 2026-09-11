@@ -28,6 +28,8 @@ const vars: Record<string, string> = {
   county: city.county,
   near: nearby.slice(0, 3).map((n) => n.name).join(', ') || city.county + ' County',
   zone: zoneCopy[city.zone],
+  state: city.state,
+  an: /^[AEIOU]/.test(city.name) ? 'an' : 'a',
 };
 /**
  * Token interpolation. The indefinite article in front of {city} has to agree with the city
@@ -41,7 +43,8 @@ const t = (s: string) =>
   s
     .replace(/\ba \{city\}/g, `${cityVowel ? 'an' : 'a'} {city}`)
     .replace(/\bA \{city\}/g, `${cityVowel ? 'An' : 'A'} {city}`)
-    .replace(/\{(city|county|near|zone)\}/g, (_, k) => vars[k]);
+    // Any {token} present in vars is substituted; unknown tokens are left visible so QA catches them.
+    .replace(/\{(\w+)\}/g, (m, k) => vars[k] ?? m);
 
 const selfUrl = content.child
   ? `/${city.slug}-${st}/${content.hub}/${content.child}/`

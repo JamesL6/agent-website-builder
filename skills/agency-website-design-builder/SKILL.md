@@ -310,7 +310,15 @@ Rebuild Required: Yes/No
 Build Handoff Approved: Yes/No
 ```
 
-## Output: Design Recipe + Design Brief
+## Output: Design Recipe + Design Brief + Gate 4 packet
+
+Three things — and the third is what the human actually approves:
+
+- **Gate 4 packet (visual, owner decision 2026-09-11):** apply the tokens to `theme.css`, the logo,
+  and real `site.ts` NAP in the client repo; render `/templates/homepage/` with the approved
+  Messaging Pack copy plus `/templates/inner-page/` and `/templates/contact-page/`; capture the §24
+  set into `artifacts/design/gate4/` (mobile-initial, mobile-scrolled, desktop, tablet) and hand
+  over a live preview URL. A recipe cannot be Approved without it. No client page is assembled here.
 
 Two paired artifacts:
 

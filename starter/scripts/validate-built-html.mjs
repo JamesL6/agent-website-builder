@@ -53,6 +53,12 @@ const BANNED = [
   'city-service pages are deferred', 'lorem ipsum', 'placeholder', 'todo:',
 ];
 
+// Starter demo data that must never reach a client page. Warn in preview mode (the starter's own
+// 404 carries it by design); FAIL with --launch. Added 2026-09-11 after 617 client pages were built
+// with "Example Restoration Co." in the header and footer.
+const PLACEHOLDERS = ['example restoration co', '(555) 000-1234', 'example city', 'northtown', 'southville', 'example county', 'example logo'];
+const placeholderPages = new Map(); // phrase -> Set(pages)
+
 let errors = 0;
 let warnings = 0;
 const err = (file, msg) => { errors++; console.error(`  ✗ ${file}: ${msg}`); };
@@ -140,6 +146,8 @@ for (const filePath of htmlFiles(DIST)) {
   for (const phrase of BANNED)
     if (visible.includes(phrase))
       err(file, `§7 banned phrase "${phrase}" in rendered visible text`);
+  for (const phrase of PLACEHOLDERS)
+    if (visible.includes(phrase)) { if (!placeholderPages.has(phrase)) placeholderPages.set(phrase, new Set()); placeholderPages.get(phrase).add(file); }
 
   // --- 5. §18 images ---------------------------------------------------------
   const heroBlocks = [...html.matchAll(/<section[^>]*data-page-hero[^>]*>([\s\S]*?)<\/section>/g)].map((m) => m[1]).join('\n');
@@ -187,6 +195,11 @@ for (const [href, pages] of [...deadLinks.entries()].sort()) {
     `${pages.size} page(s), e.g. ${[...pages][0]}`,
     `dead internal link "${href}" — no built route or file at that path (§15: never publish links to routes that don't exist)`,
   );
+}
+
+for (const [phrase, pages] of placeholderPages) {
+  const msg = `starter placeholder "${phrase}" still rendered on ${pages.size} page(s) (e.g. ${[...pages][0]}) — site.ts/theme not yet replaced with client data`;
+  if (LAUNCH) err('launch gate', msg); else warn(msg);
 }
 
 if (noindexPages.length) {

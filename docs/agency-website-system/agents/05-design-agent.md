@@ -459,6 +459,9 @@ The `Design Brief` remains the recipe's prose companion: rationale, imagery dire
 
 ## Approval Gate
 
+**Gate 4 is visual.** The handoff includes the Gate 4 packet: `theme.css` tokens + logo + real `site.ts` NAP applied to the starter, the approved Messaging Pack copy rendered on `/templates/homepage/`, and the §24 screenshot set (`artifacts/design/gate4/`: mobile-initial, mobile-scrolled, desktop, tablet) of homepage, inner-page, and contact-page previews. The human approves from the screenshots and a live preview URL, never from the Design Brief alone; `validate:artifacts` refuses an Approved recipe without the packet. No client page is assembled before this gate (owner decision 2026-09-11).
+
+
 Nonstandard sections that affect conversion, SEO, forms, tracking, or performance need explicit approval before build.
 
 Homepage design also needs visual-quality approval before build. Do not pass a flat wireframe-style homepage to the Astro Build Agent. Homepage visual direction is a human approval point (see `PIPELINE.md`, Human Approval Points).

@@ -37,8 +37,8 @@ copy:
       placement_note: ""
 
 claims_used:
-  - claim: ""
-    claim_state: ""                  # §6 — only visible_preview_allowed (or launch_proof_required with proof pending noted)
+  - text: ""
+    state: ""                  # §6 — only visible_preview_allowed (or launch_proof_required with proof pending noted)
 claims_avoided_or_needs_approval: []
 
 blockers: []                         # e.g. "target area unverified", "claim needs proof"

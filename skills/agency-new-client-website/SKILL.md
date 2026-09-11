@@ -69,9 +69,15 @@ this) and spot-check page copy.
 
 **Stage 5 — Design.** Run `$agency-website-design-builder`: brand tokens from
 guidelines/logo, one variant per section from the starter registry, Design Recipe + Design
-Brief. Rubric must have no Fail areas.
-→ 🛑 **GATE 4 (human):** approve tokens (mandatory when logo-derived) and the design
-direction.
+Brief. Rubric must have no Fail areas. THEN MAKE IT VISIBLE: in the client repo apply
+`theme.css` tokens, the logo, and real `site.ts` NAP; render the starter previews with the
+approved Messaging Pack copy on `/templates/homepage/` plus `/templates/inner-page/` and
+`/templates/contact-page/`; capture the §24 set into `artifacts/design/gate4/`
+(mobile-initial, mobile-scrolled, desktop, tablet). No client page is assembled in this stage.
+→ 🛑 **GATE 4 (human):** the human approves FROM THE SCREENSHOTS and the live preview URL —
+tokens (mandatory when logo-derived), variants, and direction. A recipe cannot be marked Approved
+without the packet (`validate:artifacts` enforces it). Never tell the human they have "already
+seen" a design unless you sent the screenshot.
 
 **Stage 6 — Build.** Run `$agency-astro-site-builder`: starter copy, theme, site data,
 homepage assembly, inner pages through the templates, `npm run check` + `npm run check:built`,
@@ -107,3 +113,7 @@ live, forms/DNI/tracking observed on production, sitemap submitted, handoff pack
 - Keep a running status the human can ask for at any time: stage, gate, blockers, owner.
 - Human approval at one gate approves that artifact only — it is never blanket permission
   for later stages.
+- Gates are not reorderable, mergeable, or reinterpretable. "The design is baked into the
+  starter, so the build IS the review" is the exact reasoning that assembled 617 client pages
+  before the human saw one screenshot (C&B, 2026-09-11). Design approval is visual and happens
+  before assembly; the build stage starts from the approved themed starter.

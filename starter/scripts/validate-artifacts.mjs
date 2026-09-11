@@ -147,7 +147,7 @@ function validateMessagingPack(file, doc) {
 
 // -------------------------------------------------------- design recipe
 
-function validateRecipe(file, doc) {
+function validateRecipe(file, doc, recipePath = join(dir, 'design-recipe.yaml')) {
   if (isBlank(doc.meta?.messaging_pack_ref))
     err(file, 'meta.messaging_pack_ref empty — recipe is invalid without an approved pack');
 
@@ -191,6 +191,14 @@ function validateRecipe(file, doc) {
   if (doc.meta?.status === 'Approved' &&
       !['Pass', 'Fail Accepted By Human'].includes(doc.meta?.rubric_result))
     err(file, `Approved recipe requires rubric_result Pass or Fail Accepted By Human, found "${doc.meta?.rubric_result}"`);
+  // Gate 4 is VISUAL approval (owner decision 2026-09-11, after a build assembled 617 pages before the
+  // human had seen a single screenshot). An Approved recipe must sit next to the packet the human saw.
+  if (doc.meta?.status === 'Approved') {
+    const gate4 = join(dirname(recipePath), 'design', 'gate4');
+    for (const shot of ['mobile-initial.png', 'mobile-scrolled.png', 'desktop.png', 'tablet.png'])
+      if (!existsSync(join(gate4, shot)))
+        err(file, `Approved recipe but design/gate4/${shot} is missing — Gate 4 is approved from the §24 screenshots of the THEMED previews, never from a document`);
+  }
 }
 
 // ------------------------------------------------------------- page map

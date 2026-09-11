@@ -44,7 +44,8 @@ Stage C  Content and design (parallel)
          └─ 5.  Design Agent      → Design Recipe + Design Brief
                 Non-homepage pattern work may start in Draft; homepage design starts
                 only when the Homepage Messaging Pack is Approved and brand tokens exist.
-            Gate: Messaging Pack approved; Design Recipe valid; rubric has no Fail areas
+            Gate: Messaging Pack approved; Design Recipe valid; rubric has no Fail areas;
+                  Gate 4 packet (themed previews, 4 screenshots in artifacts/design/gate4/) approved by the human
 
 Stage D  Build
          ├─ 6.  Astro Build Agent → Build Summary, Validation Results

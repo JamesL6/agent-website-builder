@@ -18,6 +18,13 @@ before the first build in a session. Where this skill and those files disagree, 
 
 ## Rule Zero — Start From The Starter
 
+**Rule Minus One — Gate 4 first.** The build begins from the THEMED starter the human approved at
+Gate 4 (`theme.css`, logo, `site.ts` already real; `artifacts/design/gate4/` screenshots present;
+recipe `Approved`). Never assemble a client page — not one — before that gate. Never build with the
+starter's placeholder `site.ts` ("Example Restoration Co.", "(555) 000-1234"): `validate:built`
+flags every page that still carries it.
+
+
 Every production build starts by copying the agency starter
 (the canonical checkout's `starter/` directory). Never build a client site from scratch,
 from this skill's prose, from a mockup, or from another client's repo.
