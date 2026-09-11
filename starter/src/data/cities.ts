@@ -26,6 +26,17 @@ export interface City {
   zone: 'home' | 'near' | 'outer';
   /** Other APPROVED service-area cities nearby (by name). Real internal-link routing value. */
   near: string[];
+  /**
+   * HYBRID SLOT (owner decision 2026-09-11). One or two paragraphs of genuinely local copy,
+   * rendered on this city's hub and city-service pages only when present. Filled ONLY for a real,
+   * CLIENT-CONFIRMED operational fact about this town: an office/GBP location here, a different
+   * response window, a service restriction, a documented recurring problem the crews actually see.
+   * Most towns leave it empty — that is correct. Never local color, never inferred. Tokens allowed.
+   * The build FAILS if localIntro is set without localIntroSource (who confirmed it, when).
+   */
+  localIntro?: string[];
+  /** e.g. "Confirmed by owner on onboarding call 2026-09-08". Required when localIntro is set. */
+  localIntroSource?: string;
 }
 
 /** Empty in the starter. A client build fills this from the approved page map. */

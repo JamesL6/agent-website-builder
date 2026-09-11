@@ -75,7 +75,9 @@ scope re-negotiation. Added 2026-08-28 after a build wrote copy serially during 
 page map had already settled. City hub and city-service pages fall under the same rule: they
 render from per-city data files, so the sprint's deliverable for them is that approved
 dataset (localized master briefs + intent-relevant fields only — county, state, nearby approved towns (also the internal-link structure), honest response framing; NO waterways, landmarks, housing stock, or local color (Google treats padded local pages as doorway pages; owner decision 2026-09-11), §14) — produced before build, never
-invented by the builder.
+invented by the builder. Hybrid slot (owner decision 2026-09-11): a city row may carry `localIntro` (1–2
+paragraphs) ONLY for a client-confirmed operational fact about that town, attributed in
+`localIntroSource` (build fails without it); most towns stay empty; P1 towns first.
 
 ## Handoff Artifact Map
 

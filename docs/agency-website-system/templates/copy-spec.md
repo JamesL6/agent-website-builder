@@ -46,6 +46,12 @@ Write each service's city-service content ONCE with `{city}`/`{county}` tokens (
 `{{city}}`/`{{state}}` placeholders) into `cityServiceContent`; the city hub copy once into
 `cityHubCopy`; the per-city table into `cities.ts` with intent-relevant fields only (county, state,
 nearby approved towns, response framing — no local trivia). Never one artifact per city page.
+Optional `localIntro` per town ONLY for a client-confirmed operational fact, attributed in
+`localIntroSource`; list the towns that have one below, with the source.
+
+## Towns with a confirmed local fact (localIntro)
+| Town | Fact | Confirmed by / date |
+|---|---|---|
 
 ## Reference implementation
 Read this finished page first: <path or URL of one approved page>
