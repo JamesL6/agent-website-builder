@@ -34,8 +34,6 @@ export function getStaticPaths() {
 }
 
 const { city } = Astro.props;
-if (city.localIntro?.length && !city.localIntroSource)
-  throw new Error(`cities.ts: ${city.slug} has localIntro without localIntroSource — local paragraphs must be client-confirmed and attributed`);
 const ST = city.state;
 const st = ST.toLowerCase();
 const nearby = city.near.map((n) => cities.find((c) => c.name === n)).filter(Boolean) as typeof cities;
@@ -100,7 +98,6 @@ const hereUrl = `/${city.slug}-${st}/`;
     <h2>{t(copy.openingH2)}</h2>
     {copy.opening.map((p) => <p>{t(p)}</p>)}
     <p>{zoneCopy[city.zone]}</p>
-    {city.localIntro?.map((p) => <p set:html={t(p)} />)}
 
     <InlineCTA heading={t(copy.emergencyCta.heading)} support={t(copy.emergencyCta.support)} />
 

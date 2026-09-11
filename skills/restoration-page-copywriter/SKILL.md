@@ -167,13 +167,6 @@ stalls a 26-page site for hours and invites mid-run scope re-negotiation.
    per-city dataset (`cities.ts`: county, state, real neighboring approved towns, zone) —
    intent-relevant fields ONLY; never waterways, landmarks, housing stock, or local color. 88 cities × 7 pages = 616 pages from ~7 content entries
    + 88 data rows. `validate:artifacts` REJECTS any copy artifact typed `city_hub`/`city_service`.
-   **Hybrid slot (owner decision 2026-09-11):** each city row may carry `localIntro` — one or two
-   paragraphs rendered on that town's hub and city-service pages ONLY when present. Fill it ONLY
-   for a real, CLIENT-CONFIRMED operational fact about that town: an office or GBP location there, a
-   different response window, a service restriction, a recurring problem the crews actually see.
-   Record who confirmed it in `localIntroSource` (the build fails without it). Most towns stay
-   empty — that is correct, not a gap. Never local color, never inferred, never written to make
-   pages "differ." Priority: write it for the P1 towns first; the long tail stays template.
 3. **Fan out one subagent per PARENT CATEGORY** — the hub page plus all its child pages
    (owner decision 2026-09-10; Sonnet, high effort). One agent holding a whole category writes
    consistent copy across siblings and cross-links them correctly; per-page agents are for

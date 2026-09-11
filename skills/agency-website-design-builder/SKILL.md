@@ -245,10 +245,8 @@ from `CityServicePage.astro` with content from `cityServiceContent.ts` — both 
 deliverables, interpolated per city. H1 `Restoration Services in {city}, {ST}`. Hubs are routing
 pages: short summaries linking to that city's own service pages; factual differentiation only
 (county, state, real neighboring approved cities, honest response framing) — never waterways, landmarks, housing stock, or local color (padded local pages read as doorway pages),
-never links to unapproved routes. An optional `localIntro` (1–2 paragraphs) renders only where a
-client-confirmed operational fact exists for that town (`localIntroSource` required). The brief
-records which cities and which services per city (from the page map), and which towns have a
-confirmed local fact — nothing more.
+never links to unapproved routes. The brief records which cities and which services per city (from
+the page map), nothing more.
 
 ## Service-Area Module (§15)
 

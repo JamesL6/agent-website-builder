@@ -23,9 +23,6 @@ const ST = city.state;
 const st = ST.toLowerCase();
 
 const nearby = city.near.map((n) => cities.find((c) => c.name === n)).filter(Boolean) as City[];
-if (city.localIntro?.length && !city.localIntroSource)
-  throw new Error(`cities.ts: ${city.slug} has localIntro without localIntroSource — local paragraphs must be client-confirmed and attributed (owner decision 2026-09-11)`);
-
 const vars: Record<string, string> = {
   city: city.name,
   county: city.county,
@@ -188,7 +185,6 @@ const voice =
   >
     <h2>{t(content.openingH2)}</h2>
     {content.opening.map((p) => <p set:html={t(p)} />)}
-    {city.localIntro?.map((p) => <p set:html={t(p)} />)}
 
     <InlineCTA phoneLabel={voice.phoneLabel} eyebrow={voice.openCta.eyebrow} heading={voice.openCta.heading} support={voice.openCta.support} secondaryLabel={voice.secondaryLabel} />
 
