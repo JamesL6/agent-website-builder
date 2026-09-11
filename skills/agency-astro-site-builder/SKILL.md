@@ -16,6 +16,15 @@ The governing rules live in the `agent-website-builder` repo (canonical checkout
 `docs/agency-website-system/schemas/` (the input artifact formats). Read CORE_CONTRACTS
 before the first build in a session. Where this skill and those files disagree, those files win.
 
+## Checklist first (pipeline state — owner decision 2026-09-11)
+
+Before doing anything, read `artifacts/pipeline-state.yaml` in the client repo (schema:
+`schemas/pipeline-state.yaml`). This stage is `6_build`. If any earlier stage is not
+`approved`/`complete` — in particular `5_design` approved at Gate 4 — the VISUAL gate, from screenshots in artifacts/design/gate4/ — STOP and tell the human which gate is open. Do not
+reason your way past it. When you start, set `6_build.status: in_progress`; when your output is
+ready for the human, set it to `awaiting_gate` with the evidence paths. You NEVER write `approved`
+— only the conductor does, quoting the human. `npm run validate:state` enforces all of this.
+
 ## Rule Zero — Start From The Starter
 
 **Rule Minus One — Gate 4 first.** The build begins from the THEMED starter the human approved at

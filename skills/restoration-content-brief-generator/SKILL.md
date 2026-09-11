@@ -5,6 +5,15 @@ description: Creates execution-ready SEO content briefs for restoration service,
 
 # Restoration Content Brief Generator
 
+## Checklist first (pipeline state — owner decision 2026-09-11)
+
+Before doing anything, read `artifacts/pipeline-state.yaml` in the client repo (schema:
+`schemas/pipeline-state.yaml`). This stage is `3_briefs`. If any earlier stage is not
+`approved`/`complete` — in particular `1_intake` approved at Gate 1 — STOP and tell the human which gate is open. Do not
+reason your way past it. When you start, set `3_briefs.status: in_progress`; when your output is
+ready for the human, set it to `awaiting_gate` with the evidence paths. You NEVER write `approved`
+— only the conductor does, quoting the human. `npm run validate:state` enforces all of this.
+
 ## Where the master brief library lives (read this before anything else)
 
 `docs/agency-website-system/REFERENCES.md` in the canonical checkout

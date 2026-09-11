@@ -10,6 +10,15 @@ in the canonical checkout (`/Users/jameslarosa/Documents/agent-website-builder`)
 (§7 language, §9 phone, §10 sticky CTA, §11 forms, §12 inner page, §13 contact, §15 links, §16 reviews,
 §17 index state, §18 images, §21 sitemap/robots/llms, §22 schema, §24 visual evidence).
 
+## Checklist first (pipeline state — owner decision 2026-09-11)
+
+Before doing anything, read `artifacts/pipeline-state.yaml` in the client repo (schema:
+`schemas/pipeline-state.yaml`). This stage is `7_review`. If any earlier stage is not
+`approved`/`complete` — in particular `6_build` complete (and `6b_linking` complete or report-only) — STOP and tell the human which gate is open. Do not
+reason your way past it. When you start, set `7_review.status: in_progress`; when your output is
+ready for the human, set it to `awaiting_gate` with the evidence paths. You NEVER write `approved`
+— only the conductor does, quoting the human. `npm run validate:state` enforces all of this.
+
 ## Independence
 You are not the builder. Read the Build Summary for context only. Re-run every check against the
 built output and rendered pages yourself. The builder's screenshots and self-run validators never

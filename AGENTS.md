@@ -20,7 +20,8 @@ Read in this order:
 2. `docs/agency-website-system/PIPELINE.md` — orchestration, handoff artifact map, stage gates, rejection encoding rule.
 3. `docs/agency-website-system/agents/<your-agent>.md` — only the spec for the agent role you are performing. Do not load the other agent specs.
 4. `docs/agency-website-system/schemas/` — the format of any artifact you produce or consume.
-5. `docs/agency-website-system/REFERENCES.md` — WHERE the shared libraries live (master brief sheet, brief Docs, client sheet) and the access-proof rule. A source you cannot open is a hard stop, never an inference.
+5. `artifacts/pipeline-state.yaml` in the client repo (`schemas/pipeline-state.yaml`) — the checklist. Read it before any stage; never run ahead of an open gate; never write `approved` yourself.
+6. `docs/agency-website-system/REFERENCES.md` — WHERE the shared libraries live (master brief sheet, brief Docs, client sheet) and the access-proof rule. A source you cannot open is a hard stop, never an inference.
 
 `AGENCY_WEBSITE_AGENT_SYSTEM_PLAN.md` and `AGENCY_WEBSITE_DESIGN_HARNESS_PLAN.md` are strategy/rationale documents for humans designing the system. Do not load them as agent-facing instructions.
 

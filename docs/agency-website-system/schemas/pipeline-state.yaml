@@ -1,0 +1,80 @@
+# Pipeline State — the checklist the agent does NOT get to keep in its head (owner decision 2026-09-11).
+# Lives at <client repo>/artifacts/pipeline-state.yaml. Created by the conductor at kickoff.
+# Validated by starter/scripts/validate-pipeline-state.mjs (npm run validate:state), which also
+# cross-checks it against reality: artifacts on disk, the design recipe, and built pages in dist/.
+#
+# RULES
+# - A stage may be in_progress only when every earlier stage is terminal (approved, or complete for
+#   ungated stages). No stage runs ahead of an open gate. Ever.
+# - ONLY A HUMAN APPROVAL WRITES `approved`. The agent records it quoting the human's message
+#   verbatim in approval_quote. An approval without approved_by + approved_at + approval_quote +
+#   existing evidence files is invalid. The agent never approves from its own judgment.
+# - `npm run status` prints this file as the status board. Say "where are we" and the agent runs it —
+#   it never answers from memory.
+meta:
+  client: ""
+  repo: ""                              # absolute path of the client repo
+  started_at: ""                        # ISO date
+  current_stage: 1_intake               # one of the stage keys below
+
+stages:                                 # keep this order — it IS the pipeline
+  1_intake:                             # → Gate 1
+    gate: Gate 1
+    status: not_started                 # not_started | in_progress | awaiting_gate | approved | blocked
+    evidence: []                        # e.g. artifacts/active-page-map.yaml, artifacts/redirect-map.yaml
+    approved_by: ""
+    approved_at: ""
+    approval_quote: ""                  # the human's words, verbatim
+    blocked_by: ""
+  3_briefs:                             # → Gate 2 (page map + redirect map)
+    gate: Gate 2
+    status: not_started
+    evidence: []                        # active-page-map.yaml with brief_ref + brief_title on every Assigned page
+    approved_by: ""
+    approved_at: ""
+    approval_quote: ""
+    blocked_by: ""
+  4_copy:                               # → Gate 3 (Messaging Pack + copy spot-check)
+    gate: Gate 3
+    status: not_started
+    evidence: []                        # artifacts/copy/messaging-pack.yaml, artifacts/copy/*.yaml, copy-spec.md
+    approved_by: ""
+    approved_at: ""
+    approval_quote: ""
+    blocked_by: ""
+  5_design:                             # → Gate 4 (VISUAL: the human approves from screenshots + preview URL)
+    gate: Gate 4
+    status: not_started
+    evidence: []                        # artifacts/design-recipe.yaml, artifacts/design/gate4/*.png, preview URL in notes
+    approved_by: ""
+    approved_at: ""
+    approval_quote: ""
+    blocked_by: ""
+  6_build:                              # no human gate — terminal status is `complete`
+    gate: none
+    status: not_started                 # not_started | in_progress | complete | blocked
+    evidence: []                        # Build Summary; npm run check + check:built output
+    blocked_by: ""
+  6b_linking:                           # no human gate — report-only until scope is defined
+    gate: none
+    status: not_started
+    evidence: []                        # Link Report
+    blocked_by: ""
+  7_review:                             # → Gate 5 (Review Report + final visual sign-off)
+    gate: Gate 5
+    status: not_started
+    evidence: []                        # Review Report, §24 screenshots
+    approved_by: ""
+    approved_at: ""
+    approval_quote: ""
+    blocked_by: ""
+  8_launch:                             # → Gate 6 (explicit launch approval, before DNS cutover)
+    gate: Gate 6
+    status: not_started
+    evidence: []                        # validate:launch output, Launch Report
+    approved_by: ""
+    approved_at: ""
+    approval_quote: ""
+    blocked_by: ""
+
+notes: []                               # dated free-text entries: decisions, preview URLs, blockers raised

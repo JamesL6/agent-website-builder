@@ -63,6 +63,17 @@ Rules:
 - Final build (Stage D) does not begin until the active page map, brief assignments, final page copy for in-scope pages, design recipe, and critical blockers are resolved or explicitly accepted.
 - Any agent may draft recommendations from incomplete inputs, but must label the output `Draft` and list blockers (`CORE_CONTRACTS.md §2, §4`).
 
+## The Checklist — pipeline-state.yaml (owner decision 2026-09-11)
+
+Every client repo carries `artifacts/pipeline-state.yaml` (`schemas/pipeline-state.yaml`): one entry per
+stage with status, gate, evidence paths, and — for approved stages — who approved, when, and their words
+verbatim. Stage skills read it first and refuse to run ahead of an open gate; only the conductor writes
+`approved`, only after a human says so; `npm run status` prints the board; `npm run validate:state`
+(inside `npm run check`) fails when a stage runs ahead, an approval lacks a human quote or evidence, copy
+exists before Gate 2, the recipe is Approved before Gate 4, or any client page is built before Gate 4.
+Added after the C&B build (2026-09-11) inferred briefs it never opened and assembled 617 pages before the
+owner saw one screenshot — both possible only because the pipeline's position lived in the agent's memory.
+
 ## The Copy Sprint Rule
 
 All non-homepage Final Page Copy is written as ONE parallel sprint immediately after briefs
@@ -94,6 +105,7 @@ Each handoff is a structured artifact, not prose in a chat message. Formats live
 | Design Brief (prose companion to the recipe) | 5 Design | 6 Build | per agent spec |
 | Build Summary + Validation Results | 6 Build | 6b Linking, 7 Review | per agent spec |
 | Link Report | 6b Internal Linking | 7 Review | per skill (report-only until scope defined) |
+| Pipeline State (the checklist) | conductor, updated by every stage | every stage, human | `schemas/pipeline-state.yaml` |
 | Review Report (functional + visual) | 7 Review | 8 Launch, human | per agent spec |
 | Launch Report + Handoff Packet | 8 Launch | human, AM | per agent spec |
 

@@ -19,6 +19,6 @@ site builds). These rules exist because sessions have destroyed each other's wor
 4. Authorities: `docs/agency-website-system/CORE_CONTRACTS.md` (§1–24) governs all builds; `REFERENCES.md` says where the live libraries (master brief sheet, brief Docs) are and requires proof of access;
    `PIPELINE.md` governs stage order and gates. Where a skill and these files disagree,
    these files win.
-5. Validation commands (run from `starter/`): `npm run check` (artifacts),
+5. Validation commands (run from `starter/`): `npm run check` (artifacts + pipeline state), `npm run status` (the checklist board),
    `npm run check:built` (build + built-HTML checks), `npm run validate:launch`
    (pre-launch gate: no stray noindex, robots + sitemap present).

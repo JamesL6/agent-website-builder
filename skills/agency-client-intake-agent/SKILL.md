@@ -15,6 +15,15 @@ Full spec: `agent-website-builder` repo (canonical checkout: `/Users/jameslarosa
 `docs/agency-website-system/CORE_CONTRACTS.md` (§2 shared contract, §3 source-of-truth
 order, §6 claims). Where this skill and those files disagree, those files win.
 
+## Checklist first (pipeline state — owner decision 2026-09-11)
+
+Before doing anything, read `artifacts/pipeline-state.yaml` in the client repo (schema:
+`schemas/pipeline-state.yaml`). This stage is `1_intake`. If any earlier stage is not
+`approved`/`complete` — in particular (nothing precedes intake — but confirm the file exists and create it from the schema if the conductor has not) — STOP and tell the human which gate is open. Do not
+reason your way past it. When you start, set `1_intake.status: in_progress`; when your output is
+ready for the human, set it to `awaiting_gate` with the evidence paths. You NEVER write `approved`
+— only the conductor does, quoting the human. `npm run validate:state` enforces all of this.
+
 ## What The Human Provides (the only human inputs in the pipeline's front door)
 
 - The client's Local SEO Sheet URL — specifically the `AM Verified Website Intake` tab.

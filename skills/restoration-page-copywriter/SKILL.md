@@ -7,6 +7,15 @@ description: Writes final first-person website copy for restoration service, cit
 
 Write final restoration website copy that sounds like the restoration company is speaking directly to the property owner.
 
+## Checklist first (pipeline state — owner decision 2026-09-11)
+
+Before doing anything, read `artifacts/pipeline-state.yaml` in the client repo (schema:
+`schemas/pipeline-state.yaml`). This stage is `4_copy`. If any earlier stage is not
+`approved`/`complete` — in particular `3_briefs` approved at Gate 2 (briefs are Google Docs that were opened) — STOP and tell the human which gate is open. Do not
+reason your way past it. When you start, set `4_copy.status: in_progress`; when your output is
+ready for the human, set it to `awaiting_gate` with the evidence paths. You NEVER write `approved`
+— only the conductor does, quoting the human. `npm run validate:state` enforces all of this.
+
 ## Source Order
 
 Use the most specific approved source first:

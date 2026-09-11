@@ -31,6 +31,22 @@ Ask for, and do not start without:
    Hard stop: never assume either. Interim (until the intake tab exists): intake facts may come
    in chat; record them verbatim in the Source Snapshot.
 
+## The checklist — pipeline-state.yaml (owner decision 2026-09-11)
+
+The pipeline's memory is a FILE, not your context. At kickoff, copy
+`docs/agency-website-system/schemas/pipeline-state.yaml` to `<client repo>/artifacts/pipeline-state.yaml`
+and fill `meta`. From then on:
+
+- Every stage skill reads it first and refuses to run ahead of an open gate. You never override that.
+- At each 🛑 gate: set the stage to `awaiting_gate` with evidence paths, present the gate, WAIT.
+  When the human approves, record `approved_by`, `approved_at`, and their words VERBATIM in
+  `approval_quote`, then set `approved`. An approval without a quote is invalid. You never approve.
+- Print the board (`npm run status`) at every gate and whenever the human asks where things are.
+  Never answer that question from memory.
+- `npm run check` runs `validate:state`: it fails if a stage runs ahead of a gate, if an approval
+  lacks a human quote or evidence, if copy exists before Gate 2, if the recipe is Approved before
+  Gate 4, or if ANY client page is built before Gate 4.
+
 ## Source preflight — before Stage 1 (added 2026-09-10)
 
 Open EVERY source the human supplied — the client sheet, the services doc, marketing PDFs, the
